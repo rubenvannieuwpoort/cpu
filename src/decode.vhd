@@ -63,8 +63,18 @@ begin
 				elsif opcode_in(15) = '1' then
 					-- arithmetic operations
 					operation_out <= opcode_in(11 downto 8);
-					operand_1_out <= reg(to_integer(unsigned(opcode_in(7 downto 4))));
-					operand_2_out <= reg(to_integer(unsigned(opcode_in(3 downto 0))));
+					if writeback_indicator_in = '1' and writeback_register_in = opcode_in(7 downto 4) then
+						operand_1_out <= writeback_value_in;
+					else
+						operand_1_out <= reg(to_integer(unsigned(opcode_in(7 downto 4))));
+					end if;
+					
+					if writeback_indicator_in = '1' and writeback_register_in = opcode_in(3 downto 0) then
+						operand_2_out <= writeback_value_in;
+					else
+						operand_2_out <= reg(to_integer(unsigned(opcode_in(3 downto 0))));
+					end if;
+
 					memory_indicator_out <= '0';
 					memory_operation_out <= '0';
 					memory_value_out <= "00000000000000000000000000000000";

@@ -32,7 +32,7 @@ begin
 					valid_out <= '0';
 				end if;
 
-				if to_integer(unsigned(count)) = 3 then
+				if to_integer(unsigned(count)) = 2 then
 					count <= (others => '0');
 				else
 					count <= std_logic_vector(unsigned(count) + 1);
