@@ -121,14 +121,14 @@ begin
 
 	instr_decode: instruction_decode port map(clk => clk, valid_in => valid_fetch_to_decode,
 	                                          opcode_in => opcode,
-		                                       writeback_indicator_in => writeback_indicator, writeback_register_in => writeback_register, writeback_value_in => writeback_value,
-                                             operation_out => operation_decode_to_exec, operand_1_out => op1_decode_to_exec, operand_2_out => op2_decode_to_exec,
-															memory_indicator_out => memory_indicator_decode_to_exec, memory_operation_out => memory_op_decode_to_exec, memory_value_out => memory_val_decode_to_exec,
-															writeback_indicator_out => writeback_indicator_decode_to_exec, writeback_register_out => writeback_register_decode_to_exec,
-															valid_out => valid_decode_to_exec, ready_out => decode_ready);
+	                                          writeback_indicator_in => writeback_indicator, writeback_register_in => writeback_register, writeback_value_in => writeback_value,
+	                                          operation_out => operation_decode_to_exec, operand_1_out => op1_decode_to_exec, operand_2_out => op2_decode_to_exec,
+	                                          memory_indicator_out => memory_indicator_decode_to_exec, memory_operation_out => memory_op_decode_to_exec, memory_value_out => memory_val_decode_to_exec,
+	                                          writeback_indicator_out => writeback_indicator_decode_to_exec, writeback_register_out => writeback_register_decode_to_exec,
+	                                          valid_out => valid_decode_to_exec, ready_out => decode_ready);
 
 	instr_execute: instruction_execute port map(clk => clk, valid_in => valid_decode_to_exec,
-		                                         operation_in => operation_decode_to_exec, operand_1_in => op1_decode_to_exec, operand_2_in => op2_decode_to_exec,
+	                                            operation_in => operation_decode_to_exec, operand_1_in => op1_decode_to_exec, operand_2_in => op2_decode_to_exec,
 	                                            memory_indicator_in => memory_indicator_decode_to_exec, memory_operation_in => memory_op_decode_to_exec, memory_value_in => memory_val_decode_to_exec,
 	                                            writeback_indicator_in => writeback_indicator_decode_to_exec, writeback_register_in => writeback_register_decode_to_exec,
 	                                            result_out => result_exec_to_mem,
@@ -137,8 +137,8 @@ begin
 	                                            valid_out => valid_exec_to_mem);
 
 	mem: memory port map(clk => clk, valid_in => valid_exec_to_mem,
-                        result_in => result_exec_to_mem,
-                        memory_indicator_in => memory_indicator_decode_to_exec, memory_operation_in => memory_op_decode_to_exec, memory_value_in => mem_val_exec_to_mem,
-                        writeback_indicator_in => wb_indicator_exec_to_mem, writeback_register_in => wb_reg_exec_to_mem,
-                        writeback_indicator_out => writeback_indicator, writeback_register_out => writeback_register, writeback_value_out => writeback_value);
+	                    result_in => result_exec_to_mem,
+	                    memory_indicator_in => memory_indicator_decode_to_exec, memory_operation_in => memory_op_decode_to_exec, memory_value_in => mem_val_exec_to_mem,
+	                    writeback_indicator_in => wb_indicator_exec_to_mem, writeback_register_in => wb_reg_exec_to_mem,
+	                    writeback_indicator_out => writeback_indicator, writeback_register_out => writeback_register, writeback_value_out => writeback_value);
 end Behavioral;
