@@ -10,7 +10,7 @@ ARCHITECTURE behavior OF cpu_test IS
  
     COMPONENT CPU
     PORT(
-         clk_100MHz : IN  std_logic
+         clk : IN  std_logic
         );
     END COMPONENT;
     
@@ -25,7 +25,7 @@ BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
    uut: CPU PORT MAP (
-          clk_100MHz => clk_100MHz
+          clk => clk_100MHz
         );
 
    -- Clock process definitions

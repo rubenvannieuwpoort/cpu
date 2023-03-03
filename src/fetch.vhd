@@ -9,29 +9,37 @@ entity instruction_fetch is
 		clk: in std_logic;
 		enable_in: in std_logic;
 
-		opcode_out: out std_logic_vector(15 downto 0) := "0000000000000000";
-		ready_out: out std_logic := '1'
+		valid_out: out std_logic := '0';
+		opcode_out: out std_logic_vector(15 downto 0) := "0000000000000000"
 	);
 end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
-	signal count: std_logic_vector(4 downto 0) := "00000";
-	type opcodes_list is array(0 to 31) of std_logic_vector(15 downto 0);
-	signal opcodes: opcodes_list := (
-		"1000000100000001", "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000", "1000000100000001", "0000000000000000", "0000000000000000",
-		"0000000000000000", "0000000000000000", "1000000100000001", "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000", "1000000100000001",
-		"0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000", "1000000100000001", "0000000000000000", "0000000000000000", "0000000000000000",
-		"0000000000000000", "1000000100000001", "0000000000000000", "0000000000000000", "1000000100000001", "0000000000000000", "0000000000000000", "0000000000000000");
+	signal count: std_logic_vector(3 downto 0) := "0000";
+	type opcodes_list is array(0 to 3) of std_logic_vector(15 downto 0);
+	signal opcodes: opcodes_list := ("1000000100000001", "0000000000000000", "0000000000000000", "0000000000000000");
 
 begin
-	ready_out <= '1';
-
 	process(clk)
 	begin
 		if rising_edge(clk) then
 			if enable_in = '1' then
-				count <= std_logic_vector(unsigned(count) + 1);
 				opcode_out <= opcodes(to_integer(unsigned(count)));
+
+				if count = "0000" then
+					valid_out <= '1';
+				else
+					valid_out <= '0';
+				end if;
+
+				if to_integer(unsigned(count)) = 3 then
+					count <= (others => '0');
+				else
+					count <= std_logic_vector(unsigned(count) + 1);
+				end if;
+			else
+				opcode_out <= (others => '0');
+				valid_out <= '0';
 			end if;
 		end if;
 	end process;
