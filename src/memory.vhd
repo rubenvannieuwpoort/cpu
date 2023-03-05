@@ -10,13 +10,11 @@ entity memory is
 
 		result_in: in std_logic_vector(31 downto 0);
 
-		memory_indicator_in: in std_logic;
 		memory_operation_in: in std_logic;
 		memory_value_in: in std_logic_vector(31 downto 0);
 
 		writeback_indicator_in: in std_logic;
 		writeback_register_in: in std_logic_vector(3 downto 0);
-
 
 		writeback_indicator_out: out std_logic := '0';
 		writeback_register_out: out std_logic_vector(3 downto 0) := "0000";

@@ -15,42 +15,47 @@ entity CPU is
 end CPU;
 
 architecture Behavioral of CPU is
+	-- signals from fetch
+	signal fetch_valid: std_logic;
 	signal opcode: std_logic_vector(15 downto 0);
-	signal fetch_enable, decode_ready: std_logic;
-	signal enable: std_logic;
+	
+	-- signals from decode
+	signal decode_valid: std_logic;
+	signal decode_operation: std_logic_vector(3 downto 0);
+	signal r1_indicator, r2_indicator: std_logic;
+	signal reg_1, reg_2: std_logic_vector(3 downto 0);
+	signal decode_mem_op: std_logic;
+	signal decode_mem_val: std_logic_vector(31 downto 0);
+	signal decode_wb_ind: std_logic;
+	signal decode_wb_reg: std_logic_vector(3 downto 0);
 
-	signal writeback_indicator: std_logic;
-	signal writeback_register: std_logic_vector(3 downto 0);
-	signal writeback_value: std_logic_vector(31 downto 0);
+	-- signals from register read
+	signal regread_valid: std_logic;
+	signal op_1, op_2: std_logic_vector(31 downto 0);
+	signal regread_op: std_logic_vector(3 downto 0);
+	signal regread_mem_op: std_logic;
+	signal regread_mem_val: std_logic_vector(31 downto 0);
+	signal regread_wb_ind: std_logic;
+	signal regread_wb_reg: std_logic_vector(3 downto 0);
 
-	-- signals between fetch and decode
-	signal valid_fetch_to_decode: std_logic;
+	-- signals from execute
+	signal exec_valid: std_logic;
+	signal exec_result: std_logic_vector(31 downto 0);
+	signal exec_mem_op: std_logic;
+	signal exec_mem_val: std_logic_vector(31 downto 0);
+	signal exec_wb_ind: std_logic;
+	signal exec_wb_reg: std_logic_vector(3 downto 0);
 
-	-- signals between decode and execute
-	signal operation_decode_to_exec: std_logic_vector(3 downto 0);
-	signal op1_decode_to_exec: std_logic_vector(31 downto 0);
-	signal op2_decode_to_exec: std_logic_vector(31 downto 0);
-	signal memory_indicator_decode_to_exec: std_logic;
-	signal memory_op_decode_to_exec: std_logic;
-	signal memory_val_decode_to_exec: std_logic_vector(31 downto 0);
-	signal writeback_indicator_decode_to_exec: std_logic;
-	signal writeback_register_decode_to_exec: std_logic_vector(3 downto 0);
-	signal valid_decode_to_exec: std_logic;
-
-	-- signals between execute and memory
-	signal result_exec_to_mem: std_logic_vector(31 downto 0);
-	signal mem_indicator_exec_to_mem: std_logic;
-	signal mem_op_exec_to_mem: std_logic;
-	signal mem_val_exec_to_mem: std_logic_vector(31 downto 0);
-	signal wb_indicator_exec_to_mem: std_logic;
-	signal wb_reg_exec_to_mem: std_logic_vector(3 downto 0);
-	signal valid_exec_to_mem: std_logic;
+	-- signals from memory
+	signal mem_wb_ind: std_logic;
+	signal mem_wb_reg: std_logic_vector(3 downto 0);
+	signal mem_wb_val: std_logic_vector(31 downto 0);
 
 	component instruction_fetch is
 		port(
 			clk: in std_logic;
-			enable_in: in std_logic;
-			valid_out: out std_logic := '0';
+			hold_in: in std_logic;
+			valid_out: out std_logic;
 			opcode_out: out std_logic_vector(15 downto 0)
 		);
 	end component;
@@ -59,20 +64,45 @@ architecture Behavioral of CPU is
 		port(
 			clk: in std_logic;
 			valid_in: in std_logic;
+			hold_in: in std_logic;
 			opcode_in: in std_logic_vector(15 downto 0);
 			valid_out: out std_logic;
-			operation_out: out std_logic_vector(3 downto 0);
-			operand_1_out: out std_logic_vector(31 downto 0);
-			operand_2_out: out std_logic_vector(31 downto 0);
-			memory_indicator_out: out std_logic := '0';
+			operation_out: out std_logic_vector(3 downto 0) := "0000";
+			read_indicator_1_out: out std_logic;
+			reg_1_out: out std_logic_vector(3 downto 0) := "0000";
+			read_indicator_2_out: out std_logic;
+			reg_2_out: out std_logic_vector(3 downto 0) := "0000";
 			memory_operation_out: out std_logic := '0';
 			memory_value_out: out std_logic_vector(31 downto 0);
 			writeback_indicator_out: out std_logic := '0';
+			writeback_register_out: out std_logic_vector(3 downto 0)
+		);
+	end component;
+
+	component register_read_write is
+		port(
+			clk: in std_logic;
+			valid_in: in std_logic;
+			read_indicator_1_in: in std_logic;
+			reg_1_in: in std_logic_vector(3 downto 0);
+			read_indicator_2_in: in std_logic;
+			reg_2_in: in std_logic_vector(3 downto 0);
+			valid_out: out std_logic := '0';
+			op_1_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+			op_2_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+			operation_in: std_logic_vector(3 downto 0);
+			memory_operation_in: in std_logic;
+			memory_value_in: in std_logic_vector(31 downto 0);
+			writeback_indicator_passthrough_in: in std_logic;
+			writeback_register_passthrough_in: in std_logic_vector(3 downto 0);
+			operation_out: out std_logic_vector(3 downto 0) := "0000";
+			memory_operation_out: out std_logic := '0';
+			memory_value_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+			writeback_indicator_out: out std_logic;
 			writeback_register_out: out std_logic_vector(3 downto 0);
 			writeback_indicator_in: in std_logic;
 			writeback_register_in: in std_logic_vector(3 downto 0);
-			writeback_value_in: in std_logic_vector(31 downto 0);
-			ready_out: out std_logic
+			writeback_value_in: in std_logic_vector(31 downto 0)
 		);
 	end component;
 
@@ -83,14 +113,12 @@ architecture Behavioral of CPU is
 			operation_in: in std_logic_vector(3 downto 0);
 			operand_1_in: in std_logic_vector(31 downto 0);
 			operand_2_in: in std_logic_vector(31 downto 0);
-			memory_indicator_in: in std_logic;
 			memory_operation_in: in std_logic;
 			memory_value_in: in std_logic_vector(31 downto 0);
 			writeback_indicator_in: in std_logic;
 			writeback_register_in: in std_logic_vector(3 downto 0);
 			valid_out: out std_logic;
 			result_out: out std_logic_vector(31 downto 0);
-			memory_indicator_out: out std_logic := '0';
 			memory_operation_out: out std_logic := '0';
 			memory_value_out: out std_logic_vector(31 downto 0);
 			writeback_indicator_out: out std_logic := '0';
@@ -103,7 +131,6 @@ architecture Behavioral of CPU is
 			clk: in std_logic;
 			valid_in: in std_logic;
 			result_in: in std_logic_vector(31 downto 0);
-			memory_indicator_in: in std_logic;
 			memory_operation_in: in std_logic;
 			memory_value_in: in std_logic_vector(31 downto 0);
 			writeback_indicator_in: in std_logic;
@@ -115,30 +142,42 @@ architecture Behavioral of CPU is
 	end component;
 
 begin
-	fetch_enable <= decode_ready;
+	-- todo: fix hold_in
+	instr_fetch: instruction_fetch port map(clk => clk, hold_in => '0', opcode_out => opcode, valid_out => fetch_valid);
 
-	instr_fetch: instruction_fetch port map(clk => clk, enable_in => fetch_enable, opcode_out => opcode, valid_out => valid_fetch_to_decode);
-
-	instr_decode: instruction_decode port map(clk => clk, valid_in => valid_fetch_to_decode,
+	instr_decode: instruction_decode port map(clk => clk, valid_in => fetch_valid, hold_in => '0', -- todo: fix hold_in
 	                                          opcode_in => opcode,
-	                                          writeback_indicator_in => writeback_indicator, writeback_register_in => writeback_register, writeback_value_in => writeback_value,
-	                                          operation_out => operation_decode_to_exec, operand_1_out => op1_decode_to_exec, operand_2_out => op2_decode_to_exec,
-	                                          memory_indicator_out => memory_indicator_decode_to_exec, memory_operation_out => memory_op_decode_to_exec, memory_value_out => memory_val_decode_to_exec,
-	                                          writeback_indicator_out => writeback_indicator_decode_to_exec, writeback_register_out => writeback_register_decode_to_exec,
-	                                          valid_out => valid_decode_to_exec, ready_out => decode_ready);
+															valid_out => decode_valid,
+															operation_out => decode_operation,
+															read_indicator_1_out => r1_indicator, reg_1_out => reg_1,
+															read_indicator_2_out => r2_indicator, reg_2_out => reg_2,
+	                                          memory_operation_out => decode_mem_op, memory_value_out => decode_mem_val,
+	                                          writeback_indicator_out => decode_wb_ind, writeback_register_out => decode_wb_reg);
 
-	instr_execute: instruction_execute port map(clk => clk, valid_in => valid_decode_to_exec,
-	                                            operation_in => operation_decode_to_exec, operand_1_in => op1_decode_to_exec, operand_2_in => op2_decode_to_exec,
-	                                            memory_indicator_in => memory_indicator_decode_to_exec, memory_operation_in => memory_op_decode_to_exec, memory_value_in => memory_val_decode_to_exec,
-	                                            writeback_indicator_in => writeback_indicator_decode_to_exec, writeback_register_in => writeback_register_decode_to_exec,
-	                                            result_out => result_exec_to_mem,
-	                                            memory_indicator_out => mem_indicator_exec_to_mem, memory_operation_out => mem_op_exec_to_mem, memory_value_out => mem_val_exec_to_mem,
-	                                            writeback_indicator_out => wb_indicator_exec_to_mem, writeback_register_out => wb_reg_exec_to_mem,
-	                                            valid_out => valid_exec_to_mem);
+	reg_rw: register_read_write port map(clk => clk, valid_in => decode_valid,
+	                                     read_indicator_1_in => r1_indicator, reg_1_in => reg_1,
+	                                     read_indicator_2_in => r2_indicator, reg_2_in => reg_2,
+													 valid_out => regread_valid, op_1_out => op_1, op_2_out => op_2,
+													 operation_in => decode_operation,
+													 memory_operation_in => decode_mem_op, memory_value_in => decode_mem_val,
+													 writeback_indicator_passthrough_in => '0', writeback_register_passthrough_in => "0000",
+													 operation_out => regread_op, memory_operation_out => regread_mem_op, memory_value_out => regread_mem_val,
+													 writeback_indicator_out => regread_wb_ind, writeback_register_out => regread_wb_reg,
+													 writeback_indicator_in => '0', writeback_register_in => "0000", writeback_value_in => "00000000000000000000000000000000");
+													 
 
-	mem: memory port map(clk => clk, valid_in => valid_exec_to_mem,
-	                    result_in => result_exec_to_mem,
-	                    memory_indicator_in => memory_indicator_decode_to_exec, memory_operation_in => memory_op_decode_to_exec, memory_value_in => mem_val_exec_to_mem,
-	                    writeback_indicator_in => wb_indicator_exec_to_mem, writeback_register_in => wb_reg_exec_to_mem,
-	                    writeback_indicator_out => writeback_indicator, writeback_register_out => writeback_register, writeback_value_out => writeback_value);
+	instr_execute: instruction_execute port map(clk => clk, valid_in => regread_valid,
+	                                            operation_in => regread_op, operand_1_in => op_1, operand_2_in => op_2,
+	                                            memory_operation_in => regread_mem_op, memory_value_in => regread_mem_val,
+	                                            writeback_indicator_in => regread_wb_ind, writeback_register_in => regread_wb_reg,
+	                                            result_out => exec_result,
+	                                            memory_operation_out => exec_mem_op, memory_value_out => exec_mem_val,
+	                                            writeback_indicator_out => exec_wb_ind, writeback_register_out => exec_wb_reg,
+	                                            valid_out => exec_valid);
+
+	mem: memory port map(clk => clk, valid_in => exec_valid,
+	                    result_in => exec_result,
+	                    memory_operation_in => exec_mem_op, memory_value_in => exec_mem_val,
+	                    writeback_indicator_in => exec_wb_ind, writeback_register_in => exec_wb_reg,
+	                    writeback_indicator_out => mem_wb_ind, writeback_register_out => mem_wb_reg, writeback_value_out => mem_wb_val);
 end Behavioral;

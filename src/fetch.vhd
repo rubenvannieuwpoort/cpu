@@ -7,7 +7,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity instruction_fetch is
 	port(
 		clk: in std_logic;
-		enable_in: in std_logic;
+		hold_in: in std_logic;
 
 		valid_out: out std_logic := '0';
 		opcode_out: out std_logic_vector(15 downto 0) := "0000000000000000"
@@ -23,7 +23,7 @@ begin
 	process(clk)
 	begin
 		if rising_edge(clk) then
-			if enable_in = '1' then
+			if hold_in = '0' then
 				opcode_out <= opcodes(to_integer(unsigned(count)));
 
 				if count = "0000" then

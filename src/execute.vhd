@@ -12,7 +12,6 @@ entity instruction_execute is
 		operand_1_in: in std_logic_vector(31 downto 0);
 		operand_2_in: in std_logic_vector(31 downto 0);
 
-		memory_indicator_in: in std_logic;
 		memory_operation_in: in std_logic;
 		memory_value_in: in std_logic_vector(31 downto 0);
 
@@ -24,7 +23,6 @@ entity instruction_execute is
 
 		result_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
 
-		memory_indicator_out: out std_logic := '0';
 		memory_operation_out: out std_logic := '0';
 		memory_value_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
 
@@ -44,7 +42,6 @@ begin
 	begin
 		if rising_edge(clk) then
 			if valid_in = '1' then
-				memory_indicator_out <= memory_indicator_in;
 				memory_operation_out <= memory_operation_in;
 				memory_value_out <= memory_value_in;
 					
