@@ -160,10 +160,10 @@ begin
 													 valid_out => regread_valid, op_1_out => op_1, op_2_out => op_2,
 													 operation_in => decode_operation,
 													 memory_operation_in => decode_mem_op, memory_value_in => decode_mem_val,
-													 writeback_indicator_passthrough_in => '0', writeback_register_passthrough_in => "0000",
+													 writeback_indicator_passthrough_in => decode_wb_ind, writeback_register_passthrough_in => decode_wb_reg,
 													 operation_out => regread_op, memory_operation_out => regread_mem_op, memory_value_out => regread_mem_val,
 													 writeback_indicator_out => regread_wb_ind, writeback_register_out => regread_wb_reg,
-													 writeback_indicator_in => '0', writeback_register_in => "0000", writeback_value_in => "00000000000000000000000000000000");
+													 writeback_indicator_in => mem_wb_ind, writeback_register_in => mem_wb_reg, writeback_value_in => mem_wb_val);
 													 
 
 	instr_execute: instruction_execute port map(clk => clk, valid_in => regread_valid,

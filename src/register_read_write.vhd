@@ -30,8 +30,8 @@ entity register_read_write is
 		operation_out: out std_logic_vector(3 downto 0) := "0000";
 		memory_operation_out: out std_logic := '0';
 		memory_value_out: out std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
-		writeback_indicator_out: out std_logic;
-		writeback_register_out: out std_logic_vector(3 downto 0);
+		writeback_indicator_out: out std_logic := '0';
+		writeback_register_out: out std_logic_vector(3 downto 0) := "0000";
 
 		-- writeback stage
 		-- ===============
@@ -69,6 +69,8 @@ begin
 						v_reg_1_val := "00000000000000000000000000000000";
 						v_r1_ready := '0';
 					end if;
+				else
+					v_r1_ready := '1';
 				end if;
 
 				if read_indicator_2_in = '1' then
@@ -82,6 +84,8 @@ begin
 						v_reg_1_val := "00000000000000000000000000000000";
 						v_r2_ready := '0';
 					end if;
+				else
+					v_r2_ready := '1';
 				end if;
 			end if;
 			
@@ -106,24 +110,27 @@ begin
 				writeback_indicator_out <= writeback_indicator_passthrough_in;
 				writeback_register_out <= writeback_register_passthrough_in;
 			end if;
-		end if;
-		
-		-- register writeback
-		if writeback_indicator_in = '1' then
-			reg(to_integer(unsigned(writeback_register_in))) <= writeback_value_in;
-		end if;
-		
-		-- bookkeeping of in-flight register writes
-		v_write_outgoing := v_valid and writeback_indicator_passthrough_in;
-		v_write_incoming := writeback_indicator_in;
-		if v_write_outgoing = '1' and v_write_incoming = '1' and writeback_register_passthrough_in = writeback_register_in then
-		else
-			if v_write_incoming = '1' then
-				writes_in_flight(to_integer(unsigned(writeback_register_in))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(writeback_register_in)))) + 3);
-			end if;
 
-			if v_write_outgoing = '1' then
-				writes_in_flight(to_integer(unsigned(writeback_register_passthrough_in))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(writeback_register_passthrough_in)))) + 1);
+			hold_out <= valid_in and not(v_r2_ready and v_r1_ready);
+		
+			-- register writeback
+			if writeback_indicator_in = '1' then
+				reg(to_integer(unsigned(writeback_register_in))) <= writeback_value_in;
+			end if;
+			
+			-- bookkeeping of in-flight register writes
+			v_write_outgoing := v_valid and writeback_indicator_passthrough_in;
+			v_write_incoming := writeback_indicator_in;
+			if v_write_outgoing = '1' and v_write_incoming = '1' and writeback_register_passthrough_in = writeback_register_in then
+				-- both an incoming and an outgoing write to the same register, no change
+			else
+				if v_write_incoming = '1' then
+					writes_in_flight(to_integer(unsigned(writeback_register_in))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(writeback_register_in)))) + 3);
+				end if;
+
+				if v_write_outgoing = '1' then
+					writes_in_flight(to_integer(unsigned(writeback_register_passthrough_in))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(writeback_register_passthrough_in)))) + 1);
+				end if;
 			end if;
 		end if;
 	end process;
