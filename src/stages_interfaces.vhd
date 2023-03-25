@@ -42,17 +42,20 @@ package stages_interfaces is
 	constant MEMORY_OPERATION_LOAD     : std_logic_vector(1 downto 0) := "01";
 	constant MEMORY_OPERATION_STORE    : std_logic_vector(1 downto 0) := "10";
 
-	constant EXECUTE_OPERATION_NONE   : std_logic_vector(3 downto 0) := "0000";
-	constant EXECUTE_OPERATION_SECOND : std_logic_vector(3 downto 0) := "0001";
-	constant EXECUTE_OPERATION_ADD    : std_logic_vector(3 downto 0) := "0010";
-	constant EXECUTE_OPERATION_SUB    : std_logic_vector(3 downto 0) := "0011";
-	constant EXECUTE_OPERATION_MUL    : std_logic_vector(3 downto 0) := "0100";
-	constant EXECUTE_OPERATION_AND    : std_logic_vector(3 downto 0) := "0101";
-	constant EXECUTE_OPERATION_OR     : std_logic_vector(3 downto 0) := "0110";
+	constant EXECUTE_OPERATION_SECOND : std_logic_vector(3 downto 0) := "0000";
+	constant EXECUTE_OPERATION_ADD    : std_logic_vector(3 downto 0) := "0001";
+	constant EXECUTE_OPERATION_SUB    : std_logic_vector(3 downto 0) := "0010";
+	constant EXECUTE_OPERATION_MUL    : std_logic_vector(3 downto 0) := "0011";
+	constant EXECUTE_OPERATION_AND    : std_logic_vector(3 downto 0) := "0100";
+	constant EXECUTE_OPERATION_OR     : std_logic_vector(3 downto 0) := "0101";
 	constant EXECUTE_OPERATION_XOR    : std_logic_vector(3 downto 0) := "0111";
-	constant EXECUTE_OPERATION_CMP    : std_logic_vector(3 downto 0) := "1000";
-	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "1001";
-	constant EXECUTE_OPERATION_SETVAL : std_logic_vector(3 downto 0) := "1010";
+	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "1000";
+	constant EXECUTE_OPERATION_CMP    : std_logic_vector(3 downto 0) := "1001";
+	constant EXECUTE_OPERATION_NONE   : std_logic_vector(3 downto 0) := "1010";
+	constant EXECUTE_OPERATION_BYTE0  : std_logic_vector(3 downto 0) := "1100";
+	constant EXECUTE_OPERATION_BYTE1  : std_logic_vector(3 downto 0) := "1101";
+	constant EXECUTE_OPERATION_BYTE2  : std_logic_vector(3 downto 0) := "1110";
+	constant EXECUTE_OPERATION_BYTE3  : std_logic_vector(3 downto 0) := "1111";
 
 	constant DEFAULT_DECODE_OUTPUT : decode_output_type := (
 		valid => '0',

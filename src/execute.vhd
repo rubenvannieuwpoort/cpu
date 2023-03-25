@@ -45,9 +45,7 @@ begin
 				v_internal_hold := '0';
 
 				-- compute result
-				if v_input.execute_operation = EXECUTE_OPERATION_NONE then
-					v_result := (others => '0');
-				elsif v_input.execute_operation = EXECUTE_OPERATION_SECOND then
+				if v_input.execute_operation = EXECUTE_OPERATION_SECOND then
 					v_result := v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_ADD then
 					v_result := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
@@ -62,12 +60,18 @@ begin
 					v_result := v_input.operand_1 or v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_XOR then
 					v_result := v_input.operand_1 xor v_input.operand_2;
-				--elsif v_input.execute_operation = EXECUTE_OPERATION_CMP then
-				--	v_result := v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_NOT then
 					v_result := not(v_input.operand_2);
-				elsif v_input.execute_operation = EXECUTE_OPERATION_SETVAL then
-					v_result := v_input.value;
+				--elsif v_input.execute_operation = EXECUTE_OPERATION_CMP then
+				--	v_result := v_input.operand_2;
+				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE0 then
+					v_result := v_input.operand_1(31 downto 8) & v_input.operand_2(7 downto 0);
+				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE1 then
+					v_result := v_input.operand_1(31 downto 16) & v_input.operand_2(7 downto 0) & v_input.operand_1(7 downto 0);
+				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE2 then
+					v_result := v_input.operand_1(31 downto 24) & v_input.operand_2(7 downto 0) & v_input.operand_1(15 downto 0);
+				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE3 then
+					v_result := v_input.operand_2(7 downto 0) & v_input.operand_1(23 downto 0);
 				end if;
 
 				if v_input.valid = '1' then
