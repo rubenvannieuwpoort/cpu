@@ -54,13 +54,25 @@ begin
 				v_read_internal_hold := '0';
 				if v_read_input.valid = '1' then
 					if v_read_input.read_indicator_1 = '1' then
-						v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
+						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "00" then
+							v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "01" and write_data_in.writeback_indicator = '1' and write_data_in.writeback_register = v_read_input.read_register_1 then
+							v_register_1_value := write_data_in.writeback_value;
+						else
+							v_register_1_value := (others => '0');
+						end if;
 					else
 						v_register_1_value := (others => '0');
 					end if;
 					
 					if v_read_input.read_indicator_2 = '1' then
-						v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "00" then
+							v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "01" and write_data_in.writeback_indicator = '1' and write_data_in.writeback_register = v_read_input.read_register_2 then
+							v_register_1_value := write_data_in.writeback_value;
+						else
+							v_register_2_value := (others => '0');
+						end if;
 					else
 						v_register_2_value := (others => '0');
 					end if;
