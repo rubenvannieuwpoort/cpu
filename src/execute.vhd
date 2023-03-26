@@ -9,10 +9,10 @@ entity execute is
 	port(
 		clk: in std_logic;
 		hold_in: in std_logic;
-		data_in: in register_read_output_type;
+		input: in register_read_output_type;
 
 		busy_out: out std_logic := '0';
-		data_out: out execute_output_type := DEFAULT_EXECUTE_OUTPUT
+		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT
 	);
 end execute;
 
@@ -23,27 +23,23 @@ begin
 
 	process(clk)
 		variable v_input: register_read_output_type;
-		variable v_internal_hold: std_logic;
-		variable v_data_out: execute_output_type;
+		variable v_wait: std_logic;
+		variable v_output: execute_output_type;
 		variable v_result: std_logic_vector(31 downto 0);
 		variable full_product: std_logic_vector(63 downto 0);
 	begin
 		busy_out <= buffered_input.valid;
 
 		if rising_edge(clk) then
+			-- select input
+			if buffered_input.valid = '1' then
+				v_input := buffered_input;
+			else
+				v_input := input;
+			end if;
 
+			v_wait := '0';
 			if hold_in = '0' then
-
-				-- select input
-				if buffered_input.valid = '1' then
-					v_input := buffered_input;
-				else
-					v_input := data_in;
-				end if;
-
-				-- TODO: compute v_internal_hold and v_data_out based on input
-				v_internal_hold := '0';
-
 				-- compute result
 				if v_input.execute_operation = EXECUTE_OPERATION_SECOND then
 					v_result := v_input.operand_2;
@@ -75,30 +71,30 @@ begin
 				end if;
 
 				if v_input.valid = '1' then
-					v_data_out.valid := '1';
-					v_data_out.memory_operation := v_input.memory_operation;
-					v_data_out.result := v_result;
-					v_data_out.value := v_input.value;
-					v_data_out.writeback_indicator := v_input.writeback_indicator;
-					v_data_out.writeback_register := v_input.writeback_register;
+					v_output.valid := '1';
+					v_output.memory_operation := v_input.memory_operation;
+					v_output.result := v_result;
+					v_output.value := v_input.value;
+					v_output.writeback_indicator := v_input.writeback_indicator;
+					v_output.writeback_register := v_input.writeback_register;
 				else
-					v_data_out := DEFAULT_EXECUTE_OUTPUT;
+					v_output := DEFAULT_EXECUTE_OUTPUT;
 				end if;
-			else
-				v_internal_hold := '1';
+				
+				if v_wait = '1' then
+					v_output := DEFAULT_EXECUTE_OUTPUT;
+				else
+					buffered_input <= DEFAULT_REGISTER_READ_OUTPUT;
+				end if;
+
+				output <= v_output;
 			end if;
 
-			if v_internal_hold = '0' then
-				data_out <= v_data_out;
-				buffered_input <= DEFAULT_REGISTER_READ_OUTPUT;
-			else
-				data_out <= DEFAULT_EXECUTE_OUTPUT;
-
-				if buffered_input.valid = '0' and data_in.valid = '1' then
-					buffered_input <= data_in;
-				end if;
+			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
+				buffered_input <= v_input;
 			end if;
 
+			busy_out <= hold_in or v_wait;
 		end if;
 	end process;
 

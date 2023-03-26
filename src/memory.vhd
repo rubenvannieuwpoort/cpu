@@ -9,10 +9,10 @@ entity memory is
 	port(
 		clk: in std_logic;
 		hold_in: in std_logic;
-		data_in: in execute_output_type;
+		input: in execute_output_type;
 
 		busy_out: out std_logic := '0';
-		data_out: out memory_output_type := DEFAULT_MEMORY_OUTPUT
+		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
 	);
 end memory;
 
@@ -22,43 +22,39 @@ architecture Behavioral of memory is
 begin
 
 	process(clk)
+		variable v_wait: std_logic;
 		variable v_input: execute_output_type;
-		variable v_internal_hold: std_logic;
-		variable v_data_out: memory_output_type;
+		variable v_output: memory_output_type;
 	begin
-		busy_out <= buffered_input.valid;
+		if rising_edge(clk) then		
+			-- select input
+			if buffered_input.valid = '1' then
+				v_input := buffered_input;
+			else
+				v_input := input;
+			end if;
 
-		if rising_edge(clk) then
-
+			v_wait := '0';
 			if hold_in = '0' then
+				-- generate output
+				v_output.writeback_indicator := v_input.writeback_indicator;
+				v_output.writeback_register := v_input.writeback_register;
+				v_output.writeback_value := v_input.result;
 
-				-- select input
-				if buffered_input.valid = '1' then
-					v_input := buffered_input;
+				if v_wait = '1' then
+					v_output := DEFAULT_MEMORY_OUTPUT;
 				else
-					v_input := data_in;
+					buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 				end if;
 
-				-- TODO: compute v_internal_hold and v_data_out based on input
-				v_internal_hold := '0';
-				v_data_out.writeback_indicator := v_input.writeback_indicator;
-				v_data_out.writeback_register := v_input.writeback_register;
-				v_data_out.writeback_value := v_input.result;
-			else
-				v_internal_hold := '1';
+				output <= v_output;
 			end if;
 
-			if v_internal_hold = '0' then
-				data_out <= v_data_out;
-				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
-			else
-				data_out <= DEFAULT_MEMORY_OUTPUT;
-
-				if buffered_input.valid = '0' and data_in.valid = '1' then
-					buffered_input <= data_in;
-				end if;
+			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
+				buffered_input <= v_input;
 			end if;
 
+			busy_out <= hold_in or v_wait;
 		end if;
 	end process;
 
