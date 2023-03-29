@@ -48,8 +48,8 @@ package stages_interfaces is
 	constant EXECUTE_OPERATION_MUL    : std_logic_vector(3 downto 0) := "0011";
 	constant EXECUTE_OPERATION_AND    : std_logic_vector(3 downto 0) := "0100";
 	constant EXECUTE_OPERATION_OR     : std_logic_vector(3 downto 0) := "0101";
-	constant EXECUTE_OPERATION_XOR    : std_logic_vector(3 downto 0) := "0111";
-	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "1000";
+	constant EXECUTE_OPERATION_XOR    : std_logic_vector(3 downto 0) := "0110";
+	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "0111";
 	constant EXECUTE_OPERATION_BYTE0  : std_logic_vector(3 downto 0) := "1100";
 	constant EXECUTE_OPERATION_BYTE1  : std_logic_vector(3 downto 0) := "1101";
 	constant EXECUTE_OPERATION_BYTE2  : std_logic_vector(3 downto 0) := "1110";
