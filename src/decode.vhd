@@ -58,6 +58,7 @@ begin
 					elsif v_input.opcode(15 downto 12) = "0001" and unsigned(v_input.opcode(11 downto 8)) <= unsigned(EXECUTE_OPERATION_NOT) then
 						-- binary operation
 						v_output.valid := '1';
+						v_output.flag_set_indicator := '1';
 						v_output.execute_operation := v_input.opcode(11 downto 8);
 						v_output.memory_operation := MEMORY_OPERATION_NONE;
 						v_output.read_indicator_1 := '1';
@@ -71,6 +72,7 @@ begin
 					elsif v_input.opcode(15 downto 12) = "0010" then
 						-- sign extend immediate
 						v_output.valid := '1';
+						v_output.flag_set_indicator := '0';
 						v_output.execute_operation := EXECUTE_OPERATION_SECOND;
 						v_output.memory_operation := MEMORY_OPERATION_NONE;
 						v_output.read_indicator_1 := '0';
@@ -85,6 +87,7 @@ begin
 					elsif v_input.opcode(15 downto 14) = "01" then
 						-- load immediate into byte N
 						v_output.valid := '1';
+						v_output.flag_set_indicator := '0';
 						v_output.execute_operation := "11" & v_input.opcode(13 downto 12);
 						v_output.memory_operation := MEMORY_OPERATION_NONE;
 						v_output.read_indicator_1 := '1';

@@ -22,6 +22,7 @@ package stages_interfaces is
 	type decode_output_type is record
 		valid: std_logic;
 
+		flag_set_indicator: std_logic;
 		execute_operation: std_logic_vector(3 downto 0);
 		memory_operation: std_logic_vector(1 downto 0);
 
@@ -57,6 +58,7 @@ package stages_interfaces is
 
 	constant DEFAULT_DECODE_OUTPUT : decode_output_type := (
 		valid => '0',
+		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
 		read_indicator_1 => '0',
@@ -75,6 +77,7 @@ package stages_interfaces is
 	type register_read_output_type is record
 		valid: std_logic;
 
+		flag_set_indicator: std_logic;
 		execute_operation: std_logic_vector(3 downto 0);
 		memory_operation: std_logic_vector(1 downto 0);
 	
@@ -88,6 +91,7 @@ package stages_interfaces is
 
 	constant DEFAULT_REGISTER_READ_OUTPUT : register_read_output_type := (
 		valid => '0',
+		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
 		operand_1 => (others => '0'),
