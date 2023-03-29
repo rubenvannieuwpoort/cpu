@@ -75,7 +75,7 @@ begin
 							v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
 							v_register_2_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_2 then
-							v_register_1_value := write_input.writeback_value;
+							v_register_2_value := write_input.writeback_value;
 							v_register_2_ready := '1';
 						else
 							v_register_2_value := (others => '0');
