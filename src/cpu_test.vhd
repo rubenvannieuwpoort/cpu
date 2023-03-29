@@ -1,6 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
-
+use ieee.numeric_std.all;
 
 entity cpu_test is
 end cpu_test;
@@ -13,8 +13,9 @@ architecture behavior of cpu_test is
 		);
 	end component;
 
-	signal clk : std_logic := '0';
-	constant clk_period : time := 10 ns;
+	signal clk_count: std_logic_vector(5 downto 0) := "000000";
+	signal clk: std_logic := '0';
+	constant clk_period: time := 10 ns;
 
 begin
 
@@ -22,10 +23,11 @@ begin
 
 	clk_process :process
 	begin
-		clk <= '0';
 		wait for clk_period / 2;
 		clk <= '1';
+		clk_count <= std_logic_vector(unsigned(clk_count) + 1);
 		wait for clk_period / 2;
+		clk <= '0';
 	end process;
  
 	stim_proc: process
