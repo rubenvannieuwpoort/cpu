@@ -50,8 +50,6 @@ package stages_interfaces is
 	constant EXECUTE_OPERATION_OR     : std_logic_vector(3 downto 0) := "0101";
 	constant EXECUTE_OPERATION_XOR    : std_logic_vector(3 downto 0) := "0111";
 	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "1000";
-	constant EXECUTE_OPERATION_CMP    : std_logic_vector(3 downto 0) := "1001";
-	constant EXECUTE_OPERATION_NONE   : std_logic_vector(3 downto 0) := "1010";
 	constant EXECUTE_OPERATION_BYTE0  : std_logic_vector(3 downto 0) := "1100";
 	constant EXECUTE_OPERATION_BYTE1  : std_logic_vector(3 downto 0) := "1101";
 	constant EXECUTE_OPERATION_BYTE2  : std_logic_vector(3 downto 0) := "1110";
@@ -59,7 +57,7 @@ package stages_interfaces is
 
 	constant DEFAULT_DECODE_OUTPUT : decode_output_type := (
 		valid => '0',
-		execute_operation => EXECUTE_OPERATION_NONE,
+		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
 		read_indicator_1 => '0',
 		read_register_1 => (others => '0'),
@@ -90,7 +88,7 @@ package stages_interfaces is
 
 	constant DEFAULT_REGISTER_READ_OUTPUT : register_read_output_type := (
 		valid => '0',
-		execute_operation => EXECUTE_OPERATION_NONE,
+		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
 		operand_1 => (others => '0'),
 		operand_2 => (others => '0'),

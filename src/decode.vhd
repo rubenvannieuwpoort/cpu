@@ -55,7 +55,7 @@ begin
 							-- TODO: store
 							v_output := DEFAULT_DECODE_OUTPUT;
 						end if;
-					elsif v_input.opcode(15 downto 12) = "0001" and unsigned(v_input.opcode(11 downto 8)) < unsigned(EXECUTE_OPERATION_NONE) then
+					elsif v_input.opcode(15 downto 12) = "0001" and unsigned(v_input.opcode(11 downto 8)) <= unsigned(EXECUTE_OPERATION_NOT) then
 						-- binary operation
 						v_output.valid := '1';
 						v_output.execute_operation := v_input.opcode(11 downto 8);
