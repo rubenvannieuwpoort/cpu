@@ -17,7 +17,7 @@ entity fetch is
 end fetch;
 
 architecture Behavioral of fetch is
-	signal count: std_logic_vector(4 downto 0) := "00000";
+	signal address: std_logic_vector(20 downto 0) := (others => '0');
 	type opcodes_list is array(0 to 31) of std_logic_vector(15 downto 0);
 	signal opcodes: opcodes_list := (
 		"0100000000000001", "0101000000000010", "0110000000000011", "0111000000000100", "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000",
@@ -29,9 +29,9 @@ begin
 	begin
 		if rising_edge(clk) then
 			if hold_in = '0' then
-				count <= std_logic_vector(unsigned(count) + 1);
+				address <= std_logic_vector(unsigned(address) + 1);
 				output.valid <= '1';
-				output.opcode <= opcodes(to_integer(unsigned(count)));
+				output.opcode <= opcodes(to_integer(unsigned(address(4 downto 0))));
 			end if;
 		end if;
 	end process;
