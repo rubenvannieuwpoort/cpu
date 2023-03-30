@@ -214,20 +214,20 @@ class Assembler:
 def generate_conditions(base: str):
     b = base
     return [
-        [f'{b}z', f'{b}eq'],
-        [f'{b}nz', f'{b}ne'],
-        [f'{b}a', f'{b}nbe'],
-        [f'{b}ae', f'{b}nb', f'{b}nc'],
-        [f'{b}b', f'{b}nae', f'{b}c'],
-        [f'{b}be', f'{b}na'],
-        [f'{b}g', f'{b}nle'],
-        [f'{b}ge', f'{b}nl'],
-        [f'{b}l', f'{b}nge'],
-        [f'{b}le', f'{b}ng'],
-        [f'{b}n'],
-        [f'{b}p'],
-        [f'{b}nn'],
-        [f'{b}np']
+        [f'{b}z', f'{b}eq'],             # Z
+        [f'{b}nz', f'{b}ne'],            # /Z
+        [f'{b}a', f'{b}nbe'],            # /C & /Z
+        [f'{b}ae', f'{b}nb', f'{b}nc'],  # /C
+        [f'{b}b', f'{b}nae', f'{b}c'],   # C
+        [f'{b}be', f'{b}na'],            # C & Z
+        [f'{b}g', f'{b}nle'],            # /Z & /S
+        [f'{b}ge', f'{b}nl'],            # /S
+        [f'{b}l', f'{b}nge'],            # S
+        [f'{b}le', f'{b}ng'],            # Z | S
+        [f'{b}n'],                       # S
+        [f'{b}p'],                       # /Z & /S
+        [f'{b}nn'],                      # /S
+        [f'{b}np']                       # Z | S
     ]
 
 
