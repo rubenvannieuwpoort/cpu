@@ -55,6 +55,34 @@ begin
 							-- TODO: store
 							v_output := DEFAULT_DECODE_OUTPUT;
 						end if;
+					elsif v_input.opcode(15 downto 8) = "00011000" then
+						-- cmp
+						v_output.valid := '1';
+						v_output.flag_set_indicator := '1';
+						v_output.execute_operation := EXECUTE_OPERATION_SUB;
+						v_output.memory_operation := MEMORY_OPERATION_NONE;
+						v_output.read_indicator_1 := '1';
+						v_output.read_register_1 := v_input.opcode(7 downto 4);
+						v_output.read_indicator_2 := '1';
+						v_output.read_register_2 := v_input.opcode(3 downto 0);
+						v_output.immediate := (others => '0');
+						v_output.switch_indicator := '0';
+						v_output.writeback_indicator := '0';
+						v_output.writeback_register := (others => '0');
+					elsif v_input.opcode(15 downto 8) = "00011001" then
+						-- test
+						v_output.valid := '1';
+						v_output.flag_set_indicator := '1';
+						v_output.execute_operation := EXECUTE_OPERATION_AND;
+						v_output.memory_operation := MEMORY_OPERATION_NONE;
+						v_output.read_indicator_1 := '1';
+						v_output.read_register_1 := v_input.opcode(7 downto 4);
+						v_output.read_indicator_2 := '1';
+						v_output.read_register_2 := v_input.opcode(3 downto 0);
+						v_output.immediate := (others => '0');
+						v_output.switch_indicator := '0';
+						v_output.writeback_indicator := '0';
+						v_output.writeback_register := (others => '0');
 					elsif v_input.opcode(15 downto 12) = "0001" and unsigned(v_input.opcode(11 downto 8)) <= unsigned(EXECUTE_OPERATION_NOT) then
 						-- binary operation
 						v_output.valid := '1';
