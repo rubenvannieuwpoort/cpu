@@ -30,9 +30,14 @@ begin
 		variable v_wait: std_logic;
 		variable v_output: execute_output_type;
 		variable v_result: std_logic_vector(31 downto 0);
-		variable full_product: std_logic_vector(63 downto 0);
 		variable v_carry_flag: std_logic;
 		variable v_overflow_flag: std_logic;
+
+		variable full_unsigned_product: std_logic_vector(63 downto 0);
+		variable signed_high_bits: std_logic_vector(31 downto 0);
+		
+		variable corr1: std_logic_vector(31 downto 0);
+		variable corr2: std_logic_vector(31 downto 0);
 
 		variable v_full_result: std_logic_vector(32 downto 0);
 	begin
@@ -55,26 +60,43 @@ begin
 				if v_input.execute_operation = EXECUTE_OPERATION_SECOND then
 					v_result := v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_ADD then
-					-- v_result := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
-					-- TODO: set overflow flag
 					v_full_result := std_logic_vector(unsigned('0' & v_input.operand_1) + unsigned('0' & v_input.operand_2));
-					v_carry_flag := v_full_result(32);
 					v_result := v_full_result(31 downto 0);
+					v_carry_flag := v_full_result(32);
+					v_overflow_flag := (v_input.operand_1(31) xnor v_input.operand_2(31)) and (v_input.operand_1(31) xor v_result(31));
 				elsif v_input.execute_operation = EXECUTE_OPERATION_SUB then
-					-- v_result := std_logic_vector(unsigned(v_input.operand_1) - unsigned(v_input.operand_2));
-					-- TODO: set overflow flag
 					v_full_result := std_logic_vector(unsigned('0' & v_input.operand_1) - unsigned('0' & v_input.operand_2));
-					v_carry_flag := v_full_result(32);
 					v_result := v_full_result(31 downto 0);
+					v_carry_flag := v_full_result(32);
+					v_overflow_flag := (v_input.operand_1(31) xor v_input.operand_2(31)) and (v_input.operand_1(31) xor v_result(31));
 				elsif v_input.execute_operation = EXECUTE_OPERATION_MUL then
-					full_product := std_logic_vector(unsigned(v_input.operand_1) * unsigned(v_input.operand_2));
-					-- TODO: set overflow flag
-					if unsigned(full_product(63 downto 32)) = 0 then
+					full_unsigned_product := std_logic_vector(unsigned(v_input.operand_1) * unsigned(v_input.operand_2));
+					v_result := full_unsigned_product(31 downto 0);
+
+					-- overflow flag
+					if v_input.operand_2(31) = '1' then
+						corr1 := v_input.operand_1;
+					else
+						corr1 := (others => '0');
+					end if;
+					if v_input.operand_1(31) = '1' then
+						corr2 := v_input.operand_2;
+					else
+						corr2 := (others => '0');
+					end if;
+					signed_high_bits := std_logic_vector(unsigned(full_unsigned_product(63 downto 32)) - unsigned(corr1) - unsigned(corr2));
+					if (signed_high_bits = "00000000000000000000000000000000" or signed_high_bits = "11111111111111111111111111111111") and signed_high_bits(31) = v_result(31) then
+						v_overflow_flag := '0';
+					else
+						v_overflow_flag := '1';
+					end if;
+
+					-- carry flag
+					if unsigned(full_unsigned_product(63 downto 32)) = 0 then
 						v_carry_flag := '0';
 					else
 						v_carry_flag := '1';
 					end if;
-					v_result := full_product(31 downto 0);
 				elsif v_input.execute_operation = EXECUTE_OPERATION_AND then
 					v_result := v_input.operand_1 and v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_OR then
