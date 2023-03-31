@@ -235,22 +235,22 @@ class Assembler:
 def generate_conditions(base: str):
     b = base
     return [
-        [f'{b}o'],
-        [f'{b}no'],
-        [f'{b}n'],
-        [f'{b}nn'],
-        [f'{b}e', f'{b}z'],
-        [f'{b}ne', f'{b}nz'],
-        [f'{b}b', f'{b}nae', f'{b}c'],
-        [f'{b}nb', f'{b}ae', f'{b}nc'],
-        [f'{b}be', f'{b}na'],
-        [f'{b}a', f'{b}nbe'],
-        [f'{b}l', f'{b}nge'],
-        [f'{b}ge', f'{b}nl'],
-        [f'{b}le', f'{b}ng'],
-        [f'{b}g', f'{b}nle'],
-        [f'{b}p'],
-        [f'{b}np']
+        [f'{b}o'],                      # overflow
+        [f'{b}no'],                     # no overflow
+        [f'{b}n'],                      # negative
+        [f'{b}nn'],                     # not negative
+        [f'{b}e', f'{b}z'],             # equal/zero
+        [f'{b}ne', f'{b}nz'],           # not equal/zero
+        [f'{b}b', f'{b}nae', f'{b}c'],  # below, not above or equal (for unsigned numbers), carry
+        [f'{b}nb', f'{b}ae', f'{b}nc'], # not below, above or equal (for unsigned numbers), no carry
+        [f'{b}be', f'{b}na'],           # below or equal, not above (for unsigned numbers)
+        [f'{b}a', f'{b}nbe'],           # above, not below or equal (for unsigned numbers)
+        [f'{b}l', f'{b}nge'],           # less, not greater or equal (for signed numbers)
+        [f'{b}ge', f'{b}nl'],           # greater or equal, not less (for signed numbers)
+        [f'{b}le', f'{b}ng'],           # less or equal, not greater (for signed numbers)
+        [f'{b}g', f'{b}nle'],           # greater, not less or equal (for signed numbers)
+        [f'{b}p'],                      # positive
+        [f'{b}np']                      # not positive
     ]
 
 
