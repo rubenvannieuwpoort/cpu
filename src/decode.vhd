@@ -57,7 +57,7 @@ begin
 							-- TODO: store
 							v_output := DEFAULT_DECODE_OUTPUT;
 						end if;
-					elsif (v_input.opcode(15 downto 12) = "0001" and v_input.opcode(11 downto 10) = "00") or v_input.opcode(11 downto 10) = "01" or v_input.opcode(11 downto 10) = "10" then
+					elsif v_input.opcode(15 downto 12) = "0001" and (v_input.opcode(11 downto 10) = "00" or v_input.opcode(11 downto 10) = "01" or v_input.opcode(11 downto 10) = "10") then
 						-- shift with immediate
 						v_output.valid := '1';
 						v_output.flag_set_indicator := '1';
