@@ -75,3 +75,6 @@ xst/
 _ngo/
 _xmsgs/
 ipcore_dir/
+
+# python cache
+src/__pycache__
