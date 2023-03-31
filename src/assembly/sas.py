@@ -264,7 +264,6 @@ def printVHDL(input):
 assembler = Assembler([
     Instruction([Mnemonic(['nop'])], '0000000000000000'),
     Instruction([Mnemonic(['branch']), RegisterOperand('a')], '00000010aaaa0000'),
-    Instruction([Mnemonics([['shl'], ['shr'], ['sar']], 'n'), RegisterOperand('a'), UImm5('i')], '0001nn0iaaaaiiii'),
     Instruction([Mnemonics(generate_conditions('branch_'), 'c'), RegisterOperand('a')], '00000001aaaacccc'),
     Instruction([Mnemonics([['setbyte0'], ['setbyte1'], ['setbyte2'], ['setbyte3']], 'n'), RegisterOperand('a'), UImm8('i')], '01nniiiiaaaaiiii'),
     Instruction([Mnemonics([['copy'], ['add'], ['subtract'], ['multiply'], ['and'], ['or'], ['xor'], ['not'], ['shl'], ['shr'], ['sar'], ['cmp'], ['test']], 'n'), RegisterOperand('a'), RegisterOperand('b')], '0001nnnnaaaabbbb'),
@@ -272,8 +271,9 @@ assembler = Assembler([
     Instruction([Mnemonics(['storebyte', 'storehalfword', 'storeword'], 's'), RegisterOperand('a'), RegisterOperand('b')], '000011ssaaaabbbb'),
     Instruction([Mnemonic(['setsigned']), RegisterOperand('a'), SImm8('i')], '0010iiiiaaaaiiii'),
     Instruction([Mnemonic(['setunsigned']), RegisterOperand('a'), UImm8('i')], '0011iiiiaaaaiiii'),
-    Instruction([Mnemonic(['prefetch']), RegisterOperand('a')], '10000000aaaa0000'),
-    Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10000000aaaa0001'),
+    Instruction([Mnemonics([['shl'], ['shr'], ['sar']], 'n'), RegisterOperand('a'), UImm5('i')], '1000nn0iaaaaiiii'),
+    Instruction([Mnemonic(['prefetch']), RegisterOperand('a')], '10001100aaaa0000'),
+    Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10001100aaaa0001'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), RegisterOperand('b')], '1001ccccaaaabbbb'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), SImm4('i')], '1010ccccaaaaiiii'),
 ])
