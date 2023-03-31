@@ -149,6 +149,24 @@ class UImm8(Operand):
         return None
 
 
+class UImm5(Operand):
+    def __init__(self, bit_letter: str):
+        if len(bit_letter) != 1:
+            raise ValueError(f'Expected bit letter of length 1, got "{bit_letter}"')
+
+        self._bit_letter = bit_letter
+
+    def match(self, input: str):
+        n = parse_decimal(input) or parse_hexadecimal(input)
+        if n is None:
+            return None
+
+        if 0 <= n and n <= 31:
+            return n
+
+        return None
+
+
 class SImm8(Operand):
     def __init__(self, bit_letter: str):
         if len(bit_letter) != 1:
@@ -241,9 +259,10 @@ def printVHDL(input):
 assembler = Assembler([
     Instruction([Mnemonic(['nop'])], '0000000000000000'),
     Instruction([Mnemonic(['branch']), RegisterOperand('a')], '00000010aaaa0000'),
+    Instruction([Mnemonics([['shl'], ['shr'], ['sar']], 'n'), RegisterOperand('a'), UImm5('i')], '0001nn0iaaaaiiii'),
     Instruction([Mnemonics(generate_conditions('branch_'), 'c'), RegisterOperand('a')], '00000001aaaacccc'),
     Instruction([Mnemonics([['setbyte0'], ['setbyte1'], ['setbyte2'], ['setbyte3']], 'n'), RegisterOperand('a'), UImm8('i')], '01nniiiiaaaaiiii'),
-    Instruction([Mnemonics([['copy'], ['add'], ['subtract'], ['multiply'], ['and'], ['or'], ['xor'], ['not'], ['cmp'], ['test']], 'n'), RegisterOperand('a'), RegisterOperand('b')], '0001nnnnaaaabbbb'),
+    Instruction([Mnemonics([['copy'], ['add'], ['subtract'], ['multiply'], ['and'], ['or'], ['xor'], ['not'], ['shl'], ['shr'], ['sar'], ['cmp'], ['test']], 'n'), RegisterOperand('a'), RegisterOperand('b')], '0001nnnnaaaabbbb'),
     Instruction([Mnemonics([['loadbyte'], ['loadhalfword'], ['loadword']], 's'), RegisterOperand('a'), RegisterOperand('b')], '000010ssaaaabbbb'),
     Instruction([Mnemonics(['storebyte', 'storehalfword', 'storeword'], 's'), RegisterOperand('a'), RegisterOperand('b')], '000011ssaaaabbbb'),
     Instruction([Mnemonic(['setsigned']), RegisterOperand('a'), SImm8('i')], '0010iiiiaaaaiiii'),

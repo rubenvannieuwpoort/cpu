@@ -36,11 +36,13 @@ begin
 		variable v_carry_flag: std_logic;
 		variable v_overflow_flag: std_logic;
 
-		variable full_unsigned_product: std_logic_vector(63 downto 0);
-		variable signed_high_bits: std_logic_vector(31 downto 0);
+		variable v_full_unsigned_product: std_logic_vector(63 downto 0);
+		variable v_signed_high_bits: std_logic_vector(31 downto 0);
 		
-		variable corr1: std_logic_vector(31 downto 0);
-		variable corr2: std_logic_vector(31 downto 0);
+		variable v_corr1: std_logic_vector(31 downto 0);
+		variable v_corr2: std_logic_vector(31 downto 0);
+		variable v_temp: std_logic_vector(31 downto 0);
+		variable v_temp2: std_logic_vector(31 downto 0);
 
 		variable v_full_result: std_logic_vector(32 downto 0);
 		
@@ -79,29 +81,29 @@ begin
 					v_carry_flag := v_full_result(32);
 					v_overflow_flag := (v_input.operand_1(31) xor v_input.operand_2(31)) and (v_input.operand_1(31) xor v_result(31));
 				elsif v_input.execute_operation = EXECUTE_OPERATION_MUL then
-					full_unsigned_product := std_logic_vector(unsigned(v_input.operand_1) * unsigned(v_input.operand_2));
-					v_result := full_unsigned_product(31 downto 0);
+					v_full_unsigned_product := std_logic_vector(unsigned(v_input.operand_1) * unsigned(v_input.operand_2));
+					v_result := v_full_unsigned_product(31 downto 0);
 
 					-- overflow flag
 					if v_input.operand_2(31) = '1' then
-						corr1 := v_input.operand_1;
+						v_corr1 := v_input.operand_1;
 					else
-						corr1 := (others => '0');
+						v_corr1 := (others => '0');
 					end if;
 					if v_input.operand_1(31) = '1' then
-						corr2 := v_input.operand_2;
+						v_corr2 := v_input.operand_2;
 					else
-						corr2 := (others => '0');
+						v_corr2 := (others => '0');
 					end if;
-					signed_high_bits := std_logic_vector(unsigned(full_unsigned_product(63 downto 32)) - unsigned(corr1) - unsigned(corr2));
-					if (signed_high_bits = "00000000000000000000000000000000" or signed_high_bits = "11111111111111111111111111111111") and signed_high_bits(31) = v_result(31) then
+					v_signed_high_bits := std_logic_vector(unsigned(v_full_unsigned_product(63 downto 32)) - unsigned(v_corr1) - unsigned(v_corr2));
+					if (v_signed_high_bits = "00000000000000000000000000000000" or v_signed_high_bits = "11111111111111111111111111111111") and v_signed_high_bits(31) = v_result(31) then
 						v_overflow_flag := '0';
 					else
 						v_overflow_flag := '1';
 					end if;
 
 					-- carry flag
-					if unsigned(full_unsigned_product(63 downto 32)) = 0 then
+					if unsigned(v_full_unsigned_product(63 downto 32)) = 0 then
 						v_carry_flag := '0';
 					else
 						v_carry_flag := '1';
@@ -114,6 +116,73 @@ begin
 					v_result := v_input.operand_1 xor v_input.operand_2;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_NOT then
 					v_result := not(v_input.operand_2);
+				elsif v_input.execute_operation = EXECUTE_OPERATION_SHL then
+					v_temp := v_input.operand_1;
+					if unsigned(v_input.operand_2) >= 32 then
+						v_result := (others => '0');
+					else
+						if v_input.operand_2(4) = '1' then
+							v_temp := v_temp(15 downto 0) & "0000000000000000";
+						end if;
+						if v_input.operand_2(3) = '1' then
+							v_temp := v_temp(23 downto 0) & "00000000";
+						end if;
+						if v_input.operand_2(2) = '1' then
+							v_temp := v_temp(27 downto 0) & "0000";
+						end if;
+						if v_input.operand_2(1) = '1' then
+							v_temp := v_temp(29 downto 0) & "00";
+						end if;
+						if v_input.operand_2(0) = '1' then
+							v_temp := v_temp(30 downto 0) & "0";
+						end if;
+						v_result := v_temp;
+					end if;
+				elsif v_input.execute_operation = EXECUTE_OPERATION_SHR then
+					v_temp := v_input.operand_1;
+					if unsigned(v_input.operand_2) >= 32 then
+						v_result := (others => '0');
+					else
+						if v_input.operand_2(4) = '1' then
+							v_temp := "0000000000000000" & v_temp(31 downto 16);
+						end if;
+						if v_input.operand_2(3) = '1' then
+							v_temp := "00000000" & v_temp(31 downto 8);
+						end if;
+						if v_input.operand_2(2) = '1' then
+							v_temp := "0000" & v_temp(31 downto 4);
+						end if;
+						if v_input.operand_2(1) = '1' then
+							v_temp := "00" & v_temp(31 downto 2);
+						end if;
+						if v_input.operand_2(0) = '1' then
+							v_temp := "0" & v_temp(31 downto 1);
+						end if;
+						v_result := v_temp;
+					end if;
+				elsif v_input.execute_operation = EXECUTE_OPERATION_SAR then
+					v_temp := v_input.operand_1;
+					v_temp2 := (others => v_input.operand_1(31));
+					if unsigned(v_input.operand_2) >= 32 then
+						v_result := v_temp2;
+					else
+						if v_input.operand_2(4) = '1' then
+							v_temp := v_temp2(15 downto 0) & v_temp(31 downto 16);
+						end if;
+						if v_input.operand_2(3) = '1' then
+							v_temp := v_temp2(7 downto 0) & v_temp(31 downto 8);
+						end if;
+						if v_input.operand_2(2) = '1' then
+							v_temp := v_temp2(3 downto 0) & v_temp(31 downto 4);
+						end if;
+						if v_input.operand_2(1) = '1' then
+							v_temp := v_temp2(2 downto 0) & v_temp(31 downto 2);
+						end if;
+						if v_input.operand_2(0) = '1' then
+							v_temp := v_temp2(1 downto 0) & v_temp(31 downto 1);
+						end if;
+						v_result := v_temp;
+					end if;
 				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE0 then
 					v_result := v_input.operand_1(31 downto 8) & v_input.operand_2(7 downto 0);
 				elsif v_input.execute_operation = EXECUTE_OPERATION_BYTE1 then
@@ -152,6 +221,7 @@ begin
 					v_output.value := v_input.value;
 					v_output.writeback_indicator := v_input.writeback_indicator;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.tag := v_input.tag;
 				else
 					v_output := DEFAULT_EXECUTE_OUTPUT;
 				end if;
