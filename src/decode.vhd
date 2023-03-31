@@ -26,7 +26,7 @@ begin
 		variable v_wait: std_logic;
 		variable v_input: fetch_output_type;
 		variable v_output: decode_output_type;
-		variable v_sign: std_logic_vector(23 downto 0);
+		variable v_sign: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
 			-- select input
@@ -78,6 +78,7 @@ begin
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 8) = "00011011" then
 						-- cmp
 						v_output.valid := '1';
@@ -93,6 +94,7 @@ begin
 						v_output.writeback_indicator := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 8) = "00011100" then
 						-- test
 						v_output.valid := '1';
@@ -108,6 +110,7 @@ begin
 						v_output.writeback_indicator := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 12) = "0001" and unsigned(v_input.opcode(11 downto 8)) < unsigned(EXECUTE_OPERATION_BYTE0) then
 						-- binary operation
 						v_output.valid := '1';
@@ -123,6 +126,7 @@ begin
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 12) = "0010" then
 						-- sign extend immediate
 						v_output.valid := '1';
@@ -139,6 +143,7 @@ begin
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 12) = "0011" then
 						-- set unsigned immediate
 						v_output.valid := '1';
@@ -154,6 +159,7 @@ begin
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 14) = "01" then
 						-- load immediate into byte N
 						v_output.valid := '1';
@@ -169,6 +175,7 @@ begin
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
 						v_output.is_branch := '0';
+						v_output.condition := COND_ALWAYS;
 					elsif v_input.opcode(15 downto 8) = "00000010" and v_input.opcode(3 downto 0) = "0000" then
 						-- branch
 						v_output.valid := '1';
@@ -184,6 +191,40 @@ begin
 						v_output.writeback_indicator := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.is_branch := '1';
+						v_output.condition := COND_ALWAYS;
+					elsif v_input.opcode(15 downto 12) = "1001" then
+						-- conditional copy
+						v_output.valid := '1';
+						v_output.flag_set_indicator := '0';
+						v_output.execute_operation := EXECUTE_OPERATION_SECOND;
+						v_output.memory_operation := MEMORY_OPERATION_NONE;
+						v_output.read_indicator_1 := '0';
+						v_output.read_register_1 := (others => '0');
+						v_output.read_indicator_2 := '1';
+						v_output.read_register_2 := v_input.opcode(3 downto 0);
+						v_output.immediate := (others => '0');
+						v_output.switch_indicator := '0';
+						v_output.writeback_indicator := '1';
+						v_output.writeback_register := v_input.opcode(7 downto 4);
+						v_output.is_branch := '1';
+						v_output.condition := '1' & v_input.opcode(11 downto 8);
+					elsif v_input.opcode(15 downto 12) = "1010" then
+						-- conditional copy immediate
+						v_output.valid := '1';
+						v_output.flag_set_indicator := '0';
+						v_output.execute_operation := EXECUTE_OPERATION_SECOND;
+						v_output.memory_operation := MEMORY_OPERATION_NONE;
+						v_output.read_indicator_1 := '0';
+						v_output.read_register_1 := (others => '0');
+						v_output.read_indicator_2 := '0';
+						v_output.read_register_2 := (others => '0');
+						v_sign := (others => v_input.opcode(3));
+						v_output.immediate := v_sign(31 downto 4) & v_input.opcode(3 downto 0);
+						v_output.switch_indicator := '1';
+						v_output.writeback_indicator := '1';
+						v_output.writeback_register := v_input.opcode(7 downto 4);
+						v_output.is_branch := '0';
+						v_output.condition := '1' & v_input.opcode(11 downto 8);
 					else
 						-- invalid opcode
 						-- TODO: set interrupt or something?

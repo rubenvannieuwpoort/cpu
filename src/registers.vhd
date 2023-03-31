@@ -59,7 +59,11 @@ begin
 							v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
 							v_register_1_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_1 then
-							v_register_1_value := write_input.writeback_value;
+							if write_input.act = '1' then
+								v_register_1_value := write_input.writeback_value;
+							else
+								v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
+							end if;
 							v_register_1_ready := '1';
 						else
 							v_register_1_value := (others => '0');
@@ -75,7 +79,11 @@ begin
 							v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
 							v_register_2_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_2 then
-							v_register_2_value := write_input.writeback_value;
+							if write_input.act = '1' then
+								v_register_2_value := write_input.writeback_value;
+							else
+								v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+							end if;
 							v_register_2_ready := '1';
 						else
 							v_register_2_value := (others => '0');
@@ -103,6 +111,7 @@ begin
 						v_read_output.writeback_indicator := v_read_input.writeback_indicator;
 						v_read_output.writeback_register := v_read_input.writeback_register;
 						v_read_output.is_branch := v_read_input.is_branch;
+						v_read_output.condition := v_read_input.condition;
 						v_read_output.tag := v_read_input.tag;
 					else
 						v_read_wait := '1';
@@ -131,7 +140,7 @@ begin
 			-- REGISTER WRITE STAGE
 			-- ====================
 
-			if write_input.writeback_indicator = '1' then
+			if write_input.writeback_indicator = '1' and write_input.act = '1' then
 				reg(to_integer(unsigned(write_input.writeback_register))) <= write_input.writeback_value;
 			end if;
 			

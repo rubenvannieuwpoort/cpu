@@ -40,6 +40,7 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		is_branch: std_logic;
+		condition: std_logic_vector(4 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record decode_output_type;
 
@@ -63,6 +64,24 @@ package stages_interfaces is
 	constant EXECUTE_OPERATION_BYTE2  : std_logic_vector(3 downto 0) := "1110";
 	constant EXECUTE_OPERATION_BYTE3  : std_logic_vector(3 downto 0) := "1111";
 
+	constant COND_ALWAYS : std_logic_vector(4 downto 0) := "00000";
+	constant COND_O      : std_logic_vector(4 downto 0) := "10000";
+	constant COND_NO     : std_logic_vector(4 downto 0) := "10001";
+	constant COND_N      : std_logic_vector(4 downto 0) := "10010";
+	constant COND_NN     : std_logic_vector(4 downto 0) := "10011";
+	constant COND_E      : std_logic_vector(4 downto 0) := "10100";
+	constant COND_NE     : std_logic_vector(4 downto 0) := "10101";
+	constant COND_B      : std_logic_vector(4 downto 0) := "10110";
+	constant COND_NB     : std_logic_vector(4 downto 0) := "10111";
+	constant COND_BE     : std_logic_vector(4 downto 0) := "11000";
+	constant COND_A      : std_logic_vector(4 downto 0) := "11001";
+	constant COND_L      : std_logic_vector(4 downto 0) := "11010";
+	constant COND_GE     : std_logic_vector(4 downto 0) := "11011";
+	constant COND_LE     : std_logic_vector(4 downto 0) := "11100";
+	constant COND_G      : std_logic_vector(4 downto 0) := "11101";
+	constant COND_P      : std_logic_vector(4 downto 0) := "11110";
+	constant COND_NP     : std_logic_vector(4 downto 0) := "11111";
+
 	constant DEFAULT_DECODE_OUTPUT : decode_output_type := (
 		valid => '0',
 		flag_set_indicator => '0',
@@ -77,6 +96,7 @@ package stages_interfaces is
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 		is_branch => '0',
+		condition => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -97,6 +117,7 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		is_branch: std_logic;
+		condition: std_logic_vector(4 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record register_read_output_type;
 
@@ -111,6 +132,7 @@ package stages_interfaces is
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 		is_branch => '0',
+		condition => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -127,6 +149,7 @@ package stages_interfaces is
 
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
+		act: std_logic;
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
 
@@ -137,7 +160,8 @@ package stages_interfaces is
 		value => (others => '0'),
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
-		tag => (others => '0')
+		tag => (others => '0'),
+		act => '0'
 	);
 
 
@@ -147,6 +171,7 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		writeback_value: std_logic_vector(31 downto 0);
+		act: std_logic;
 		tag: std_logic_vector(4 downto 0);
 	end record memory_output_type;
 
@@ -154,6 +179,7 @@ package stages_interfaces is
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 		writeback_value => (others => '0'),
+		act => '0',
 		tag => (others => '0')
 	);
 

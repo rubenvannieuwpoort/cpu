@@ -30,6 +30,7 @@ begin
 
 	process(clk)
 		variable v_input: register_read_output_type;
+		variable v_act: std_logic;
 		variable v_wait: std_logic;
 		variable v_output: execute_output_type;
 		variable v_result: std_logic_vector(31 downto 0);
@@ -62,10 +63,10 @@ begin
 				v_input := input;
 			end if;
 
+			v_act := '0';
+			v_wait := '0';
 			v_carry_flag := '0';
 			v_overflow_flag := '0';
-
-			v_wait := '0';
 			if hold_in = '0' then
 				-- compute result
 				if v_input.execute_operation = EXECUTE_OPERATION_SECOND then
@@ -213,6 +214,43 @@ begin
 					end if;
 				end if;
 
+				-- evaluate condition and set v_act accordingly
+				if v_input.condition = COND_ALWAYS then
+					v_act := '1';
+				elsif v_input.condition = COND_O then
+					v_act := overflow_flag;
+				elsif v_input.condition = COND_NO then
+					v_act := not(overflow_flag);
+				elsif v_input.condition = COND_N then
+					v_act := sign_flag;
+				elsif v_input.condition = COND_NN then
+					v_act := not(sign_flag);
+				elsif v_input.condition = COND_E then
+					v_act := zero_flag;
+				elsif v_input.condition = COND_NE then
+					v_act := not(zero_flag);
+				elsif v_input.condition = COND_B then
+					v_act := carry_flag;
+				elsif v_input.condition = COND_NB then
+					v_act := not(carry_flag);
+				elsif v_input.condition = COND_BE then
+					v_act := carry_flag or zero_flag;
+				elsif v_input.condition = COND_A then
+					v_act := not(carry_flag) and not(zero_flag);
+				elsif v_input.condition = COND_L then
+					v_act := sign_flag xor overflow_flag;
+				elsif v_input.condition = COND_GE then
+					v_act := sign_flag xnor overflow_flag;
+				elsif v_input.condition = COND_LE then
+					v_act := zero_flag or (sign_flag xor overflow_flag);
+				elsif v_input.condition = COND_G then
+					v_act := not(zero_flag) and (sign_flag xnor overflow_flag);
+				elsif v_input.condition = COND_P then
+					v_act := not(sign_flag) and not(zero_flag);
+				elsif v_input.condition = COND_NP then
+					v_act := sign_flag or zero_flag;
+				end if;
+
 				-- set output
 				if v_input.valid = '1' then
 					v_output.valid := '1';
@@ -221,6 +259,7 @@ begin
 					v_output.value := v_input.value;
 					v_output.writeback_indicator := v_input.writeback_indicator;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.act := v_act;
 					v_output.tag := v_input.tag;
 				else
 					v_output := DEFAULT_EXECUTE_OUTPUT;
