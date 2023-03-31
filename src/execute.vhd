@@ -12,7 +12,10 @@ entity execute is
 		input: in register_read_output_type;
 
 		busy_out: out std_logic := '0';
-		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT
+		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT;
+
+		branch_indicator: out std_logic := '0';
+		branch_address: out std_logic_vector(19 downto 0) := "00000000000000000000"
 	);
 end execute;
 
@@ -40,10 +43,16 @@ begin
 		variable corr2: std_logic_vector(31 downto 0);
 
 		variable v_full_result: std_logic_vector(32 downto 0);
+		
+		variable v_branch_indicator: std_logic;
+		variable v_branch_address: std_logic_vector(19 downto 0);
 	begin
 		busy_out <= buffered_input.valid;
 
 		if rising_edge(clk) then
+			v_branch_indicator := '0';
+			v_branch_address := (others => '0');
+		
 			-- select input
 			if buffered_input.valid = '1' then
 				v_input := buffered_input;
@@ -151,12 +160,25 @@ begin
 					v_output := DEFAULT_EXECUTE_OUTPUT;
 				else
 					buffered_input <= DEFAULT_REGISTER_READ_OUTPUT;
+
+					-- branching
+					if v_input.is_branch = '1' then
+						-- branches are read directly by fetch stage, they are not subject to the normal pipelining logic
+						-- so we need to take care to ignore the hold_in signal and ensure the address is only handed to the fetch unit once
+						v_input.is_branch := '0';
+						v_branch_indicator := '1';
+						v_branch_address := v_result(19 downto 0);
+					end if;
 				end if;
 
 				output <= v_output;
 			end if;
+			
+			branch_indicator <= v_branch_indicator;
+			branch_address <= v_branch_address;
 
 			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
+				v_input.is_branch := '0';
 				buffered_input <= v_input;
 			end if;
 

@@ -37,6 +37,7 @@ package stages_interfaces is
 
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
+		is_branch: std_logic;
 	end record decode_output_type;
 
 	constant MEMORY_OPERATION_NONE     : std_logic_vector(1 downto 0) := "00";
@@ -68,7 +69,8 @@ package stages_interfaces is
 		immediate => (others => '0'),
 		switch_indicator => '0',
 		writeback_indicator => '0',
-		writeback_register => (others => '0')
+		writeback_register => (others => '0'),
+		is_branch => '0'
 	);
 
 
@@ -87,6 +89,7 @@ package stages_interfaces is
 
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
+		is_branch: std_logic;
 	end record register_read_output_type;
 
 	constant DEFAULT_REGISTER_READ_OUTPUT : register_read_output_type := (
@@ -98,7 +101,8 @@ package stages_interfaces is
 		operand_2 => (others => '0'),
 		value => (others => '0'),
 		writeback_indicator => '0',
-		writeback_register => (others => '0')
+		writeback_register => (others => '0'),
+		is_branch => '0'
 	);
 
 

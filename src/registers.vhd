@@ -102,6 +102,7 @@ begin
 						end if;
 						v_read_output.writeback_indicator := v_read_input.writeback_indicator;
 						v_read_output.writeback_register := v_read_input.writeback_register;
+						v_read_output.is_branch := v_read_input.is_branch;
 					else
 						v_read_wait := '1';
 						v_read_output := DEFAULT_REGISTER_READ_OUTPUT;
