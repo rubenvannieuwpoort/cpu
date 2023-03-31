@@ -216,6 +216,8 @@ class Assembler:
         return None
 
     def _parse(self, input: str) -> list[str]:
+        if ';' in input:
+            input = input.split(';', 1)[0]
         if ' ' in input:
             operand, rest = input.split(' ', 1)
             return [operand.strip()] + [x.strip() for x in rest.split(',')]
@@ -223,7 +225,8 @@ class Assembler:
             return [input.strip()]
 
     def assemble(self, input: str) -> int:
-        match = self._match(self._parse(input))
+        arguments = self._parse(input)
+        match = self._match(arguments)
         if match is None:
             raise ValueError(f'No matching instruction found for "{input}"')
 
