@@ -210,14 +210,17 @@ class Assembler:
     def _match(self, input: list[str]) -> tuple[Operand, ]:
         for instruction in self._instructions:
             match = instruction.match(input)
-            if match:
+            if match is not None:
                 return instruction, match
         
         return None
 
     def _parse(self, input: str) -> list[str]:
-        operand, rest = input.split(' ', 1)
-        return [operand] + [x.strip() for x in rest.split(',')]
+        if ' ' in input:
+            operand, rest = input.split(' ', 1)
+            return [operand.strip()] + [x.strip() for x in rest.split(',')]
+        else:
+            return [input.strip()]
 
     def assemble(self, input: str) -> int:
         match = self._match(self._parse(input))
@@ -232,20 +235,22 @@ class Assembler:
 def generate_conditions(base: str):
     b = base
     return [
-        [f'{b}z', f'{b}eq'],             # Z
-        [f'{b}nz', f'{b}ne'],            # /Z
-        [f'{b}a', f'{b}nbe'],            # /C & /Z
-        [f'{b}ae', f'{b}nb', f'{b}nc'],  # /C
-        [f'{b}b', f'{b}nae', f'{b}c'],   # C
-        [f'{b}be', f'{b}na'],            # C & Z
-        [f'{b}g', f'{b}nle'],            # /Z & /S
-        [f'{b}ge', f'{b}nl'],            # /S
-        [f'{b}l', f'{b}nge'],            # S
-        [f'{b}le', f'{b}ng'],            # Z | S
-        [f'{b}n'],                       # S
-        [f'{b}p'],                       # /Z & /S
-        [f'{b}nn'],                      # /S
-        [f'{b}np']                       # Z | S
+        [f'{b}o'],
+        [f'{b}no'],
+        [f'{b}n'],
+        [f'{b}nn'],
+        [f'{b}e', f'{b}z'],
+        [f'{b}ne', f'{b}nz'],
+        [f'{b}b', f'{b}nae', f'{b}c'],
+        [f'{b}nb', f'{b}ae', f'{b}nc'],
+        [f'{b}be', f'{b}na'],
+        [f'{b}a', f'{b}nbe'],
+        [f'{b}l', f'{b}nge'],
+        [f'{b}ge', f'{b}nl'],
+        [f'{b}le', f'{b}ng'],
+        [f'{b}g', f'{b}nle'],
+        [f'{b}p'],
+        [f'{b}np']
     ]
 
 
@@ -270,7 +275,7 @@ assembler = Assembler([
     Instruction([Mnemonic(['prefetch']), RegisterOperand('a')], '10000000aaaa0000'),
     Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10000000aaaa0001'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), RegisterOperand('b')], '1001ccccaaaabbbb'),
-    Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), SImm4('b')], '1010ccccaaaabbbb'),
+    Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), SImm4('i')], '1010ccccaaaaiiii'),
 ])
 
 if __name__ == '__main__':
@@ -288,6 +293,6 @@ if __name__ == '__main__':
         if stripped_line == '' or stripped_line[0] == ';':
             continue
 
-        result.append(assembler.assemble(line))
+        result.append(assembler.assemble(stripped_line))
 
     printVHDL(result)
