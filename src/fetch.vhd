@@ -40,6 +40,7 @@ begin
 					address <= std_logic_vector(unsigned(address) + 1);
 					output.valid <= '1';
 					output.opcode <= v_opcode;
+					output.tag <= address(4 downto 0);
 
 					if (v_opcode(15 downto 8) = "00000010" and v_opcode(3 downto 0) = "0000") or v_opcode(15 downto 8) = "00000001" then
 						v_is_branch := '1';

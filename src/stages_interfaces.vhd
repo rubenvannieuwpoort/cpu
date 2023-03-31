@@ -9,11 +9,13 @@ package stages_interfaces is
 	type fetch_output_type is record
 		valid: std_logic;
 		opcode : std_logic_vector(15 downto 0);
+		tag: std_logic_vector(4 downto 0);
 	end record fetch_output_type;  
 
 	constant DEFAULT_FETCH_OUTPUT : fetch_output_type := (
 		valid => '0',
-		opcode => (others => '0')
+		opcode => (others => '0'),
+		tag => (others => '0')
 	);
 
 
@@ -38,6 +40,7 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		is_branch: std_logic;
+		tag: std_logic_vector(4 downto 0);
 	end record decode_output_type;
 
 	constant MEMORY_OPERATION_NONE     : std_logic_vector(1 downto 0) := "00";
@@ -70,7 +73,8 @@ package stages_interfaces is
 		switch_indicator => '0',
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
-		is_branch => '0'
+		is_branch => '0',
+		tag => (others => '0')
 	);
 
 
@@ -90,6 +94,7 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		is_branch: std_logic;
+		tag: std_logic_vector(4 downto 0);
 	end record register_read_output_type;
 
 	constant DEFAULT_REGISTER_READ_OUTPUT : register_read_output_type := (
@@ -102,7 +107,8 @@ package stages_interfaces is
 		value => (others => '0'),
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
-		is_branch => '0'
+		is_branch => '0',
+		tag => (others => '0')
 	);
 
 
@@ -118,6 +124,7 @@ package stages_interfaces is
 
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
+		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
 
 	constant DEFAULT_EXECUTE_OUTPUT : execute_output_type := (
@@ -126,7 +133,8 @@ package stages_interfaces is
 		result => (others => '0'),
 		value => (others => '0'),
 		writeback_indicator => '0',
-		writeback_register => (others => '0')
+		writeback_register => (others => '0'),
+		tag => (others => '0')
 	);
 
 
@@ -136,12 +144,14 @@ package stages_interfaces is
 		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(3 downto 0);
 		writeback_value: std_logic_vector(31 downto 0);
+		tag: std_logic_vector(4 downto 0);
 	end record memory_output_type;
 
 	constant DEFAULT_MEMORY_OUTPUT : memory_output_type := (
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
-		writeback_value => (others => '0')
+		writeback_value => (others => '0'),
+		tag => (others => '0')
 	);
 
 end package stages_interfaces;

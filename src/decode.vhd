@@ -40,6 +40,8 @@ begin
 			if hold_in = '0' then
 				-- output generation
 				if v_input.valid = '1' then
+					v_output.tag := v_input.tag;
+
 					if v_input.opcode(15 downto 0) = "0000000000000000" then
 						-- nop
 						v_output := DEFAULT_DECODE_OUTPUT;

@@ -40,6 +40,7 @@ begin
 				v_output.writeback_indicator := v_input.writeback_indicator;
 				v_output.writeback_register := v_input.writeback_register;
 				v_output.writeback_value := v_input.result;
+				v_output.tag := v_input.tag;
 
 				if v_wait = '1' then
 					v_output := DEFAULT_MEMORY_OUTPUT;
