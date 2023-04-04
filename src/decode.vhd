@@ -74,6 +74,8 @@ begin
 						v_sign := (others => v_input.opcode(0));
 						v_output.immediate := v_sign(31 downto 1) & "1";
 						v_output.switch_indicator := '1';
+						v_output.writeback_indicator := '1';
+						v_output.writeback_register := v_input.opcode(7 downto 4);
 					elsif v_input.opcode(15 downto 10) = "000010" and unsigned(v_input.opcode(9 downto 8)) <= unsigned(MEMORY_SIZE_WORD) then
 						-- load
 						v_output.valid := '1';
