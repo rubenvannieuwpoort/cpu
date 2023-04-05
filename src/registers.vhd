@@ -100,6 +100,7 @@ begin
 						v_read_output.flag_set_indicator := v_read_input.flag_set_indicator;
 						v_read_output.execute_operation := v_read_input.execute_operation;
 						v_read_output.memory_operation := v_read_input.memory_operation;
+						v_read_output.memory_size := v_read_input.memory_size;
 						v_read_output.operand_1 := v_register_1_value;
 						if v_read_input.switch_indicator = '0' then
 							v_read_output.operand_2 := v_register_2_value;

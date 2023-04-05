@@ -258,6 +258,25 @@ begin
 				if v_input.valid = '1' then
 					v_output.valid := '1';
 					v_output.memory_operation := v_input.memory_operation;
+					if v_input.memory_size = MEMORY_SIZE_WORD then
+						v_output.write_enable := "1111";
+					elsif v_input.memory_size = MEMORY_SIZE_HALFWORD then
+						if v_result(0) = '0' then
+							v_output.write_enable := "1100";
+						else
+							v_output.write_enable := "0011";
+						end if;
+					elsif v_input.memory_size = MEMORY_SIZE_BYTE then
+						if v_result(1 downto 0) = "00" then
+							v_output.write_enable := "1000";
+						elsif v_result(1 downto 0) = "01" then
+							v_output.write_enable := "0100";
+						elsif v_result(1 downto 0) = "10" then
+							v_output.write_enable := "0010";
+						elsif v_result(1 downto 0) = "11" then
+							v_output.write_enable := "0001";
+						end if;
+					end if;
 					v_output.result := v_result;
 					v_output.value := v_input.value;
 					v_output.writeback_indicator := v_input.writeback_indicator;

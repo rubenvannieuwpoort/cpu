@@ -27,6 +27,7 @@ package stages_interfaces is
 		flag_set_indicator: std_logic;
 		execute_operation: std_logic_vector(3 downto 0);
 		memory_operation: std_logic_vector(1 downto 0);
+		memory_size: std_logic_vector(1 downto 0);
 
 		read_indicator_1: std_logic;
 		read_register_1: std_logic_vector(3 downto 0);
@@ -47,6 +48,10 @@ package stages_interfaces is
 	constant MEMORY_OPERATION_NONE     : std_logic_vector(1 downto 0) := "00";
 	constant MEMORY_OPERATION_LOAD     : std_logic_vector(1 downto 0) := "01";
 	constant MEMORY_OPERATION_STORE    : std_logic_vector(1 downto 0) := "10";
+
+	constant MEMORY_SIZE_BYTE     : std_logic_vector(1 downto 0) := "00";
+	constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
+	constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "11";
 
 	constant EXECUTE_OPERATION_SECOND : std_logic_vector(3 downto 0) := "0000";
 	constant EXECUTE_OPERATION_ADD    : std_logic_vector(3 downto 0) := "0001";
@@ -87,6 +92,7 @@ package stages_interfaces is
 		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
+		memory_size => (others => '0'),
 		read_indicator_1 => '0',
 		read_register_1 => (others => '0'),
 		read_indicator_2 => '0',
@@ -109,6 +115,7 @@ package stages_interfaces is
 		flag_set_indicator: std_logic;
 		execute_operation: std_logic_vector(3 downto 0);
 		memory_operation: std_logic_vector(1 downto 0);
+		memory_size: std_logic_vector(1 downto 0);
 	
 		operand_1: std_logic_vector(31 downto 0);
 		operand_2: std_logic_vector(31 downto 0);
@@ -126,6 +133,7 @@ package stages_interfaces is
 		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
 		memory_operation => MEMORY_OPERATION_NONE,
+		memory_size => (others => '0'),
 		operand_1 => (others => '0'),
 		operand_2 => (others => '0'),
 		value => (others => '0'),
@@ -143,6 +151,7 @@ package stages_interfaces is
 		valid: std_logic;
 
 		memory_operation: std_logic_vector(1 downto 0);
+		write_enable: std_logic_vector(3 downto 0);
 	
 		result: std_logic_vector(31 downto 0);
 		value: std_logic_vector(31 downto 0);
@@ -156,6 +165,7 @@ package stages_interfaces is
 	constant DEFAULT_EXECUTE_OUTPUT : execute_output_type := (
 		valid => '0',
 		memory_operation => MEMORY_OPERATION_NONE,
+		write_enable => (others => '0'),
 		result => (others => '0'),
 		value => (others => '0'),
 		writeback_indicator => '0',
