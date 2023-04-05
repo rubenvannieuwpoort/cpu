@@ -254,31 +254,51 @@ begin
 					v_act := sign_flag or zero_flag;
 				end if;
 
-				-- set output
+				-- conversion to little endian for stores
 				if v_input.valid = '1' then
 					v_output.valid := '1';
 					v_output.memory_operation := v_input.memory_operation;
-					if v_input.memory_size = MEMORY_SIZE_WORD then
-						v_output.write_enable := "1111";
-					elsif v_input.memory_size = MEMORY_SIZE_HALFWORD then
-						if v_result(0) = '0' then
-							v_output.write_enable := "1100";
-						else
-							v_output.write_enable := "0011";
+
+					if v_input.memory_operation = MEMORY_OPERATION_STORE then
+						if v_input.memory_size = MEMORY_SIZE_WORD then
+							if v_result(1 downto 0) = "00" then
+								v_output.write_enable := "1111";
+								v_output.value := v_input.value(7 downto 0) & v_input.value(15 downto 8) & v_input.value(23 downto 16) & v_input.value(31 downto 24);
+							else
+								-- error
+							end if;
+						elsif v_input.memory_size = MEMORY_SIZE_HALFWORD then
+							if v_result(1 downto 0) = "00" then
+								v_output.write_enable := "1100";
+								v_output.value := v_input.value(7 downto 0) & v_input.value(15 downto 8) & "0000000000000000";
+							elsif v_result(1 downto 0) = "10" then
+								v_output.write_enable := "0011";
+								v_output.value := "0000000000000000" & v_input.value(7 downto 0) & v_input.value(15 downto 8);
+							else
+								-- error
+							end if;
+						elsif v_input.memory_size = MEMORY_SIZE_BYTE then
+							if v_result(1 downto 0) = "00" then
+								v_output.write_enable := "1000";
+								v_output.value := v_input.value(7 downto 0) & "000000000000000000000000";
+							elsif v_result(1 downto 0) = "01" then
+								v_output.write_enable := "0100";
+								v_output.value := "00000000" & v_input.value(7 downto 0) & "0000000000000000";
+							elsif v_result(1 downto 0) = "10" then
+								v_output.write_enable := "0010";
+								v_output.value := "0000000000000000" & v_input.value(7 downto 0) & "00000000";
+							elsif v_result(1 downto 0) = "11" then
+								v_output.write_enable := "0001";
+								v_output.value := "000000000000000000000000" & v_input.value(7 downto 0);
+							end if;
 						end if;
-					elsif v_input.memory_size = MEMORY_SIZE_BYTE then
-						if v_result(1 downto 0) = "00" then
-							v_output.write_enable := "1000";
-						elsif v_result(1 downto 0) = "01" then
-							v_output.write_enable := "0100";
-						elsif v_result(1 downto 0) = "10" then
-							v_output.write_enable := "0010";
-						elsif v_result(1 downto 0) = "11" then
-							v_output.write_enable := "0001";
-						end if;
+					else
+						v_output.write_enable := "0000";
+						v_output.value := v_input.value;
 					end if;
+
 					v_output.result := v_result;
-					v_output.value := v_input.value;
+					-- v_output.value := v_input.value;
 					v_output.writeback_indicator := v_input.writeback_indicator;
 					v_output.writeback_register := v_input.writeback_register;
 					v_output.act := v_act;

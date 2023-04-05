@@ -42,7 +42,7 @@ begin
 		clk => clk,
 		write_enable_in => input.write_enable,
 		data_in => input.value,
-		address_in => input.result(8 downto 0),
+		address_in => input.result(10 downto 2),
 		data_out => ram_data_out
 	);
 
