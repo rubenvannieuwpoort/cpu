@@ -53,7 +53,9 @@ begin
 					end if;
 				end if;
 			else
+				if hold_in = '0' then
 				output <= DEFAULT_FETCH_OUTPUT;
+				end if;
 				if continue_in = '1' then
 					wait_indicator <= '0';
 				elsif address_indicator_in = '1' then
