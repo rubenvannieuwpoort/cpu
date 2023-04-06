@@ -51,7 +51,7 @@ package stages_interfaces is
 
 	constant MEMORY_SIZE_BYTE     : std_logic_vector(1 downto 0) := "00";
 	constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
-	constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "11";
+	constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "10";
 
 	constant EXECUTE_OPERATION_SECOND : std_logic_vector(3 downto 0) := "0000";
 	constant EXECUTE_OPERATION_ADD    : std_logic_vector(3 downto 0) := "0001";
