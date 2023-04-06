@@ -82,7 +82,7 @@ begin
 						v_output.flag_set_indicator := '0';
 						v_output.execute_operation := EXECUTE_OPERATION_ADD;  -- this works as 'none' by adding 0 to operand 1 (maybe I should just add a none op?)
 						v_output.memory_operation := MEMORY_OPERATION_LOAD;
-						v_output.memory_size := v_input.opcode(11 downto 10);
+						v_output.memory_size := v_input.opcode(9 downto 8);
 						v_output.read_indicator_1 := '1';
 						v_output.read_register_1 := v_input.opcode(3 downto 0);
 						v_output.read_indicator_2 := '1';
@@ -99,7 +99,7 @@ begin
 						v_output.flag_set_indicator := '0';
 						v_output.execute_operation := EXECUTE_OPERATION_ADD;  -- this works as 'none' by adding 0 to operand 1 (maybe I should just add a none op?)
 						v_output.memory_operation := MEMORY_OPERATION_STORE;
-						v_output.memory_size := v_input.opcode(11 downto 10);
+						v_output.memory_size := v_input.opcode(9 downto 8);
 						v_output.read_indicator_1 := '1';
 						v_output.read_register_1 := v_input.opcode(3 downto 0);
 						v_output.read_indicator_2 := '1';
