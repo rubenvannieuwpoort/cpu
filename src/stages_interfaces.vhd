@@ -152,6 +152,7 @@ package stages_interfaces is
 
 		memory_operation: std_logic_vector(1 downto 0);
 		write_enable: std_logic_vector(3 downto 0);
+		memory_size: std_logic_vector(1 downto 0);  -- this is only for writeback stage to convert from MSB to LSB
 	
 		result: std_logic_vector(31 downto 0);
 		value: std_logic_vector(31 downto 0);
@@ -165,6 +166,7 @@ package stages_interfaces is
 	constant DEFAULT_EXECUTE_OUTPUT : execute_output_type := (
 		valid => '0',
 		memory_operation => MEMORY_OPERATION_NONE,
+		memory_size => (others => '0'),
 		write_enable => (others => '0'),
 		result => (others => '0'),
 		value => (others => '0'),
@@ -183,6 +185,9 @@ package stages_interfaces is
 		writeback_value: std_logic_vector(31 downto 0);
 		act: std_logic;
 		tag: std_logic_vector(4 downto 0);
+		convert_memory_order_indicator: std_logic;
+		memory_size: std_logic_vector(1 downto 0);  -- this is only for writeback stage to convert from MSB to LSB
+		address_bits: std_logic_vector(1 downto 0);  -- this is only for writeback stage to convert from MSB to LSB
 	end record memory_output_type;
 
 	constant DEFAULT_MEMORY_OUTPUT : memory_output_type := (
@@ -190,7 +195,10 @@ package stages_interfaces is
 		writeback_register => (others => '0'),
 		writeback_value => (others => '0'),
 		act => '0',
-		tag => (others => '0')
+		tag => (others => '0'),
+		convert_memory_order_indicator => '0',
+		memory_size => (others => '0'),
+		address_bits => (others => '0')
 	);
 
 end package stages_interfaces;

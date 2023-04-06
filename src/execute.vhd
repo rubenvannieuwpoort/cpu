@@ -297,6 +297,7 @@ begin
 						v_output.value := v_input.value;
 					end if;
 
+					v_output.memory_size := v_input.memory_size;
 					v_output.result := v_result;
 					-- v_output.value := v_input.value;
 					v_output.writeback_indicator := v_input.writeback_indicator;

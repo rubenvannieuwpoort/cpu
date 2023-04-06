@@ -69,6 +69,14 @@ begin
 				-- v_output.writeback_value := v_input.result;
 				v_output.act := v_input.act;
 				v_output.tag := v_input.tag;
+				v_output.address_bits := v_input.result(1 downto 0);
+
+				if v_input.memory_operation = MEMORY_OPERATION_LOAD then
+					v_output.convert_memory_order_indicator := '1';
+				else
+					v_output.convert_memory_order_indicator := '0';
+				end if;
+				v_output.memory_size := v_input.memory_size;
 
 				if v_wait = '1' then
 					v_output := DEFAULT_MEMORY_OUTPUT;
@@ -82,6 +90,9 @@ begin
 				-- output.writeback_value <= v_output.result;
 				output.act <= v_output.act;
 				output.tag <= v_output.tag;
+				output.convert_memory_order_indicator <= v_output.convert_memory_order_indicator;
+				output.memory_size <= v_output.memory_size;
+				output.address_bits <= v_output.address_bits;
 			end if;
 
 			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then

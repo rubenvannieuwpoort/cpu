@@ -36,6 +36,7 @@ begin
 		variable v_register_1_value, v_register_2_value: std_logic_vector(31 downto 0);
 		variable v_write_incoming, v_write_outgoing: std_logic;
 		variable v_register_1_ready, v_register_2_ready: std_logic;
+		variable v_writeback_value: std_logic_vector(31 downto 0);
 	begin
 
 		if rising_edge(clk) then
@@ -141,8 +142,40 @@ begin
 			-- REGISTER WRITE STAGE
 			-- ====================
 
+			if write_input.convert_memory_order_indicator = '1' then
+				if write_input.memory_size = MEMORY_SIZE_WORD then
+					if write_input.address_bits = "00" then
+						v_writeback_value := write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8) &  write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
+					else
+						-- error
+					end if;
+				elsif write_input.memory_size = MEMORY_SIZE_HALFWORD then
+					if write_input.address_bits = "00" then
+						v_writeback_value := "0000000000000000" & write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8);
+					elsif write_input.address_bits = "10" then
+						v_writeback_value := "0000000000000000" & write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
+					else
+						-- error
+					end if;
+				elsif write_input.memory_size = MEMORY_SIZE_BYTE then
+					if write_input.address_bits = "00" then
+						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(7 downto 0);
+					elsif write_input.address_bits = "01" then
+						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(15 downto 8);
+					elsif write_input.address_bits = "10" then
+						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(23 downto 16);
+					elsif write_input.address_bits = "11" then
+						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(31 downto 24);
+					end if;
+				else
+					-- error
+				end if;
+			else
+				v_writeback_value := write_input.writeback_value;
+			end if;
+
 			if write_input.writeback_indicator = '1' and write_input.act = '1' then
-				reg(to_integer(unsigned(write_input.writeback_register))) <= write_input.writeback_value;
+				reg(to_integer(unsigned(write_input.writeback_register))) <= v_writeback_value;
 			end if;
 			
 			-- bookkeeping of in-flight writes
