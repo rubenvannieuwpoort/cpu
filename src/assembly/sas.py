@@ -273,7 +273,7 @@ assembler = Assembler([
     Instruction([Mnemonics([['setbyte0'], ['setbyte1'], ['setbyte2'], ['setbyte3']], 'n'), RegisterOperand('a'), UImm8('i')], '01nniiiiaaaaiiii'),
     Instruction([Mnemonics([['copy'], ['add'], ['subtract'], ['multiply'], ['and'], ['or'], ['xor'], ['not'], ['shl'], ['shr'], ['sar'], ['cmp'], ['test']], 'n'), RegisterOperand('a'), RegisterOperand('b')], '0001nnnnaaaabbbb'),
     Instruction([Mnemonics([['loadbyte'], ['loadhalfword'], ['loadword']], 's'), RegisterOperand('a'), RegisterOperand('b')], '000010ssaaaabbbb'),
-    Instruction([Mnemonics(['storebyte', 'storehalfword', 'storeword'], 's'), RegisterOperand('a'), RegisterOperand('b')], '000011ssaaaabbbb'),
+    Instruction([Mnemonics([['storebyte'], ['storehalfword'], ['storeword']], 's'), RegisterOperand('a'), RegisterOperand('b')], '000011ssaaaabbbb'),
     Instruction([Mnemonic(['setsigned']), RegisterOperand('a'), SImm8('i')], '0010iiiiaaaaiiii'),
     Instruction([Mnemonic(['setunsigned']), RegisterOperand('a'), UImm8('i')], '0011iiiiaaaaiiii'),
     Instruction([Mnemonics([['shl'], ['shr'], ['sar']], 'n'), RegisterOperand('a'), UImm5('i')], '1000nn0iaaaaiiii'),
@@ -294,7 +294,7 @@ if __name__ == '__main__':
     result = []
 
     for line in open(sys.argv[1], 'r'):
-        stripped_line = line.strip()
+        stripped_line = line.split(';')[0].strip()
         if stripped_line == '' or stripped_line[0] == ';':
             continue
 
