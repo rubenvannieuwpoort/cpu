@@ -191,7 +191,7 @@ begin
 						v_output.read_indicator_2 := '0';
 						v_output.read_register_2 := (others => '0');
 						v_sign := (others => v_input.opcode(11));
-						v_output.immediate := v_sign & v_input.opcode(11 downto 8) & v_input.opcode(3 downto 0);
+						v_output.immediate := v_sign(31 downto 8) & v_input.opcode(11 downto 8) & v_input.opcode(3 downto 0);
 						v_output.switch_indicator := '1';
 						v_output.writeback_indicator := '1';
 						v_output.writeback_register := v_input.opcode(7 downto 4);
