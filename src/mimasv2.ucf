@@ -1,0 +1,6 @@
+# modified from https://productdata.numato.com/assets/downloads/fpga/mimasv2/mimasv2_user_constraints_file.ucf
+
+config vccaux = "3.3";
+
+# clocks
+net "clk_in" loc = V10 | iostandard = lvcmos33 | period = 100MHz;
