@@ -7,12 +7,14 @@ use work.stages_interfaces.all;
 
 entity CPU is
 	port(
-		clk: in std_logic
+		clk_in: in std_logic
 	);
 end CPU;
 
 
 architecture Behavioral of CPU is
+	signal clk: std_logic;
+
 	signal fetch_output: fetch_output_type := DEFAULT_FETCH_OUTPUT;
 
 	signal decode_busy_out: std_logic := '0';
@@ -87,6 +89,8 @@ architecture Behavioral of CPU is
 	end component;
 
 begin
+	clk <= clk_in;
+
 	stage_fetch: fetch port map(clk => clk, hold_in => decode_busy_out, continue_in => execute_branch_continue_indicator_out, address_indicator_in => execute_branch_address_indicator_out, address_in => execute_branch_address_out, output => fetch_output);
 	stage_decode: decode port map(clk => clk, hold_in => register_read_busy_out, input => fetch_output, busy_out => decode_busy_out, output => decode_output);
 	stage_registers: registers port map(clk => clk, write_input => memory_output, read_hold_in => execute_busy_out, read_input => decode_output, read_busy_out => register_read_busy_out, read_output => register_read_output);
