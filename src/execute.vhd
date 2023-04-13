@@ -52,8 +52,6 @@ begin
 		variable v_branch_address_indicator: std_logic;
 		variable v_branch_address: std_logic_vector(19 downto 0);
 	begin
-		busy_out <= buffered_input.valid;
-
 		if rising_edge(clk) then
 			v_branch_continue_indicator := '0';
 			v_branch_address_indicator := '0';
@@ -180,10 +178,10 @@ begin
 							v_temp := v_temp2(3 downto 0) & v_temp(31 downto 4);
 						end if;
 						if v_input.operand_2(1) = '1' then
-							v_temp := v_temp2(2 downto 0) & v_temp(31 downto 2);
+							v_temp := v_temp2(2 downto 0) & v_temp(31 downto 3);
 						end if;
 						if v_input.operand_2(0) = '1' then
-							v_temp := v_temp2(1 downto 0) & v_temp(31 downto 1);
+							v_temp := v_temp2(1 downto 0) & v_temp(31 downto 2);
 						end if;
 						v_result := v_temp;
 					end if;
