@@ -3,4 +3,4 @@
 config vccaux = "3.3";
 
 # clocks
-net "clk_in" loc = V10 | iostandard = lvcmos33 | period = 100MHz;
+net "clk_sys" loc = V10 | iostandard = lvcmos33 | period = 100MHz;
