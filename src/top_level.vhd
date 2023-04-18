@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.ALL;
 
---use work.types.all;
+use work.types.all;
 
 
 entity top_level is
@@ -35,8 +35,8 @@ end top_level;
 
 architecture Behavioral of top_level is
 	-- clocks
-	--signal clk_main, clk_pixel: std_logic;
-	--signal clk_mem: memory_clock_signals;
+	signal clk_main, clk_pixel: std_logic;
+	signal clk_mem: memory_clock_signals;
 
 	--signal memory_ready: std_logic;
 	--signal memory_written: std_logic;
@@ -63,14 +63,14 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
-	--component clock_generator is
-	--	port(
-	--		clk_in: in std_logic;
-	--		clk_main: out std_logic;
-	--		clk_mem: out memory_clock_signals;
-	--		clk_pixel: out std_logic
-	--	);
-	--end component;
+	component clock_generator is
+		port(
+			clk_in: in std_logic;
+			clk_main: out std_logic;
+			clk_mem: out memory_clock_signals;
+			clk_pixel: out std_logic
+		);
+	end component;
 
 	--component memory_interface
 	--	port(
@@ -107,15 +107,15 @@ architecture Behavioral of top_level is
 	--end component;
 
 begin
-	cpu_inst: CPU port map(clk => clk_sys);
+	cpu_inst: CPU port map(clk => clk_main);
 
-	--clock_gen: clock_generator
-	--	port map(
-	--		clk_in => clk_sys,
-	--		clk_main => clk_main,
-	--		clk_mem => clk_mem,
-	--		clk_pixel => clk_pixel
-	--	);
+	clock_gen: clock_generator
+		port map(
+			clk_in => clk_sys,
+			clk_main => clk_main,
+			clk_mem => clk_mem,
+			clk_pixel => clk_pixel
+		);
 
 	--vga_hsync <= vga.hsync;
 	--vga_vsync <= vga.vsync;
