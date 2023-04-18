@@ -9,11 +9,11 @@ entity top_level is
 	port(
 		clk_sys: in std_logic;
 		-- vga
-		--vga_hsync: out std_logic;
-		--vga_vsync: out std_logic;
-		--vga_red: out std_logic_vector(2 downto 0);
-		--vga_green: out std_logic_vector(2 downto 0);
-		--vga_blue: out std_logic_vector(2 downto 1);
+		vga_hsync: out std_logic;
+		vga_vsync: out std_logic;
+		vga_red: out std_logic_vector(2 downto 0);
+		vga_green: out std_logic_vector(2 downto 0);
+		vga_blue: out std_logic_vector(2 downto 1);
 		-- ram
 		ram_dq: inout std_logic_vector(15 downto 0);
 		ram_a: out std_logic_vector(12 downto 0);
@@ -39,11 +39,11 @@ architecture Behavioral of top_level is
 	signal clk_mem: memory_clock_signals;
 
 	signal memory_ready: std_logic;
-	--signal memory_written: std_logic;
+	signal memory_written: std_logic;
 	--signal reset: std_logic := '0';
 
 	-- vga
-	--signal vga: vga_signals;
+	signal vga: vga_signals;
 
 	-- ram
 	signal ram: ram_signals;
@@ -96,15 +96,15 @@ architecture Behavioral of top_level is
 	--	);
 	--end component;
 
-	--component vga_generator
-	--	port(
-	--		clk: in std_logic;
-	--		vga_out: out vga_signals;
-	--		memory_ready: in std_logic;
-	--		read_cmd: out read_cmd_signals;
-	--		read_status: in read_status_signals
-	--	);
-	--end component;
+	component vga_generator
+		port(
+			clk: in std_logic;
+			vga_out: out vga_signals;
+			memory_ready: in std_logic;
+			read_cmd: out read_cmd_signals;
+			read_status: in read_status_signals
+		);
+	end component;
 
 begin
 	clock_gen: clock_generator
@@ -127,11 +127,19 @@ begin
 			reset => '0'
 		);
 
-	--vga_hsync <= vga.hsync;
-	--vga_vsync <= vga.vsync;
-	--vga_red <= vga.red;
-	--vga_green <= vga.green;
-	--vga_blue <= vga.blue;
+	vga_gen: vga_generator
+		port map(
+			clk => clk_pixel,
+			memory_ready => memory_written,
+			read_cmd => read_cmd, read_status => read_status,
+			vga_out => vga
+		);
+
+	vga_hsync <= vga.hsync;
+	vga_vsync <= vga.vsync;
+	vga_red <= vga.red;
+	vga_green <= vga.green;
+	vga_blue <= vga.blue;
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;

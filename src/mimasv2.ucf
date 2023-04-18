@@ -6,6 +6,19 @@ config vccaux = "3.3";
 net "clk_sys" loc = V10 | iostandard = lvcmos33 | period = 100MHz;
 
 
+# VGA
+NET "vga_hsync"              LOC = B12 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_vsync"              LOC = A12 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_blue[2]"            LOC = A11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_blue[1]"            LOC = B11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_green[2]"           LOC = C11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_green[1]"           LOC = A10 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_green[0]"           LOC = C10 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_red[2]"             LOC = C9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_red[1]"             LOC = B9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+NET "vga_red[0]"             LOC = A9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+
+
 # RAM
 # ===
 
