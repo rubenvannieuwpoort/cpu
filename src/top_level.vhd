@@ -40,7 +40,6 @@ architecture Behavioral of top_level is
 
 	signal memory_ready: std_logic;
 	signal memory_written: std_logic;
-	--signal reset: std_logic := '0';
 
 	-- vga
 	signal vga: vga_signals;
@@ -86,15 +85,15 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
-	--component test_pattern_writer
-	--	port(
-	--		clk: in std_logic;
-	--		completed: out std_logic;
-	--		memory_ready: in std_logic;
-	--		write_cmd: out write_cmd_signals;
-	--		write_status: in write_status_signals
-	--	);
-	--end component;
+	component test_pattern_writer
+		port(
+			clk: in std_logic;
+			completed: out std_logic;
+			memory_ready: in std_logic;
+			write_cmd: out write_cmd_signals;
+			write_status: in write_status_signals
+		);
+	end component;
 
 	component vga_generator
 		port(
@@ -133,6 +132,13 @@ begin
 			memory_ready => memory_written,
 			read_cmd => read_cmd, read_status => read_status,
 			vga_out => vga
+		);
+
+	inst_test_pattern_writer: test_pattern_writer
+		port map(
+			clk => clk_main,
+			completed => memory_written, memory_ready => memory_ready,
+			write_cmd => write_cmd, write_status => write_status
 		);
 
 	vga_hsync <= vga.hsync;
