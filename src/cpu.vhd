@@ -2,12 +2,15 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.types.all;
 use work.stages_interfaces.all;
 
 
 entity CPU is
 	port(
-		clk: in std_logic
+		clk: in std_logic;
+		write_status: in write_status_signals;
+		write_cmd: out write_cmd_signals
 	);
 end CPU;
 
@@ -82,6 +85,8 @@ architecture Behavioral of CPU is
 			hold_in: in std_logic;
 			input: in execute_output_type;
 			busy_out: out std_logic;
+			write_status_in: in write_status_signals;
+			write_cmd_out: out write_cmd_signals;
 			output: out memory_output_type
 		);
 	end component;
@@ -91,5 +96,5 @@ begin
 	stage_decode: decode port map(clk => clk, hold_in => register_read_busy_out, input => fetch_output, busy_out => decode_busy_out, output => decode_output);
 	stage_registers: registers port map(clk => clk, write_input => memory_output, read_hold_in => execute_busy_out, read_input => decode_output, read_busy_out => register_read_busy_out, read_output => register_read_output);
 	stage_execute: execute port map(clk => clk, hold_in => memory_busy_out, input => register_read_output, busy_out => execute_busy_out, output => execute_output, branch_continue_indicator => execute_branch_continue_indicator_out, branch_address_indicator => execute_branch_address_indicator_out, branch_address => execute_branch_address_out);
-	stage_memory: memory port map(clk => clk, hold_in => '0', input => execute_output, busy_out => memory_busy_out, output => memory_output);
+	stage_memory: memory port map(clk => clk, hold_in => '0', input => execute_output, busy_out => memory_busy_out, write_status_in => write_status, write_cmd_out => write_cmd, output => memory_output);
 end Behavioral;

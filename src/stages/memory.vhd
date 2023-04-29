@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.types.all;
 use work.stages_interfaces.all;
 
 
@@ -12,6 +13,8 @@ entity memory is
 		input: in execute_output_type;
 
 		busy_out: out std_logic := '0';
+		write_status_in: in write_status_signals;
+		write_cmd_out: out write_cmd_signals;
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
 	);
 end memory;
@@ -19,32 +22,8 @@ end memory;
 
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal last_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal ram_data_out: std_logic_vector(31 downto 0) := (others => '0');
-	
-	component ram_block is
-		port(
-			clk: in std_logic;
-
-			write_enable_in: in std_logic_vector(3 downto 0);
-			data_in: in std_logic_vector(31 downto 0);
-			address_in: in std_logic_vector(8 downto 0);
-
-			data_out: out  std_logic_vector(31 downto 0)
-		);
-	end component;
 	
 begin
-	output.writeback_value <= last_input.result when last_input.memory_operation = MEMORY_OPERATION_NONE else ram_data_out;
-	-- output.writeback_value <= (others => '0') when input.memory_operation = MEMORY_OPERATION_NONE else (others => '0');
-
-	internal_ram: ram_block port map (
-		clk => clk,
-		write_enable_in => input.write_enable,
-		data_in => input.value,
-		address_in => input.result(10 downto 2),
-		data_out => ram_data_out
-	);
 
 	process(clk)
 		variable v_wait: std_logic;
@@ -52,7 +31,6 @@ begin
 		variable v_output: memory_output_type;
 	begin
 		if rising_edge(clk) then
-			last_input <= input;
 		
 			-- select input
 			if buffered_input.valid = '1' then

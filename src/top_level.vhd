@@ -58,7 +58,9 @@ architecture Behavioral of top_level is
 
 	component CPU is
 		port(
-			clk: in std_logic
+			clk: in std_logic;
+			write_status: in write_status_signals;
+			write_cmd: out write_cmd_signals
 		);
 	end component;
 
@@ -114,7 +116,7 @@ begin
 			clk_pixel => clk_pixel
 		);
 
-	cpu_inst: CPU port map(clk => clk_main);
+	cpu_inst: CPU port map(clk => clk_main, write_status => write_status, write_cmd => write_cmd);
 
 	mem_if: memory_interface
 		port map(
@@ -132,13 +134,6 @@ begin
 			memory_ready => memory_written,
 			read_cmd => read_cmd, read_status => read_status,
 			vga_out => vga
-		);
-
-	inst_test_pattern_writer: test_pattern_writer
-		port map(
-			clk => clk_main,
-			completed => memory_written, memory_ready => memory_ready,
-			write_cmd => write_cmd, write_status => write_status
 		);
 
 	vga_hsync <= vga.hsync;
