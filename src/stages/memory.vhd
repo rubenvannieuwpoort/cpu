@@ -12,7 +12,7 @@ entity memory is
 		hold_in: in std_logic;
 		input: in execute_output_type;
 
-		busy_out: out std_logic := '0';
+		hold_out: out std_logic;
 		write_status_in: in write_status_signals;
 		write_port_out: out write_port_signals;
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -22,63 +22,79 @@ end memory;
 
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	
+	signal write_cmd_out: write_cmd_signals := DEFAULT_WRITE_CMD;
+
+	function should_stall(input: execute_output_type; write_status: write_status_signals) return boolean is
+		variable is_write_cmd: boolean;
+		variable write_port_ready: boolean;
+	begin
+		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE;
+		write_port_ready := write_status.data_empty = '1' and write_status.cmd_empty = '1';
+		return write_port_ready or not(is_write_cmd);
+	end function;
+
+	function f(input: execute_output_type) return memory_output_type is
+		variable output: memory_output_type;
+	begin
+		output.writeback_indicator := input.writeback_indicator;
+		output.writeback_register := input.writeback_register;
+		output.writeback_value := input.result;
+		output.act := input.act;
+		output.tag := input.tag;
+		if input.memory_operation = MEMORY_OPERATION_LOAD then
+			output.convert_memory_order_indicator := '1';
+		else
+			output.convert_memory_order_indicator := '0';
+		end if;
+		output.address_bits := input.result(1 downto 0);
+		return output;
+	end function;
+
+	function g(input: execute_output_type) return write_cmd_signals is
+		variable write_cmd: write_cmd_signals;
+	begin
+		if input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE then
+			write_cmd.enable := '1';
+			write_cmd.data_enable := '1';
+			write_cmd.address := input.result(31 downto 2);
+			write_cmd.write_mask := not(input.write_enable);
+			write_cmd.data := input.value;
+			return write_cmd;
+		end if;
+
+		return DEFAULT_WRITE_CMD;
+	end function;
 begin
+	write_port_out.clk <= clk;
+	write_port_out.write_cmd <= write_cmd_out;
+	hold_out <= buffered_input.valid;
 
 	process(clk)
-		variable v_wait: std_logic;
+		variable v_should_stall: boolean;
 		variable v_input: execute_output_type;
-		variable v_output: memory_output_type;
 	begin
 		if rising_edge(clk) then
-		
-			-- select input
 			if buffered_input.valid = '1' then
 				v_input := buffered_input;
 			else
 				v_input := input;
 			end if;
 
-			v_wait := '0';
 			if hold_in = '0' then
-				-- generate output
-				v_output.writeback_indicator := v_input.writeback_indicator;
-				v_output.writeback_register := v_input.writeback_register;
-				-- v_output.writeback_value := v_input.result;
-				v_output.act := v_input.act;
-				v_output.tag := v_input.tag;
-				v_output.address_bits := v_input.result(1 downto 0);
-
-				if v_input.memory_operation = MEMORY_OPERATION_LOAD then
-					v_output.convert_memory_order_indicator := '1';
-				else
-					v_output.convert_memory_order_indicator := '0';
+				v_should_stall := should_stall(v_input, write_status_in);
+				if v_should_stall then
+					output <= DEFAULT_MEMORY_OUTPUT;
 				end if;
-				v_output.memory_size := v_input.memory_size;
-
-				if v_wait = '1' then
-					v_output := DEFAULT_MEMORY_OUTPUT;
-				else
-					buffered_input <= DEFAULT_EXECUTE_OUTPUT;
-				end if;
-
-				-- equivalent to output <= v_output; EXCEPT for the writeback value
-				output.writeback_indicator <= v_output.writeback_indicator;
-				output.writeback_register <= v_output.writeback_register;
-				-- output.writeback_value <= v_output.result;
-				output.act <= v_output.act;
-				output.tag <= v_output.tag;
-				output.convert_memory_order_indicator <= v_output.convert_memory_order_indicator;
-				output.memory_size <= v_output.memory_size;
-				output.address_bits <= v_output.address_bits;
 			end if;
 
-			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
+			if hold_in = '0' and not(v_should_stall) then
+				output <= f(v_input);
+				write_cmd_out <= g(v_input);
+				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
+			else
+				write_cmd_out <= DEFAULT_WRITE_CMD;
 				buffered_input <= v_input;
 			end if;
-
-			busy_out <= hold_in or v_wait;
 		end if;
 	end process;
-
 end Behavioral;

@@ -11,7 +11,7 @@ entity decode is
 		hold_in: in std_logic;
 		input: in fetch_output_type;
 
-		busy_out: out std_logic := '0';
+		hold_out: out std_logic := '0';
 		output: out decode_output_type := DEFAULT_DECODE_OUTPUT
 	);
 end decode;
@@ -300,7 +300,7 @@ begin
 				buffered_input <= v_input;
 			end if;
 
-			busy_out <= hold_in or v_wait;
+			hold_out <= hold_in or v_wait;
 		end if;
 	end process;
 

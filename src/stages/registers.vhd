@@ -11,7 +11,7 @@ entity registers is
 		read_hold_in: in std_logic;
 		read_input: in decode_output_type;
 
-		read_busy_out: out std_logic := '0';
+		read_hold_out: out std_logic := '0';
 		read_output: out register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
 		
 		write_input: in memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -136,7 +136,7 @@ begin
 				buffered_read_input <= v_read_input;
 			end if;
 
-			read_busy_out <= read_hold_in or v_read_wait;
+			read_hold_out <= read_hold_in or v_read_wait;
 
 			
 			-- REGISTER WRITE STAGE
