@@ -10,7 +10,7 @@ xor r1, r1
 xor r0, r0
 copy r3, r0
 xor r3, r1
-storebyte r2, r3
+storebyte r3, r2  ; not sure, maybe the other way around??
 increment r0
 increment r2
 cmp r0, r4

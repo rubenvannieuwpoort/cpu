@@ -39,7 +39,6 @@ architecture Behavioral of top_level is
 	signal clk_mem: memory_clock_signals;
 
 	signal memory_ready: std_logic;
-	signal memory_written: std_logic;
 
 	-- vga
 	signal vga: vga_signals;
@@ -93,7 +92,7 @@ architecture Behavioral of top_level is
 			clk: in std_logic;
 			completed: out std_logic;
 			memory_ready: in std_logic;
-			write_cmd: out write_cmd_signals;
+			write_port: out write_port_signals;
 			write_status: in write_status_signals
 		);
 	end component;
@@ -129,10 +128,19 @@ begin
 			reset => '0'
 		);
 
+	test_pattern_writer_inst: test_pattern_writer
+		port map(
+			clk => clk_main,
+			memory_ready => memory_ready,
+			completed => open,
+			write_port => open,
+			write_status => write_status
+		);
+
 	vga_gen: vga_generator
 		port map(
 			clk => clk_pixel,
-			memory_ready => memory_written,
+			memory_ready => memory_ready,
 			read_cmd => read_cmd, read_status => read_status,
 			vga_out => vga
 		);

@@ -58,7 +58,7 @@ architecture Behavioral of memory is
 		if input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE then
 			write_cmd.enable := '1';
 			write_cmd.data_enable := '1';
-			write_cmd.address := input.result(31 downto 2);
+			write_cmd.address := input.result(29 downto 2) & "00";
 			write_cmd.write_mask := not(input.write_enable);
 			write_cmd.data := input.value;
 			return write_cmd;
