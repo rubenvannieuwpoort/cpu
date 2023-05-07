@@ -59,12 +59,24 @@ package types is
 	end record;
 
 	type write_cmd_signals is record
-		clk: std_logic;
 		enable: std_logic;
 		data_enable: std_logic;
 		address: std_logic_vector(29 downto 0);
 		write_mask: std_logic_vector(3 downto 0);
 		data: std_logic_vector(31 downto 0);
+	end record;
+
+	constant DEFAULT_WRITE_CMD: write_cmd_signals := (
+		enable => '0',
+		data_enable => '0',
+		address => (others => '0'),
+		write_mask => "1111",
+		data => (others => '0')
+	);
+
+	type write_port_signals is record
+		clk: std_logic;
+		write_cmd: write_cmd_signals;
 	end record;
 
 	type write_status_signals is record

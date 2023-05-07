@@ -53,14 +53,14 @@ architecture Behavioral of top_level is
 	signal read_status: read_status_signals;
 
 	-- write port
-	signal write_cmd: write_cmd_signals;
+	signal write_port: write_port_signals;
 	signal write_status: write_status_signals;
 
 	component CPU is
 		port(
 			clk: in std_logic;
 			write_status: in write_status_signals;
-			write_cmd: out write_cmd_signals
+			write_port: out write_port_signals
 		);
 	end component;
 
@@ -76,7 +76,7 @@ architecture Behavioral of top_level is
 	component memory_interface
 		port(
 			clk: memory_clock_signals;
-			write_cmd: in write_cmd_signals;
+			write_port: in write_port_signals;
 			write_status: out write_status_signals;
 			read_cmd: in read_cmd_signals;
 			read_status: out read_status_signals;
@@ -116,12 +116,12 @@ begin
 			clk_pixel => clk_pixel
 		);
 
-	cpu_inst: CPU port map(clk => clk_main, write_status => write_status, write_cmd => write_cmd);
+	cpu_inst: CPU port map(clk => clk_main, write_status => write_status, write_port => write_port);
 
 	mem_if: memory_interface
 		port map(
 			clk => clk_mem,
-			write_cmd => write_cmd, write_status => write_status,
+			write_port => write_port, write_status => write_status,
 			read_cmd => read_cmd, read_status => read_status,
 			ram => ram, ram_bus => ram_bus,
 			calib_done => memory_ready,

@@ -14,7 +14,7 @@ entity memory is
 
 		busy_out: out std_logic := '0';
 		write_status_in: in write_status_signals;
-		write_cmd_out: out write_cmd_signals;
+		write_port_out: out write_port_signals;
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
 	);
 end memory;

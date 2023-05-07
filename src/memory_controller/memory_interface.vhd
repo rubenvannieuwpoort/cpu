@@ -7,7 +7,7 @@ use work.types.all;
 entity memory_interface is
 	port(
 		clk: in memory_clock_signals;
-		write_cmd: in write_cmd_signals;
+		write_port: in write_port_signals;
 		write_status: out write_status_signals;
 		read_cmd: in read_cmd_signals;
 		read_status: out read_status_signals;
@@ -177,25 +177,25 @@ begin
 			c3_p0_rd_overflow => read_status.overflow,
 			c3_p0_rd_error => read_status.error,
 
-			c3_p1_cmd_clk => write_cmd.clk,
-			c3_p1_cmd_en => write_cmd.enable,
+			c3_p1_cmd_clk => write_port.clk,
+			c3_p1_cmd_en => write_port.write_cmd.enable,
 			c3_p1_cmd_instr => "000", -- write
 			c3_p1_cmd_bl => "000000", -- 1 word
-			c3_p1_cmd_byte_addr => write_cmd.address,
+			c3_p1_cmd_byte_addr => write_port.write_cmd.address,
 			c3_p1_cmd_empty => write_status.cmd_empty,
 			c3_p1_cmd_full => write_status.cmd_full,
 
-			c3_p1_wr_clk => write_cmd.clk,
-			c3_p1_wr_en => write_cmd.data_enable,
-			c3_p1_wr_mask => write_cmd.write_mask,
-			c3_p1_wr_data => write_cmd.data,
+			c3_p1_wr_clk => write_port.clk,
+			c3_p1_wr_en => write_port.write_cmd.data_enable,
+			c3_p1_wr_mask => write_port.write_cmd.write_mask,
+			c3_p1_wr_data => write_port.write_cmd.data,
 			c3_p1_wr_full => write_status.data_full,
 			c3_p1_wr_empty => write_status.data_empty,
 			c3_p1_wr_count => open,
 			c3_p1_wr_underrun => open,
 			c3_p1_wr_error => write_status.error,
 
-			c3_p1_rd_clk => write_cmd.clk,
+			c3_p1_rd_clk => write_port.clk,
 			c3_p1_rd_en => '0',
 			c3_p1_rd_data => open,
 			c3_p1_rd_full => open,
