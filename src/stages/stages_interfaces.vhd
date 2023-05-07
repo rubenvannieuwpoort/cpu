@@ -8,11 +8,11 @@ package stages_interfaces is
 
 	type fetch_output_type is record
 		valid: std_logic;
-		opcode : std_logic_vector(15 downto 0);
+		opcode: std_logic_vector(15 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record fetch_output_type;  
 
-	constant DEFAULT_FETCH_OUTPUT : fetch_output_type := (
+	constant DEFAULT_FETCH_OUTPUT: fetch_output_type := (
 		valid => '0',
 		opcode => (others => '0'),
 		tag => (others => '0')
@@ -45,49 +45,49 @@ package stages_interfaces is
 		tag: std_logic_vector(4 downto 0);
 	end record decode_output_type;
 
-	constant MEMORY_OPERATION_NONE     : std_logic_vector(1 downto 0) := "00";
-	constant MEMORY_OPERATION_LOAD     : std_logic_vector(1 downto 0) := "01";
-	constant MEMORY_OPERATION_STORE    : std_logic_vector(1 downto 0) := "10";
+	constant MEMORY_OPERATION_NONE : std_logic_vector(1 downto 0) := "00";
+	constant MEMORY_OPERATION_LOAD : std_logic_vector(1 downto 0) := "01";
+	constant MEMORY_OPERATION_STORE: std_logic_vector(1 downto 0) := "10";
 
 	constant MEMORY_SIZE_BYTE     : std_logic_vector(1 downto 0) := "00";
 	constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
 	constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "10";
 
-	constant EXECUTE_OPERATION_SECOND : std_logic_vector(3 downto 0) := "0000";
-	constant EXECUTE_OPERATION_ADD    : std_logic_vector(3 downto 0) := "0001";
-	constant EXECUTE_OPERATION_SUB    : std_logic_vector(3 downto 0) := "0010";
-	constant EXECUTE_OPERATION_MUL    : std_logic_vector(3 downto 0) := "0011";
-	constant EXECUTE_OPERATION_AND    : std_logic_vector(3 downto 0) := "0100";
-	constant EXECUTE_OPERATION_OR     : std_logic_vector(3 downto 0) := "0101";
-	constant EXECUTE_OPERATION_XOR    : std_logic_vector(3 downto 0) := "0110";
-	constant EXECUTE_OPERATION_NOT    : std_logic_vector(3 downto 0) := "0111";
-	constant EXECUTE_OPERATION_SHL    : std_logic_vector(3 downto 0) := "1000";
-	constant EXECUTE_OPERATION_SHR    : std_logic_vector(3 downto 0) := "1001";
-	constant EXECUTE_OPERATION_SAR    : std_logic_vector(3 downto 0) := "1010";
-	constant EXECUTE_OPERATION_BYTE0  : std_logic_vector(3 downto 0) := "1100";
-	constant EXECUTE_OPERATION_BYTE1  : std_logic_vector(3 downto 0) := "1101";
-	constant EXECUTE_OPERATION_BYTE2  : std_logic_vector(3 downto 0) := "1110";
-	constant EXECUTE_OPERATION_BYTE3  : std_logic_vector(3 downto 0) := "1111";
+	constant EXECUTE_OPERATION_SECOND: std_logic_vector(3 downto 0) := "0000";
+	constant EXECUTE_OPERATION_ADD   : std_logic_vector(3 downto 0) := "0001";
+	constant EXECUTE_OPERATION_SUB   : std_logic_vector(3 downto 0) := "0010";
+	constant EXECUTE_OPERATION_MUL   : std_logic_vector(3 downto 0) := "0011";
+	constant EXECUTE_OPERATION_AND   : std_logic_vector(3 downto 0) := "0100";
+	constant EXECUTE_OPERATION_OR    : std_logic_vector(3 downto 0) := "0101";
+	constant EXECUTE_OPERATION_XOR   : std_logic_vector(3 downto 0) := "0110";
+	constant EXECUTE_OPERATION_NOT   : std_logic_vector(3 downto 0) := "0111";
+	constant EXECUTE_OPERATION_SHL   : std_logic_vector(3 downto 0) := "1000";
+	constant EXECUTE_OPERATION_SHR   : std_logic_vector(3 downto 0) := "1001";
+	constant EXECUTE_OPERATION_SAR   : std_logic_vector(3 downto 0) := "1010";
+	constant EXECUTE_OPERATION_BYTE0 : std_logic_vector(3 downto 0) := "1100";
+	constant EXECUTE_OPERATION_BYTE1 : std_logic_vector(3 downto 0) := "1101";
+	constant EXECUTE_OPERATION_BYTE2 : std_logic_vector(3 downto 0) := "1110";
+	constant EXECUTE_OPERATION_BYTE3 : std_logic_vector(3 downto 0) := "1111";
 
-	constant COND_ALWAYS : std_logic_vector(4 downto 0) := "00000";
-	constant COND_O      : std_logic_vector(4 downto 0) := "10000";
-	constant COND_NO     : std_logic_vector(4 downto 0) := "10001";
-	constant COND_N      : std_logic_vector(4 downto 0) := "10010";
-	constant COND_NN     : std_logic_vector(4 downto 0) := "10011";
-	constant COND_E      : std_logic_vector(4 downto 0) := "10100";
-	constant COND_NE     : std_logic_vector(4 downto 0) := "10101";
-	constant COND_B      : std_logic_vector(4 downto 0) := "10110";
-	constant COND_NB     : std_logic_vector(4 downto 0) := "10111";
-	constant COND_BE     : std_logic_vector(4 downto 0) := "11000";
-	constant COND_A      : std_logic_vector(4 downto 0) := "11001";
-	constant COND_L      : std_logic_vector(4 downto 0) := "11010";
-	constant COND_GE     : std_logic_vector(4 downto 0) := "11011";
-	constant COND_LE     : std_logic_vector(4 downto 0) := "11100";
-	constant COND_G      : std_logic_vector(4 downto 0) := "11101";
-	constant COND_P      : std_logic_vector(4 downto 0) := "11110";
-	constant COND_NP     : std_logic_vector(4 downto 0) := "11111";
+	constant COND_ALWAYS: std_logic_vector(4 downto 0) := "00000";
+	constant COND_O     : std_logic_vector(4 downto 0) := "10000";
+	constant COND_NO    : std_logic_vector(4 downto 0) := "10001";
+	constant COND_N     : std_logic_vector(4 downto 0) := "10010";
+	constant COND_NN    : std_logic_vector(4 downto 0) := "10011";
+	constant COND_E     : std_logic_vector(4 downto 0) := "10100";
+	constant COND_NE    : std_logic_vector(4 downto 0) := "10101";
+	constant COND_B     : std_logic_vector(4 downto 0) := "10110";
+	constant COND_NB    : std_logic_vector(4 downto 0) := "10111";
+	constant COND_BE    : std_logic_vector(4 downto 0) := "11000";
+	constant COND_A     : std_logic_vector(4 downto 0) := "11001";
+	constant COND_L     : std_logic_vector(4 downto 0) := "11010";
+	constant COND_GE    : std_logic_vector(4 downto 0) := "11011";
+	constant COND_LE    : std_logic_vector(4 downto 0) := "11100";
+	constant COND_G     : std_logic_vector(4 downto 0) := "11101";
+	constant COND_P     : std_logic_vector(4 downto 0) := "11110";
+	constant COND_NP    : std_logic_vector(4 downto 0) := "11111";
 
-	constant DEFAULT_DECODE_OUTPUT : decode_output_type := (
+	constant DEFAULT_DECODE_OUTPUT: decode_output_type := (
 		valid => '0',
 		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
@@ -128,7 +128,7 @@ package stages_interfaces is
 		tag: std_logic_vector(4 downto 0);
 	end record register_read_output_type;
 
-	constant DEFAULT_REGISTER_READ_OUTPUT : register_read_output_type := (
+	constant DEFAULT_REGISTER_READ_OUTPUT: register_read_output_type := (
 		valid => '0',
 		flag_set_indicator => '0',
 		execute_operation => EXECUTE_OPERATION_SECOND,
@@ -163,7 +163,7 @@ package stages_interfaces is
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
 
-	constant DEFAULT_EXECUTE_OUTPUT : execute_output_type := (
+	constant DEFAULT_EXECUTE_OUTPUT: execute_output_type := (
 		valid => '0',
 		memory_operation => MEMORY_OPERATION_NONE,
 		memory_size => (others => '0'),
@@ -190,7 +190,7 @@ package stages_interfaces is
 		address_bits: std_logic_vector(1 downto 0);  -- this is only for writeback stage to convert from MSB to LSB
 	end record memory_output_type;
 
-	constant DEFAULT_MEMORY_OUTPUT : memory_output_type := (
+	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (
 		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 		writeback_value => (others => '0'),
