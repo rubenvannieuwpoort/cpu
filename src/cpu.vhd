@@ -9,6 +9,7 @@ use work.stages_interfaces.all;
 entity CPU is
 	port(
 		clk: in std_logic;
+		memory_ready: in std_logic;
 		write_status: in write_status_signals;
 		write_port: out write_port_signals
 	);
@@ -82,6 +83,7 @@ architecture Behavioral of CPU is
 	component memory is
 		port(
 			clk: in std_logic;
+			memory_ready: in std_logic;
 			hold_in: in std_logic;
 			input: in execute_output_type;
 			hold_out: out std_logic;
@@ -96,5 +98,5 @@ begin
 	stage_decode: decode port map(clk => clk, hold_in => register_read_hold_out, input => fetch_output, hold_out => decode_hold_out, output => decode_output);
 	stage_registers: registers port map(clk => clk, write_input => memory_output, read_hold_in => execute_hold_out, read_input => decode_output, read_hold_out => register_read_hold_out, read_output => register_read_output);
 	stage_execute: execute port map(clk => clk, hold_in => memory_hold_out, input => register_read_output, hold_out => execute_hold_out, output => execute_output, branch_continue_indicator => execute_branch_continue_indicator_out, branch_address_indicator => execute_branch_address_indicator_out, branch_address => execute_branch_address_out);
-	stage_memory: memory port map(clk => clk, hold_in => '0', input => execute_output, hold_out => memory_hold_out, write_status_in => write_status, write_port_out => write_port, output => memory_output);
+	stage_memory: memory port map(clk => clk, memory_ready => memory_ready, hold_in => '0', input => execute_output, hold_out => memory_hold_out, write_status_in => write_status, write_port_out => write_port, output => memory_output);
 end Behavioral;

@@ -2,14 +2,19 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.types.all;
+
+
 entity cpu_test is
 end cpu_test;
-
 
 architecture behavior of cpu_test is
 	component CPU
 		port(
-			clk : in std_logic
+			clk: in std_logic;
+			memory_ready: in std_logic;
+			write_status: in write_status_signals;
+			write_port: out write_port_signals
 		);
 	end component;
 
@@ -17,9 +22,10 @@ architecture behavior of cpu_test is
 	signal clk: std_logic := '0';
 	constant clk_period: time := 10 ns;
 
+	signal write_status: write_status_signals := DEFAULT_WRITE_STATUS;
 begin
 
-	uut: CPU port map(clk => clk);
+	uut: CPU port map(clk => clk, memory_ready => '1', write_status => write_status, write_port => open);
 
 	clk_process :process
 	begin

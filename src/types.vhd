@@ -87,4 +87,13 @@ package types is
 		data_count: std_logic_vector(6 downto 0);
 		error: std_logic;
 	end record;
+
+	constant DEFAULT_WRITE_STATUS: write_status_signals := (
+		cmd_full => '0',
+		cmd_empty => '1',
+		data_full => '0',
+		data_empty => '1',
+		data_count => (others => '0'),
+		error => '0'
+	);
 end package;

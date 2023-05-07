@@ -59,6 +59,7 @@ architecture Behavioral of top_level is
 	component CPU is
 		port(
 			clk: in std_logic;
+			memory_ready: in std_logic;
 			write_status: in write_status_signals;
 			write_port: out write_port_signals
 		);
@@ -116,7 +117,7 @@ begin
 			clk_pixel => clk_pixel
 		);
 
-	cpu_inst: CPU port map(clk => clk_main, write_status => write_status, write_port => write_port);
+	cpu_inst: CPU port map(clk => clk_main, memory_ready => memory_ready, write_status => write_status, write_port => write_port);
 
 	mem_if: memory_interface
 		port map(

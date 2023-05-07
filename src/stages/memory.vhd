@@ -9,6 +9,7 @@ use work.stages_interfaces.all;
 entity memory is
 	port(
 		clk: in std_logic;
+		memory_ready: in std_logic;
 		hold_in: in std_logic;
 		input: in execute_output_type;
 
@@ -24,13 +25,13 @@ architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 	signal write_cmd_out: write_cmd_signals := DEFAULT_WRITE_CMD;
 
-	function should_stall(input: execute_output_type; write_status: write_status_signals) return boolean is
+	function should_stall(input: execute_output_type; write_status: write_status_signals; memory_ready: std_logic) return boolean is
 		variable is_write_cmd: boolean;
 		variable write_port_ready: boolean;
 	begin
 		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE;
-		write_port_ready := write_status.data_empty = '1' and write_status.cmd_empty = '1';
-		return write_port_ready or not(is_write_cmd);
+		write_port_ready := memory_ready = '1' and write_status.data_empty = '1' and write_status.cmd_empty = '1';
+		return is_write_cmd and not(write_port_ready);
 	end function;
 
 	function f(input: execute_output_type) return memory_output_type is
@@ -46,6 +47,7 @@ architecture Behavioral of memory is
 		else
 			output.convert_memory_order_indicator := '0';
 		end if;
+		output.memory_size := input.memory_size;
 		output.address_bits := input.result(1 downto 0);
 		return output;
 	end function;
@@ -81,7 +83,7 @@ begin
 			end if;
 
 			if hold_in = '0' then
-				v_should_stall := should_stall(v_input, write_status_in);
+				v_should_stall := should_stall(v_input, write_status_in, memory_ready);
 				if v_should_stall then
 					output <= DEFAULT_MEMORY_OUTPUT;
 				end if;
