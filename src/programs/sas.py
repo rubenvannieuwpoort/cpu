@@ -3,6 +3,134 @@
 from abc import ABC
 
 
+# nop
+# 0000000000000000
+# No OPeration
+
+# branch A
+# 00000010aaaa0000
+# branch to the value in register A
+
+# increment A
+# 00000010aaaa0010
+# increment the value in register A
+
+# decrement A
+# 00000010aaaa0011
+# decrement the value in register A
+
+# branch_<condition> A
+# 00000001aaaacccc
+# branch to the value in register A if condition C is true
+
+# setbyte_<n> A
+# 01nniiiiaaaaiiii
+# set byte N of register A to I (0 being the least significant byte)
+
+# copy A, B
+# 0001nnnnaaaabbbb
+# copy the value of register B to register A
+
+# add A, B
+# 0001nnnnaaaabbbb
+# add the value of register B to the value in register A
+
+# subtract A, B
+# 0001nnnnaaaabbbb
+# subtract the value of register B from the value in register A
+
+# multiply A, B
+# 0001nnnnaaaabbbb
+# multiply the value of register A by the value in register B
+
+# and A, B
+# 0001nnnnaaaabbbb
+# bit-wise AND the value in register A by the value in register B
+
+# or A, B
+# 0001nnnnaaaabbbb
+# bit-wise OR the value in register A by the value in register B
+
+# xor A, B
+# 0001nnnnaaaabbbb
+# bit-wise XOR the value in register A by the value in register B
+
+# not A, B
+# 0001nnnnaaaabbbb
+# set the value of register A to the bitwise complement of the value in register B
+
+# shl A, B
+# 0001nnnnaaaabbbb
+# shift the value in register A to the left by the number of bits indicated by the value in register B
+# the bits shifted in from the right are zeroes
+
+# shr A, B
+# 0001nnnnaaaabbbb
+# shift the value in register A to the right by the number of bits indicated by the value in register B
+# the bits shifted in from the left are zeroes
+
+# sar A, B
+# 0001nnnnaaaabbbb
+# shift the value in register A to the left by the number of bits indicated by the value in register B
+# the bits shifted in from the left are all equal to the most significant bit of the value in register A
+
+# cmp A, B
+# 0001nnnnaaaabbbb
+# subtract the value in register B from the value in register A; don't store the result but set the flags accordingly
+
+# test A, B
+# 0001nnnnaaaabbbb
+# perform a bitwise AND on the value of register A and the value of register B; don't store the result but set the flags accordingly
+
+# loadbyte A, B
+# loadhalfword A, B
+# loadword A, B
+# 000010ssaaaabbbb
+# load byte/halfword/word TODO
+
+# storebyte A, B
+# storehalfword A, B
+# storeword A, B
+# 000011ssaaaabbbb
+# store byte/halfword/word TODO
+
+# setsigned A, I
+# 0010iiiiaaaaiiii
+# set the value in register A to I, where I is a value in the range [-128, 127]
+
+# setunsigned A, I
+# 0011iiiiaaaaiiii
+# set the value in register A to I, where I is a value in the range [0, 255]
+
+# shl A, I
+# 1000000iaaaaiiii
+# shift the value in register A left by I bits
+# the bits shifted in from the right are zeroes
+
+# shr A, I
+# 1000010iaaaaiiii
+# shift the value in register A right by I bits
+# the bits shifted in from the left are zeroes
+
+# shl A, I
+# 1000100iaaaaiiii
+# shift the value in register A right by I bits
+# the bits shifted in from the left are all equal to the most significant bit of the value in register A
+
+# prefetch
+# TODO
+
+# flush
+# TODO
+
+# set_<condition> A, B
+# 1001ccccaaaabbbb
+# set the value of register A to the value of register B, if the condition is true
+
+# set_<condition> A, I
+# 1010ccccaaaaiiii
+# set the value of register A to I, if the condition is true
+
 class Operand(ABC):
     def bit_letter(self):
         return self._bit_letter
@@ -277,8 +405,8 @@ assembler = Assembler([
     Instruction([Mnemonic(['setsigned']), RegisterOperand('a'), SImm8('i')], '0010iiiiaaaaiiii'),
     Instruction([Mnemonic(['setunsigned']), RegisterOperand('a'), UImm8('i')], '0011iiiiaaaaiiii'),
     Instruction([Mnemonics([['shl'], ['shr'], ['sar']], 'n'), RegisterOperand('a'), UImm5('i')], '1000nn0iaaaaiiii'),
-    Instruction([Mnemonic(['prefetch']), RegisterOperand('a')], '10001100aaaa0000'),
-    Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10001100aaaa0001'),
+    # Instruction([Mnemonic(['prefetch']), RegisterOperand('a')], '10001100aaaa0000'),
+    # Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10001100aaaa0001'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), RegisterOperand('b')], '1001ccccaaaabbbb'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), SImm4('i')], '1010ccccaaaaiiii'),
 ])
