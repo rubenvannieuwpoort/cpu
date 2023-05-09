@@ -397,6 +397,7 @@ instructions = [
     Instruction([Mnemonic(['branch']), RegisterOperand('a')], '00000010aaaa0000'),
     Instruction([Mnemonic(['increment']), RegisterOperand('a')], '00000010aaaa0010'),
     Instruction([Mnemonic(['decrement']), RegisterOperand('a')], '00000010aaaa0011'),
+    Instruction([Mnemonic(['savepc']), RegisterOperand('a')], '00000010aaaa0100'),
     Instruction([Mnemonics(generate_conditions('branch_'), 'c'), RegisterOperand('a')], '00000001aaaacccc'),
     Instruction([Mnemonics([['setbyte0'], ['setbyte1'], ['setbyte2'], ['setbyte3']], 'n'), RegisterOperand('a'), UImm8('i')], '01nniiiiaaaaiiii'),
     Instruction([Mnemonics([['copy'], ['add'], ['subtract'], ['multiply'], ['and'], ['or'], ['xor'], ['not'], ['shl'], ['shr'], ['sar'], ['cmp'], ['test']], 'n'), RegisterOperand('a'), RegisterOperand('b')], '0001nnnnaaaabbbb'),
