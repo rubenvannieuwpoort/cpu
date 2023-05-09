@@ -29,7 +29,7 @@ architecture Behavioral of memory is
 		variable is_write_cmd: boolean;
 		variable write_port_ready: boolean;
 	begin
-		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE;
+		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE;
 		write_port_ready := memory_ready = '1' and write_status.data_empty = '1' and write_status.cmd_empty = '1';
 		return is_write_cmd and not(write_port_ready);
 	end function;
@@ -54,8 +54,9 @@ architecture Behavioral of memory is
 
 	function g(input: execute_output_type) return write_cmd_signals is
 		variable write_cmd: write_cmd_signals;
+		variable is_memory_operation: boolean;
 	begin
-		if input.memory_operation = MEMORY_OPERATION_STORE and input.memory_size = MEMORY_SIZE_BYTE then
+		if input.memory_operation = MEMORY_OPERATION_STORE then
 			write_cmd.enable := '1';
 			write_cmd.data_enable := '1';
 			write_cmd.address := input.result(29 downto 2) & "00";
