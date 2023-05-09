@@ -392,7 +392,7 @@ def printVHDL(input):
     print('"' + '", "'.join(map(lambda x: bin(x)[2:].rjust(16, '0'), input)) + '"')
 
 
-assembler = Assembler([
+instructions = [
     Instruction([Mnemonic(['nop'])], '0000000000000000'),
     Instruction([Mnemonic(['branch']), RegisterOperand('a')], '00000010aaaa0000'),
     Instruction([Mnemonic(['increment']), RegisterOperand('a')], '00000010aaaa0010'),
@@ -409,7 +409,18 @@ assembler = Assembler([
     # Instruction([Mnemonic(['flush']), RegisterOperand('a')], '10001100aaaa0001'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), RegisterOperand('b')], '1001ccccaaaabbbb'),
     Instruction([Mnemonics(generate_conditions('set_'), 'c'), RegisterOperand('a'), SImm4('i')], '1010ccccaaaaiiii'),
-])
+]
+
+conflicts = []
+for i in range(0, len(instructions)):
+    for j in range(0, i):
+        if not any((instructions[i]._instruction_encoding[k] == '0' and instructions[j]._instruction_encoding[k] == '1') or
+                   (instructions[i]._instruction_encoding[k] == '1' and instructions[j]._instruction_encoding[k] == '0') for k in range(0, 16)):
+            conflicts.append((instructions[i], instructions[j]))
+
+assert len(conflicts) == 0
+
+assembler = Assembler(instructions)
 
 if __name__ == '__main__':
     import sys
