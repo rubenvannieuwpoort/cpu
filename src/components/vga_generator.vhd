@@ -84,23 +84,23 @@ begin
 			if hCounter < hVisible and vCounter < vVisible then 
 				case hcounter(1 downto 0) is
 					when "00" =>
-						vga_out.red   <= read_status.data( 7 downto 5);
-						vga_out.green <= read_status.data( 4 downto 2);
-						vga_out.blue  <= read_status.data( 1 downto 0);
-					when "01" =>
-						vga_out.red   <= read_status.data(15 downto 13);
-						vga_out.green <= read_status.data(12 downto 10);
-						vga_out.blue  <= read_status.data( 9 downto  8);
-					when "10" =>
-						vga_out.red   <= read_status.data(23 downto 21);
-						vga_out.green <= read_status.data(20 downto 18);
-						vga_out.blue  <= read_status.data(17 downto 16);
-						-- read_data_enable will be asserted next cycle so read_data will change the one following that
-						read_cmd.data_enable <= memory_ready and not read_status.data_empty;
-					when others =>
 						vga_out.red   <= read_status.data(31 downto 29);
 						vga_out.green <= read_status.data(28 downto 26);
 						vga_out.blue  <= read_status.data(25 downto 24);
+					when "01" =>
+						vga_out.red   <= read_status.data(23 downto 21);
+						vga_out.green <= read_status.data(20 downto 18);
+						vga_out.blue  <= read_status.data(17 downto 16);
+					when "10" =>
+						vga_out.red   <= read_status.data(15 downto 13);
+						vga_out.green <= read_status.data(12 downto 10);
+						vga_out.blue  <= read_status.data( 9 downto  8);
+						-- read_data_enable will be asserted next cycle so read_data will change the one following that
+						read_cmd.data_enable <= memory_ready and not read_status.data_empty;
+					when others =>
+						vga_out.red   <= read_status.data( 7 downto 5);
+						vga_out.green <= read_status.data( 4 downto 2);
+						vga_out.blue  <= read_status.data( 1 downto 0);
 				end case; 
 			else
 				vga_out.red   <= (others => '0');
