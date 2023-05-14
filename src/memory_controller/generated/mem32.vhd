@@ -376,26 +376,26 @@ component memc3_wrapper is
 
 
 
-   constant C3_CLKOUT0_DIVIDE       : integer := 6; 
-   constant C3_CLKOUT1_DIVIDE       : integer := 6; 
-   constant C3_CLKOUT2_DIVIDE       : integer := 18; 
-   constant C3_CLKOUT3_DIVIDE       : integer := 8; 
-   constant C3_CLKFBOUT_MULT        : integer := 12; 
-   constant C3_DIVCLK_DIVIDE        : integer := 2; 
-   constant C3_INCLK_PERIOD         : integer := ((C3_MEMCLK_PERIOD * C3_CLKFBOUT_MULT) / (C3_DIVCLK_DIVIDE * C3_CLKOUT0_DIVIDE * 2)); 
+   --constant C3_CLKOUT0_DIVIDE       : integer := 6; 
+   --constant C3_CLKOUT1_DIVIDE       : integer := 6; 
+   --constant C3_CLKOUT2_DIVIDE       : integer := 18; 
+   --constant C3_CLKOUT3_DIVIDE       : integer := 8; 
+   --constant C3_CLKFBOUT_MULT        : integer := 12; 
+   --constant C3_DIVCLK_DIVIDE        : integer := 2; 
+   --constant C3_INCLK_PERIOD         : integer := ((C3_MEMCLK_PERIOD * C3_CLKFBOUT_MULT) / (C3_DIVCLK_DIVIDE * C3_CLKOUT0_DIVIDE * 2)); 
    constant C3_ARB_NUM_TIME_SLOTS   : integer := 12; 
    constant C3_ARB_TIME_SLOT_0      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_1      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_1      : bit_vector(5 downto 0) := o"01"; 
    constant C3_ARB_TIME_SLOT_2      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_3      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_3      : bit_vector(5 downto 0) := o"01"; 
    constant C3_ARB_TIME_SLOT_4      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_5      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_5      : bit_vector(5 downto 0) := o"01"; 
    constant C3_ARB_TIME_SLOT_6      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_7      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_7      : bit_vector(5 downto 0) := o"01"; 
    constant C3_ARB_TIME_SLOT_8      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_9      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_9      : bit_vector(5 downto 0) := o"01"; 
    constant C3_ARB_TIME_SLOT_10     : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_11     : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_11     : bit_vector(5 downto 0) := o"01"; 
    constant C3_MEM_TRAS             : integer := 40000; 
    constant C3_MEM_TRCD             : integer := 15000; 
    constant C3_MEM_TREFI            : integer := 7800000; 
