@@ -183,38 +183,6 @@ end mem32;
 
 architecture arc of mem32 is
 
- 
-
---component memc3_infrastructure is
---    generic (
---      C_RST_ACT_LOW        : integer;
---      C_INPUT_CLK_TYPE     : string;
---      C_CLKOUT0_DIVIDE     : integer;
---      C_CLKOUT1_DIVIDE     : integer;
---      C_CLKOUT2_DIVIDE     : integer;
---      C_CLKOUT3_DIVIDE     : integer;
---      C_CLKFBOUT_MULT      : integer;
---      C_DIVCLK_DIVIDE      : integer;
---      C_INCLK_PERIOD       : integer
---
---      );
---    port (
---      sys_clk_p                              : in    std_logic;
---      sys_clk_n                              : in    std_logic;
---      sys_clk                                : in    std_logic;
---      sys_rst_i                              : in    std_logic;
---      clk0                                   : out   std_logic;
---      rst0                                   : out   std_logic;
---      async_rst                              : out   std_logic;
---      sysclk_2x                              : out   std_logic;
---      sysclk_2x_180                          : out   std_logic;
---      pll_ce_0                               : out   std_logic;
---      pll_ce_90                              : out   std_logic;
---      pll_lock                               : out   std_logic;
---      mcb_drp_clk                            : out   std_logic
---      );
---  end component;
-
 
 component memc3_wrapper is
     generic (
@@ -376,26 +344,19 @@ component memc3_wrapper is
 
 
 
-   --constant C3_CLKOUT0_DIVIDE       : integer := 6; 
-   --constant C3_CLKOUT1_DIVIDE       : integer := 6; 
-   --constant C3_CLKOUT2_DIVIDE       : integer := 18; 
-   --constant C3_CLKOUT3_DIVIDE       : integer := 8; 
-   --constant C3_CLKFBOUT_MULT        : integer := 12; 
-   --constant C3_DIVCLK_DIVIDE        : integer := 2; 
-   --constant C3_INCLK_PERIOD         : integer := ((C3_MEMCLK_PERIOD * C3_CLKFBOUT_MULT) / (C3_DIVCLK_DIVIDE * C3_CLKOUT0_DIVIDE * 2)); 
    constant C3_ARB_NUM_TIME_SLOTS   : integer := 12; 
-   constant C3_ARB_TIME_SLOT_0      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_1      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_2      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_3      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_4      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_5      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_6      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_7      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_8      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_9      : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_10     : bit_vector(5 downto 0) := o"01"; 
-   constant C3_ARB_TIME_SLOT_11     : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_0      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_1      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_2      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_3      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_4      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_5      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_6      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_7      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_8      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_9      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_10     : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_11     : bit_vector(5 downto 0) := o"10"; 
    constant C3_MEM_TRAS             : integer := 40000; 
    constant C3_MEM_TRCD             : integer := 15000; 
    constant C3_MEM_TREFI            : integer := 7800000; 
@@ -450,14 +411,6 @@ component memc3_wrapper is
    constant C3_SMALL_DEVICE         : string := "TRUE"; -- The parameter is set to TRUE for all packages of xc6slx9 device
                                                          -- as most of them cannot fit the complete example design when the
                                                          -- Chip scope modules are enabled
-
-  --signal  async_rst                             : std_logic;
-  --signal  sysclk_2x                             : std_logic;
-  --signal  sysclk_2x_180                         : std_logic;
-  --signal  pll_ce_0                              : std_logic;
-  --signal  pll_ce_90                             : std_logic;
-  --signal  pll_lock                              : std_logic;
-  --signal  c3_mcb_drp_clk                           : std_logic;
 
 
   signal  c3_cmp_error                             : std_logic;

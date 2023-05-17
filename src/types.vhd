@@ -85,6 +85,7 @@ package types is
 		data_full: std_logic;
 		data_empty: std_logic;
 		data_count: std_logic_vector(6 downto 0);
+		underrun: std_logic;
 		error: std_logic;
 	end record;
 
@@ -94,6 +95,7 @@ package types is
 		data_full => '0',
 		data_empty => '1',
 		data_count => (others => '0'),
+		underrun => '0',
 		error => '0'
 	);
 end package;

@@ -191,8 +191,8 @@ begin
 			c3_p1_wr_data => write_port.write_cmd.data,
 			c3_p1_wr_full => write_status.data_full,
 			c3_p1_wr_empty => write_status.data_empty,
-			c3_p1_wr_count => open,
-			c3_p1_wr_underrun => open,
+			c3_p1_wr_count => write_status.data_count,
+			c3_p1_wr_underrun => write_status.underrun,
 			c3_p1_wr_error => write_status.error,
 
 			c3_p1_rd_clk => write_port.clk,
