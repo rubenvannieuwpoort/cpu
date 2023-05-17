@@ -26,6 +26,18 @@ net "led(6)" loc = t17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
 net "led(7)" loc = t18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
 
 
+# seven segment display
+net "seven_segment_enable(0)" loc = b2 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment_enable(1)" loc = a2 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment_enable(2)" loc = b3 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(0)" loc = a5 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(1)" loc = c6 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(2)" loc = d6 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(3)" loc = c5 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(4)" loc = c4 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(5)" loc = a4 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(6)" loc = b4 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "seven_segment(7)" loc = a3 | iostandard = lvcmos33 | drive = 8 | slew = fast;
 
 # RAM
 # ===

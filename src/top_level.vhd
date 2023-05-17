@@ -8,7 +8,7 @@ use work.types.all;
 entity top_level is
 	port(
 		clk_sys: in std_logic;
-		-- vga
+		-- VGA
 		vga_hsync: out std_logic;
 		vga_vsync: out std_logic;
 		vga_red: out std_logic_vector(2 downto 0);
@@ -16,6 +16,10 @@ entity top_level is
 		vga_blue: out std_logic_vector(2 downto 1);
 		-- LEDs
 		led: out std_logic_vector(7 downto 0);
+		-- seven segment display
+		seven_segment_enable: out std_logic_vector(2 downto 0);
+		seven_segment: out std_logic_vector(7 downto 0);
+		-- RAM
 		ram_dq: inout std_logic_vector(15 downto 0);
 		ram_a: out std_logic_vector(12 downto 0);
 		ram_ba: out std_logic_vector( 1 downto 0);
@@ -109,6 +113,9 @@ architecture Behavioral of top_level is
 	end component;
 
 begin
+	seven_segment_enable <= "000";
+	seven_segment <= "11111111";
+
 	clock_gen: clock_generator
 		port map(
 			clk_in => clk_sys,
