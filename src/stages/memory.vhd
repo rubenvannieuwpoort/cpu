@@ -30,7 +30,7 @@ architecture Behavioral of memory is
 		variable write_port_ready: boolean;
 	begin
 		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE;
-		write_port_ready := memory_ready = '1' and write_status.data_empty = '1' and write_status.cmd_empty = '1';
+		write_port_ready := memory_ready = '1' and unsigned(write_status.data_count) < 16 and write_status.cmd_full = '0';
 		return is_write_cmd and not(write_port_ready);
 	end function;
 
