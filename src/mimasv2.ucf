@@ -14,9 +14,17 @@ NET "vga_blue[1]"            LOC = B11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLE
 NET "vga_green[2]"           LOC = C11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
 NET "vga_green[1]"           LOC = A10 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
 NET "vga_green[0]"           LOC = C10 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
-NET "vga_red[2]"             LOC = C9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
-NET "vga_red[1]"             LOC = B9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
-NET "vga_red[0]"             LOC = A9 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = FAST;
+# LEDs
+
+net "led(0)" loc = p15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(1)" loc = p16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(2)" loc = n15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(3)" loc = n16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(4)" loc = u17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(5)" loc = u18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(6)" loc = t17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "led(7)" loc = t18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+
 
 
 # RAM

@@ -14,7 +14,8 @@ entity top_level is
 		vga_red: out std_logic_vector(2 downto 0);
 		vga_green: out std_logic_vector(2 downto 0);
 		vga_blue: out std_logic_vector(2 downto 1);
-		-- ram
+		-- LEDs
+		led: out std_logic_vector(7 downto 0);
 		ram_dq: inout std_logic_vector(15 downto 0);
 		ram_a: out std_logic_vector(12 downto 0);
 		ram_ba: out std_logic_vector( 1 downto 0);
@@ -150,6 +151,8 @@ begin
 	vga_red <= vga.red;
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
+
+	led <= read_status.overflow & read_status.error & write_status.underrun & write_status.error & "0000";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;
