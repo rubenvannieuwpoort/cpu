@@ -15,20 +15,52 @@ entity vga_generator is
 	);
 end vga_generator;
 
+-- VGA timings for different resolutions
+
+-- HDTV (1280x720@60)
+-- pixel clock: 74.2 MHz
+-- 1280 72 80 216, 720 3 5 22
+
+-- SDTV (720x480@60)
+-- pixel clock: 27.7 MHz
+-- 720 24 40 96, 480 10 3 32
+
+-- VGA (640x480@60)
+-- pixel clock: 27.17
+-- 640 16 96 48, 480 10 2 33
+
 architecture Behavioral of vga_generator is
-	-- Timings for 1280x720@60Hz, 75Mhz pixel clock
-	constant hVisible: natural := 1280;
-	constant hSyncStart: natural := 1352;
-	constant hSyncEnd: natural := 1432;
-	constant hMax: natural := 1647;
+
+	-- change this block to change the resolution
+	-- you also need to change the frequency of the pixel clock
+	--constant width: natural := 640;
+	--constant hFrontPorch: natural := 16;
+	--constant hSync: natural := 96;
+	--constant hBackPorch: natural := 48;
+
+	--constant height: natural := 480;
+	--constant vFrontPorch: natural := 10;
+	--constant vSync: natural := 2;
+	--constant vBackPorch: natural := 33;
+	constant width: natural := 1280;
+	constant hFrontPorch: natural := 72;
+	constant hSync: natural := 80;
+	constant hBackPorch: natural := 216;
+
+	constant height: natural := 720;
+	constant vFrontPorch: natural := 3;
+	constant vSync: natural := 5;
+	constant vBackPorch: natural := 22;
+	-- don't touch stuff after this line
+
+	constant hSyncStart: natural := width + hFrontPorch;
+	constant hSyncEnd: natural := hSyncStart + hSync;
+	constant hMax: natural := hSyncEnd + hBackPorch - 1;
 	constant hSyncActive: std_logic := '1';
-
-	constant vVisible: natural := 720;
-	constant vSyncStart: natural := 723;
-	constant vSyncEnd: natural := 728;
-	constant vMax: natural := 750;
+	constant vSyncStart: natural := height + vFrontPorch;
+	constant vSyncEnd: natural := vSyncStart + vSync;
+	constant vMax: natural := vSyncEnd + vBackPorch - 1;
 	constant vSyncActive: std_logic := '1';
-
 	signal hCounter : unsigned(10 downto 0) := (others => '0');
 	signal vCounter : unsigned(10 downto 0) := (others => '0');
 	signal address  : unsigned(29 downto 0) := (others => '0');
@@ -47,21 +79,21 @@ begin
 			end if;
 
 			read_cmd_enable_local <= '0';  -- indicates a read cmd should be issued
-			if hCounter >= hVisible-64 then
+			if hCounter >= width - 64 then
 				--read_cmd.refresh <= '1';
 			else
 				--read_cmd.refresh <= '0';
 			end if;
 
 			if hCounter(5 downto 0) = "111100" then -- once out of 64 cycles
-				if vCounter < vVisible-1 then
-					if hCounter < hVisible then 
+				if vCounter < height - 1 then
+					if hCounter < width then 
 						-- issue a read every 64th cycle of a visible line (except last)
 						read_cmd_enable_local <= memory_ready and not read_status.cmd_full;
 					end if;
-				elsif vCounter = vVisible-1 then
+				elsif vCounter = height - 1 then
 					-- don't issue the last three reads on the last line
-					if hCounter < (hVisible - 4 * 64) then 
+					if hCounter < (width - 4 * 64) then 
 						read_cmd_enable_local <= memory_ready and not read_status.cmd_full;
 					end if;
 				elsif vCounter = vMax-1 then 
@@ -75,13 +107,13 @@ begin
 			read_cmd.data_enable <= '0';  -- indicates a read should be read from FIFO
 
 			-- flush read port at end of frame
-			if vCounter = vVisible then
+			if vCounter = height then
 				-- read_data_enable <= memory_ready and not read_data_empty;
 				address <= (others => '0');
 			end if;
 
 			-- display pixels and trigger data FIFO reads
-			if hCounter < hVisible and vCounter < vVisible then 
+			if hCounter < width and vCounter < height then 
 				case hcounter(1 downto 0) is
 					when "00" =>
 						vga_out.red   <= read_status.data(31 downto 29);
