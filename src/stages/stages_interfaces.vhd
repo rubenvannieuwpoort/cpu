@@ -9,7 +9,7 @@ package stages_interfaces is
 	type fetch_output_type is record
 		valid: std_logic;
 		address: std_logic_vector(31 downto 0);
-		opcode: std_logic_vector(15 downto 0);
+		opcode: std_logic_vector(31 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record fetch_output_type;  
 
