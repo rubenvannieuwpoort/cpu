@@ -28,13 +28,13 @@ begin
 		variable v_output: decode_output_type;
 		variable v_sign: std_logic_vector(31 downto 0);
 
-		variable v_funct7: std_logic_vector(6 downto 0);
-		variable v_funct3: std_logic_vector(2 downto 0);
+		--variable v_funct7: std_logic_vector(6 downto 0);
+		--variable v_funct3: std_logic_vector(2 downto 0);
 		variable v_imm: std_logic_vector(31 downto 0);
 		variable v_rs1: std_logic_vector(4 downto 0);
 		variable v_rs2: std_logic_vector(4 downto 0);
 		variable v_rsd: std_logic_vector(4 downto 0);
-		variable v_opcode: std_logic_vector(6 downto 0);
+		--variable v_opcode: std_logic_vector(6 downto 0);
 	begin
 		if rising_edge(clk) then
 			-- select input
@@ -103,6 +103,195 @@ begin
 
 
 
+					if v_input.opcode(6 downto 0) = "0110111" then
+						-- LUI
+						v_imm := v_input.opcode(31 downto 12) & "000000000000";
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010111" then
+						-- AUIPC
+						v_imm := v_input.opcode(31 downto 12) & "000000000000";
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "1101111" then
+						-- JAL
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(19 downto 12) & v_input.opcode(20) & v_input.opcode(20) & v_input.opcode(30 downto 25) & v_input.opcode(24 downto 12) & "0"), 32))
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "1100111" and v_input(14 downto 12) = "000" then
+						-- JALR
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "000" then
+						-- BEQ
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "001" then
+						-- BNE
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "100" then
+						-- BLT
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "101" then
+						-- BGE
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "110" then
+						-- BLTU
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "111" then
+						-- BGEU
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "000" then
+						-- LB
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "001" then
+						-- LH
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "010" then
+						-- LW
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "100" then
+						-- LBU
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "101" then
+						-- LHU
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0100011" and v_input.opcode(14 downto 12) = "000" then
+						-- SB
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "0100011" and v_input.opcode(14 downto 12) = "001" then
+						-- SH
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "0100011" and v_input.opcode(14 downto 12) = "010" then
+						-- SW
+						v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32)); -- TODO: extend
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" then
+						-- ADDI
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" then
+						-- SLTI
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" then
+						-- SLTIU
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" then
+						-- XORI
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" then
+						-- ORI
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" then
+						-- ANDI
+						v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SLLI
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SRLI
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
+						-- SRAI
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0000000" then
+						-- ADD
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0100000" then
+						-- SUB
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SLL
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SLT
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SLTU
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" and v_input.opcode(31 downto 25) = "0000000" then
+						-- XOR
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
+						-- SRL
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
+						-- SRA
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" and v_input.opcode(31 downto 25) = "0000000" then
+						-- OR
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" and v_input.opcode(31 downto 25) = "0000000" then
+						-- AND
+						v_rs2 := v_input.opcode(24 downto 20);
+						v_rs1 := v_input.opcode(19 downto 15);
+						v_rd := v_input.opcode(11 downto 7);
+					elsif v_input.opcode(6 downto 0) = "0001111" and v_input.opcode(14 downto 12) = "000" then
+						-- FENCE
+					elsif v_input.opcode(6 downto 0) = "00000000000000000000000001110011" and v_input.opcode(14 downto 12) = "" then
+						-- ECALL
+					elsif v_input.opcode(31 downto 0) = "00000000000100000000000001110011" and v_input.opcode(14 downto 12) = "" then
+						-- EBREAK
+					end if;
 
 
 
