@@ -32,16 +32,16 @@ package stages_interfaces is
 		memory_size: std_logic_vector(1 downto 0);
 
 		read_indicator_1: std_logic;
-		read_register_1: std_logic_vector(3 downto 0);
+		read_register_1: std_logic_vector(4 downto 0);
 
 		read_indicator_2: std_logic;
-		read_register_2: std_logic_vector(3 downto 0);
+		read_register_2: std_logic_vector(4 downto 0);
 
 		immediate: std_logic_vector(31 downto 0);
 		switch_indicator: std_logic;
 
 		writeback_indicator: std_logic;
-		writeback_register: std_logic_vector(3 downto 0);
+		writeback_register: std_logic_vector(4 downto 0);
 		is_branch: std_logic;
 		condition: std_logic_vector(4 downto 0);
 		tag: std_logic_vector(4 downto 0);
@@ -124,7 +124,7 @@ package stages_interfaces is
 		value: std_logic_vector(31 downto 0);
 
 		writeback_indicator: std_logic;
-		writeback_register: std_logic_vector(3 downto 0);
+		writeback_register: std_logic_vector(4 downto 0);
 		is_branch: std_logic;
 		condition: std_logic_vector(4 downto 0);
 		tag: std_logic_vector(4 downto 0);
@@ -160,7 +160,7 @@ package stages_interfaces is
 		value: std_logic_vector(31 downto 0);
 
 		writeback_indicator: std_logic;
-		writeback_register: std_logic_vector(3 downto 0);
+		writeback_register: std_logic_vector(4 downto 0);
 		act: std_logic;
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
@@ -183,7 +183,7 @@ package stages_interfaces is
 
 	type memory_output_type is record
 		writeback_indicator: std_logic;
-		writeback_register: std_logic_vector(3 downto 0);
+		writeback_register: std_logic_vector(4 downto 0);
 		writeback_value: std_logic_vector(31 downto 0);
 		act: std_logic;
 		tag: std_logic_vector(4 downto 0);
