@@ -174,7 +174,7 @@ begin
 				v_writeback_value := write_input.writeback_value;
 			end if;
 
-			if write_input.writeback_indicator = '1' and write_input.act = '1' then
+			if write_input.writeback_indicator = '1' and write_input.act = '1' and write_input.writeback_register /= "0000" then
 				reg(to_integer(unsigned(write_input.writeback_register))) <= v_writeback_value;
 			end if;
 			
