@@ -34,7 +34,7 @@ begin
 		variable v_read_wait: std_logic;
 		variable v_read_output: register_read_output_type;
 		variable v_register_1_value, v_register_2_value: std_logic_vector(31 downto 0);
-		variable v_write_incoming, v_write_outgoing: std_logic;
+		variable v_write_incoming, v_write_outgoing: boolean;
 		variable v_register_1_ready, v_register_2_ready: std_logic;
 		variable v_writeback_value: std_logic_vector(31 downto 0);
 	begin
@@ -142,53 +142,53 @@ begin
 			-- REGISTER WRITE STAGE
 			-- ====================
 
-			if write_input.convert_memory_order_indicator = '1' then
-				if write_input.memory_size = MEMORY_SIZE_WORD then
-					if write_input.address_bits = "00" then
-						v_writeback_value := write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8) &  write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
-					else
-						-- error
-					end if;
-				elsif write_input.memory_size = MEMORY_SIZE_HALFWORD then
-					if write_input.address_bits = "00" then
-						v_writeback_value := "0000000000000000" & write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8);
-					elsif write_input.address_bits = "10" then
-						v_writeback_value := "0000000000000000" & write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
-					else
-						-- error
-					end if;
-				elsif write_input.memory_size = MEMORY_SIZE_BYTE then
-					if write_input.address_bits = "00" then
-						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(7 downto 0);
-					elsif write_input.address_bits = "01" then
-						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(15 downto 8);
-					elsif write_input.address_bits = "10" then
-						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(23 downto 16);
-					elsif write_input.address_bits = "11" then
-						v_writeback_value := "000000000000000000000000" & write_input.writeback_value(31 downto 24);
-					end if;
-				else
-					-- error
-				end if;
-			else
+			--if write_input.convert_memory_order_indicator = '1' then
+			--	if write_input.memory_size = MEMORY_SIZE_WORD then
+			--		if write_input.address_bits = "00" then
+			--			v_writeback_value := write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8) &  write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
+			--		else
+			--			-- TODO: error?
+			--		end if;
+			--	elsif write_input.memory_size = MEMORY_SIZE_HALFWORD then
+			--		if write_input.address_bits = "00" then
+			--			v_writeback_value := "0000000000000000" & write_input.writeback_value(7 downto 0) & write_input.writeback_value(15 downto 8);
+			--		elsif write_input.address_bits = "10" then
+			--			v_writeback_value := "0000000000000000" & write_input.writeback_value(23 downto 16) & write_input.writeback_value(31 downto 24);
+			--		else
+			--			-- TODO: error?
+			--		end if;
+			--	elsif write_input.memory_size = MEMORY_SIZE_BYTE then
+			--		if write_input.address_bits = "00" then
+			--			v_writeback_value := "000000000000000000000000" & write_input.writeback_value(7 downto 0);
+			--		elsif write_input.address_bits = "01" then
+			--			v_writeback_value := "000000000000000000000000" & write_input.writeback_value(15 downto 8);
+			--		elsif write_input.address_bits = "10" then
+			--			v_writeback_value := "000000000000000000000000" & write_input.writeback_value(23 downto 16);
+			--		elsif write_input.address_bits = "11" then
+			--			v_writeback_value := "000000000000000000000000" & write_input.writeback_value(31 downto 24);
+			--		end if;
+			--	else
+			--		-- TODO: error?
+			--	end if;
+			--else
 				v_writeback_value := write_input.writeback_value;
-			end if;
+			--end if;
 
-			if write_input.writeback_indicator = '1' and write_input.act = '1' and write_input.writeback_register /= "0000" then
+			if write_input.writeback_register /= "00000" then
 				reg(to_integer(unsigned(write_input.writeback_register))) <= v_writeback_value;
 			end if;
 			
 			-- bookkeeping of in-flight writes
-			v_write_incoming := write_input.writeback_indicator;
-			v_write_outgoing := v_read_input.valid and not(v_read_wait) and v_read_output.writeback_indicator;
-			if v_write_outgoing = '1' and v_write_incoming = '1' and v_read_input.writeback_register = write_input.writeback_register then
+			v_write_incoming := write_input.writeback_register /= "00000"
+			v_write_outgoing := v_read_input.valid = '1' and v_read_wait = '0' and v_read_output.writeback_register /= "00000";
+			if v_write_outgoing and v_write_incoming and v_read_input.writeback_register = write_input.writeback_register then
 				-- both an incoming and an outgoing write to the same register, no change
 			else
-				if v_write_incoming = '1' then
+				if v_write_incoming then
 					writes_in_flight(to_integer(unsigned(write_input.writeback_register))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(write_input.writeback_register)))) - 1);
 				end if;
 
-				if v_write_outgoing = '1' then
+				if v_write_outgoing then
 					writes_in_flight(to_integer(unsigned(v_read_input.writeback_register))) <= std_logic_vector(unsigned(writes_in_flight(to_integer(unsigned(v_read_input.writeback_register)))) + 1);
 				end if;
 			end if;

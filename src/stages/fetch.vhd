@@ -12,16 +12,19 @@ entity fetch is
 		clk: in std_logic;
 		hold_in: in std_logic;
 
-		continue_in: in std_logic;
-		address_indicator_in: in std_logic;
-		address_in: in std_logic_vector(19 downto 0);
+		--continue_in: in std_logic;
+		--pc_indicator_in: in std_logic;
+		--pc_in: in std_logic_vector(19 downto 0);
 
 		output: out fetch_output_type := DEFAULT_FETCH_OUTPUT
 	);
 end fetch;
 
 architecture Behavioral of fetch is
-	signal address: std_logic_vector(19 downto 0) := (others => '0');
+	signal pc: std_logic_vector(31 downto 0) := (others => '0');
+	signal pc_next: std_logic_vector(31 downto 0) := std_logic_vector(unsigned(4));
+	signal wait_indicator: std_logic := '0';
+
 	type opcodes_list is array(0 to 31) of std_logic_vector(31 downto 0);
 	signal opcodes: opcodes_list := (
 		"00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000",
@@ -33,43 +36,43 @@ architecture Behavioral of fetch is
 		"00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000",
 		"00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000", "00000000000000000000000000000000"
 	);
-	signal wait_indicator: std_logic := '0';
+
+	function is_branch(opcode: std_logic_vector(31 downto 0)) return boolean is
+	begin
+		return false;
+	end function;
 begin
 	process(clk)
 		variable v_opcode: std_logic_vector(15 downto 0);
-		variable v_is_branch: std_logic;
 	begin
 		if rising_edge(clk) then
 			if wait_indicator = '0' then
 				if hold_in = '0' then
-					v_opcode := opcodes(to_integer(unsigned(address(4 downto 0))));
+					v_opcode := opcodes(to_integer(unsigned(pc(6 downto 2))));
 
-					address <= std_logic_vector(unsigned(address) + 1);
+					pc <= pc_next;
+					pc_next <= std_logic_vector(unsigned(pc_next) + 4);
+
 					output.valid <= '1';
-					output.address <= "000000000000" & address;
+					output.pc <= pc;
+					output.pc_next <= pc_next;
 					output.opcode <= v_opcode;
-					output.tag <= address(4 downto 0);
-
-					if (v_opcode(15 downto 8) = "00000010" and v_opcode(3 downto 0) = "0000") or v_opcode(15 downto 8) = "00000001" then
-						v_is_branch := '1';
-					else
-						v_is_branch := '0';
-					end if;
+					output.tag <= address(6 downto 2);
 					
-					if v_is_branch = '1' then
+					if is_branch(v_opcode) then
 						wait_indicator <= '1';
 					end if;
 				end if;
 			else
 				if hold_in = '0' then
-				output <= DEFAULT_FETCH_OUTPUT;
+					output <= DEFAULT_FETCH_OUTPUT;
 				end if;
-				if continue_in = '1' then
-					wait_indicator <= '0';
-				elsif address_indicator_in = '1' then
-					wait_indicator <= '0';
-					address <= address_in;
-				end if;
+			--	if continue_in = '1' then
+			--		wait_indicator <= '0';
+			--	elsif pc_in_indicator = '1' then
+			--		wait_indicator <= '0';
+			--		pc <= pc_in;
+			--	end if;
 			end if;
 		end if;
 	end process;
