@@ -33,9 +33,9 @@ begin
 		variable v_read_input: decode_output_type;
 		variable v_read_wait: std_logic;
 		variable v_read_output: register_read_output_type;
-		variable v_register_1_value, v_register_2_value: std_logic_vector(31 downto 0);
+		variable v_register_1_value, v_register_2_3_value: std_logic_vector(31 downto 0);
 		variable v_write_incoming, v_write_outgoing: boolean;
-		variable v_register_1_ready, v_register_2_ready: std_logic;
+		variable v_register_1_ready, v_register_2_3_ready: std_logic;
 		variable v_writeback_value: std_logic_vector(31 downto 0);
 	begin
 
@@ -55,7 +55,7 @@ begin
 			if read_hold_in = '0' then
 				-- compute v_internal_hold and v_data_out based on input
 				if v_read_input.valid = '1' then
-					if v_read_input.read_indicator_1 = '1' then
+					if v_read_input.operand_1_type = TYPE_REGISTER then
 						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "00" then
 							v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
 							v_register_1_ready := '1';
@@ -72,48 +72,50 @@ begin
 						end if;
 					else
 						v_register_1_value := (others => '0');
-							v_register_1_ready := '1';
+						v_register_1_ready := '1';
 					end if;
 					
-					if v_read_input.read_indicator_2 = '1' then
+					if v_read_input.operand_2_type = TYPE_REGISTER or v_read_input.operand_3_type = TYPE_REGISTER then
 						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "00" then
-							v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
-							v_register_2_ready := '1';
+							v_register_2_3_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+							v_register_2_3_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_2 then
 							if write_input.act = '1' then
-								v_register_2_value := write_input.writeback_value;
+								v_register_2_3_value := write_input.writeback_value;
 							else
-								v_register_2_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+								v_register_2_3_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
 							end if;
-							v_register_2_ready := '1';
+							v_register_2_3_ready := '1';
 						else
-							v_register_2_value := (others => '0');
-							v_register_2_ready := '0';
+							v_register_2_3_value := (others => '0');
+							v_register_2_3_ready := '0';
 						end if;
 					else
-						v_register_2_value := (others => '0');
-						v_register_2_ready := '1';
+						v_register_2_3_value := (others => '0');
+						v_register_2_3_ready := '1';
 					end if;
 
-					if (v_register_1_ready and v_register_2_ready) = '1' then
+					if (v_register_1_ready and v_register_2_3_ready) = '1' then
 						v_read_wait := '0';
+
 						v_read_output.valid := '1';
-						v_read_output.flag_set_indicator := v_read_input.flag_set_indicator;
-						v_read_output.execute_operation := v_read_input.execute_operation;
-						v_read_output.memory_operation := v_read_input.memory_operation;
-						v_read_output.memory_size := v_read_input.memory_size;
-						v_read_output.operand_1 := v_register_1_value;
-						if v_read_input.switch_indicator = '0' then
-							v_read_output.operand_2 := v_register_2_value;
-							v_read_output.value := v_read_input.immediate;
+						if v_read_input.operand_1_type = TYPE_REGISTER then
+							v_read_output.operand_1 <= v_register_1_value;
 						else
-							v_read_output.operand_2 := v_read_input.immediate;
-							v_read_output.value := v_register_2_value;
+							v_read_output.operand_1 <= v_read_input.operand_1_immediate;
 						end if;
-						v_read_output.writeback_indicator := v_read_input.writeback_indicator;
-						v_read_output.writeback_register := v_read_input.writeback_register;
-						v_read_output.is_branch := v_read_input.is_branch;
-						v_read_output.condition := v_read_input.condition;
+						if v_read_input.operand_2_type = TYPE_REGISTER then
+							v_read_output.operand_2 <= v_register_2_3_value;
+						else
+							v_read_output.operand_2 <= v_read_input.operand_2_immediate;
+						end if;
+						if v_read_input.operand_3_type = TYPE_REGISTER then
+							v_read_output.operand_3 <= v_register_2_3_value;
+						else
+							v_read_output.operand_3 <= v_read_input.operand_3_immediate;
+						end if;
+						v_read_output.writeback_register <= v_read_input.writeback_register;
+						v_read_output.alu_function <= v_read_input.alu_function;
 						v_read_output.tag := v_read_input.tag;
 					else
 						v_read_wait := '1';
