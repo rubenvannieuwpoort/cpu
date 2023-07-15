@@ -104,7 +104,7 @@ package stages_interfaces is
 
 		writeback_register => (others => '0'),
 
-		alu_function => => (others => '0'),
+		alu_function => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -158,9 +158,9 @@ package stages_interfaces is
 	constant DEFAULT_EXECUTE_OUTPUT: execute_output_type := (
 		valid => '0',
 
-		writeback_value => (others => '0')
+		writeback_value => (others => '0'),
 		writeback_indicator => '0',
-		writeback_register => (others => '0')
+		writeback_register => (others => '0'),
 
 		tag => (others => '0')
 	);
@@ -181,9 +181,9 @@ package stages_interfaces is
 	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (
 		valid => '0',
 
-		writeback_value => (others => '0')
+		writeback_value => (others => '0'),
 		writeback_indicator => '0',
-		writeback_register => (others => '0')
+		writeback_register => (others => '0'),
 
 		tag => (others => '0')
 	);

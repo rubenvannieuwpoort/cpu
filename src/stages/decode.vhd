@@ -96,7 +96,7 @@ begin
 						v_output.operand_2_3_register <= (others => '0');
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= (others => '0');
-						v_output.writeback_register: v_input.opcode(11 downto 7);
+						v_output.writeback_register <= v_input.opcode(11 downto 7);
 						v_output.alu_function <= ALU_FUNCTION_ADD;
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "0010111" then
@@ -579,6 +579,9 @@ begin
 						-- TODO: figure this out (interrupt?)
 						v_output := DEFAULT_DECODE_OUTPUT;
 					end if;
+				else
+					v_output := DEFAULT_DECODE_OUTPUT;
+				end if;
 				
 				if v_wait = '1' then
 					v_output := DEFAULT_DECODE_OUTPUT;

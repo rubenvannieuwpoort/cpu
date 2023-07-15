@@ -179,7 +179,7 @@ begin
 			end if;
 			
 			-- bookkeeping of in-flight writes
-			v_write_incoming := write_input.writeback_register /= "00000"
+			v_write_incoming := write_input.writeback_register /= "00000";
 			v_write_outgoing := v_read_input.valid = '1' and v_read_wait = '0' and v_read_output.writeback_register /= "00000";
 			if v_write_outgoing and v_write_incoming and v_read_input.writeback_register = write_input.writeback_register then
 				-- both an incoming and an outgoing write to the same register, no change
