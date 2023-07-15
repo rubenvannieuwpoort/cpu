@@ -12,7 +12,7 @@ entity execute is
 		input: in register_read_output_type;
 
 		hold_out: out std_logic := '0';
-		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT;
+		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT
 
 		--branch_continue_indicator: out std_logic := '0';
 		--branch_address_indicator: out std_logic := '0';
@@ -53,12 +53,12 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SUB then
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) - unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLT then
 					v_output.valid := '1';
 					if signed(v_input.operand_1) < signed(v_input.operand_2) then
@@ -67,7 +67,7 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLTU then
 					v_output.valid := '1';
 					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
@@ -76,22 +76,22 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_AND then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 and v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_OR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 or v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_XOR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 xor v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_LEFT then
 					v_temp := v_input.operand_1;
 					if unsigned(v_input.operand_2) >= 32 then
@@ -118,7 +118,7 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
 					if unsigned(v_input.operand_2) >= 32 then
@@ -144,7 +144,7 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
 					v_temp2 := (others => v_input.operand_1(31));
@@ -171,61 +171,61 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_JAL then
 					v_output.valid := '1';
 					-- TODO: set output branch address to v_input.operand_1 + v_input.operand_2
 					v_output.writeback_value := v_input.operand_3;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BEQ then
 					v_output.valid := '1';
 					if v_input.operand_1 = v_input.operand_2 then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BNE then
 					v_output.valid := '1';
 					if v_input.operand_1 /= v_input.operand_2 then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BLT then
 					v_output.valid := '1';
 					if signed(v_input.operand_1) < signed(v_input.operand_2) then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BLTU then
 					v_output.valid := '1';
 					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BGE then
 					v_output.valid := '1';
 					if signed(v_input.operand_1) >= signed(v_input.operand_2) then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_BGEU then
 					v_output.valid := '1';
 					if unsigned(v_input.operand_1) >= unsigned(v_input.operand_2) then
 						-- TODO: set output branch address to v_input.operand_3
-					else if;
+					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.tag = v_input.tag;
+					v_output.tag := v_input.tag;
 				else
 					-- TODO: this should never happen. Interrupt?
 				end if;
