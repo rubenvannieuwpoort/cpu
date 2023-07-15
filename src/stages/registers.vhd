@@ -56,15 +56,11 @@ begin
 				-- compute v_internal_hold and v_data_out based on input
 				if v_read_input.valid = '1' then
 					if v_read_input.operand_1_type = TYPE_REGISTER then
-						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "00" then
-							v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
+						if writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "00" then
+							v_register_1_value := reg(to_integer(unsigned(v_read_input.operand_1_register)));
 							v_register_1_ready := '1';
-						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_1))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_1 then
-							if write_input.act = '1' then
-								v_register_1_value := write_input.writeback_value;
-							else
-								v_register_1_value := reg(to_integer(unsigned(v_read_input.read_register_1)));
-							end if;
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_1_register then
+							v_register_1_value := write_input.writeback_value;
 							v_register_1_ready := '1';
 						else
 							v_register_1_value := (others => '0');
@@ -76,15 +72,11 @@ begin
 					end if;
 					
 					if v_read_input.operand_2_type = TYPE_REGISTER or v_read_input.operand_3_type = TYPE_REGISTER then
-						if writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "00" then
-							v_register_2_3_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
+						if writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "00" then
+							v_register_2_3_value := reg(to_integer(unsigned(v_read_input.operand_2_3_register)));
 							v_register_2_3_ready := '1';
-						elsif writes_in_flight(to_integer(unsigned(v_read_input.read_register_2))) = "01" and write_input.writeback_indicator = '1' and write_input.writeback_register = v_read_input.read_register_2 then
-							if write_input.act = '1' then
-								v_register_2_3_value := write_input.writeback_value;
-							else
-								v_register_2_3_value := reg(to_integer(unsigned(v_read_input.read_register_2)));
-							end if;
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_2_3_register then
+							v_register_2_3_value := write_input.writeback_value;
 							v_register_2_3_ready := '1';
 						else
 							v_register_2_3_value := (others => '0');
@@ -100,22 +92,22 @@ begin
 
 						v_read_output.valid := '1';
 						if v_read_input.operand_1_type = TYPE_REGISTER then
-							v_read_output.operand_1 <= v_register_1_value;
+							v_read_output.operand_1 := v_register_1_value;
 						else
-							v_read_output.operand_1 <= v_read_input.operand_1_immediate;
+							v_read_output.operand_1 := v_read_input.operand_1_immediate;
 						end if;
 						if v_read_input.operand_2_type = TYPE_REGISTER then
-							v_read_output.operand_2 <= v_register_2_3_value;
+							v_read_output.operand_2 := v_register_2_3_value;
 						else
-							v_read_output.operand_2 <= v_read_input.operand_2_immediate;
+							v_read_output.operand_2 := v_read_input.operand_2_immediate;
 						end if;
 						if v_read_input.operand_3_type = TYPE_REGISTER then
-							v_read_output.operand_3 <= v_register_2_3_value;
+							v_read_output.operand_3 := v_register_2_3_value;
 						else
-							v_read_output.operand_3 <= v_read_input.operand_3_immediate;
+							v_read_output.operand_3 := v_read_input.operand_3_immediate;
 						end if;
-						v_read_output.writeback_register <= v_read_input.writeback_register;
-						v_read_output.alu_function <= v_read_input.alu_function;
+						v_read_output.writeback_register := v_read_input.writeback_register;
+						v_read_output.alu_function := v_read_input.alu_function;
 						v_read_output.tag := v_read_input.tag;
 					else
 						v_read_wait := '1';

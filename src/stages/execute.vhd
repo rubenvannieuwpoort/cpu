@@ -33,9 +33,9 @@ begin
 		variable v_temp2: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
-			v_branch_continue_indicator := '0';
-			v_branch_address_indicator := '0';
-			v_branch_address := (others => '0');
+			--v_branch_continue_indicator := '0';
+			--v_branch_address_indicator := '0';
+			--v_branch_address := (others => '0');
 		
 			-- select input
 			if buffered_input.valid = '1' then
@@ -44,10 +44,7 @@ begin
 				v_input := input;
 			end if;
 
-			v_act := '0';
 			v_wait := '0';
-			v_carry_flag := '0';
-			v_overflow_flag := '0';
 			if hold_in = '0' then
 				if v_input.alu_function = ALU_FUNCTION_ADD then
 					v_output.valid := '1';
@@ -62,7 +59,7 @@ begin
 				elsif v_input.alu_function = ALU_FUNCTION_SLT then
 					v_output.valid := '1';
 					if signed(v_input.operand_1) < signed(v_input.operand_2) then
-						v_output.writeback_value := std_logic_vector(unsigned(1));
+						v_output.writeback_value := std_logic_vector(to_unsigned(1, 32));
 					else
 						v_output.writeback_value := (others => '0');
 					end if;
@@ -71,7 +68,7 @@ begin
 				elsif v_input.alu_function = ALU_FUNCTION_SLTU then
 					v_output.valid := '1';
 					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
-						v_output.writeback_value := std_logic_vector(unsigned(1));
+						v_output.writeback_value := std_logic_vector(to_unsigned(1, 32));
 					else
 						v_output.writeback_value := (others => '0');
 					end if;
@@ -112,7 +109,6 @@ begin
 						if v_input.operand_2(0) = '1' then
 							v_temp := v_temp(30 downto 0) & "0";
 						end if;
-						v_result := v_temp;
 					end if;
 
 					v_output.valid := '1';

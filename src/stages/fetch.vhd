@@ -22,7 +22,7 @@ end fetch;
 
 architecture Behavioral of fetch is
 	signal pc: std_logic_vector(31 downto 0) := (others => '0');
-	signal pc_next: std_logic_vector(31 downto 0) := std_logic_vector(unsigned(4));
+	signal pc_next: std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4, 32));
 	signal wait_indicator: std_logic := '0';
 
 	type opcodes_list is array(0 to 31) of std_logic_vector(31 downto 0);
@@ -43,7 +43,7 @@ architecture Behavioral of fetch is
 	end function;
 begin
 	process(clk)
-		variable v_opcode: std_logic_vector(15 downto 0);
+		variable v_opcode: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
 			if wait_indicator = '0' then
@@ -57,7 +57,7 @@ begin
 					output.pc <= pc;
 					output.pc_next <= pc_next;
 					output.opcode <= v_opcode;
-					output.tag <= address(6 downto 2);
+					output.tag <= pc(6 downto 2);
 					
 					if is_branch(v_opcode) then
 						wait_indicator <= '1';

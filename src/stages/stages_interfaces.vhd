@@ -98,9 +98,10 @@ package stages_interfaces is
 		operand_1_immediate => (others => '0'),
 
 		operand_2_type => '0',
+		operand_2_immediate => (others => '0'),
 		operand_2_3_register => (others => '0'),
-		operand_2_3_immediate => (others => '0'),
 		operand_3_type => '0',
+		operand_3_immediate => (others => '0'),
 
 		writeback_register => (others => '0'),
 
@@ -149,7 +150,6 @@ package stages_interfaces is
 		valid: std_logic;
 
 		writeback_value: std_logic_vector(31 downto 0);
-		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(4 downto 0);
 
 		tag: std_logic_vector(4 downto 0);
@@ -159,7 +159,6 @@ package stages_interfaces is
 		valid => '0',
 
 		writeback_value => (others => '0'),
-		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 
 		tag => (others => '0')
@@ -169,20 +168,14 @@ package stages_interfaces is
 	-- MEMORY STAGE
 
 	type memory_output_type is record
-		valid: std_logic;
-
 		writeback_value: std_logic_vector(31 downto 0);
-		writeback_indicator: std_logic;
 		writeback_register: std_logic_vector(4 downto 0);
 
 		tag: std_logic_vector(4 downto 0);
 	end record memory_output_type;
 
 	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (
-		valid => '0',
-
 		writeback_value => (others => '0'),
-		writeback_indicator => '0',
 		writeback_register => (others => '0'),
 
 		tag => (others => '0')
