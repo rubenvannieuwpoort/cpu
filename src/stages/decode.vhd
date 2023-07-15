@@ -115,6 +115,7 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1101111" then
 						-- JAL (done)
+						-- puts pc in op1, offset in op2, and pc_next in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_IMMEDIATE;
 						v_output.operand_1_register <= (others => '0');
@@ -129,6 +130,7 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100111" and v_input(14 downto 12) = "000" then
 						-- JALR (done)
+						-- puts rs1 in op1, offset in op2, and pc_next in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
@@ -143,13 +145,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "000" then
 						-- BEQ (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
@@ -157,13 +160,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "001" then
 						-- BNE (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
@@ -171,13 +175,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "100" then
 						-- BLT (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
@@ -185,13 +190,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "101" then
 						-- BGE (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
@@ -199,13 +205,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "110" then
 						-- BLTU (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
@@ -213,13 +220,14 @@ begin
 						v_output.tag <= v_input.tag;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input(14 downto 12) = "111" then
 						-- BGEU (done)
+						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid <= '1';
 						v_output.operand_1_type <= TYPE_REGISTER;
 						v_output.operand_1_register <= v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate <= (others => '0');
 						v_output.operand_2_type <= TYPE_REGISTER;
-						v_output.operand_2_immediate <= std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
-						v_output.operand_2_3_register <= (others => '0');
+						v_output.operand_2_immediate <= (others => '0');
+						v_output.operand_2_3_register <= v_input.opcode(24 downto 20);
 						v_output.operand_3_type <= TYPE_IMMEDIATE;
 						v_output.operand_3_immediate <= std_logic_vector(unsigned(pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
 						v_output.writeback_register <= v_input.opcode(11 downto 7);
