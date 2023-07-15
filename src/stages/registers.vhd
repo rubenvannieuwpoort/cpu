@@ -106,6 +106,7 @@ begin
 						else
 							v_read_output.operand_3 := v_read_input.operand_3_immediate;
 						end if;
+						v_read_output.branch_to_be_handled := v_read_input.branch_to_be_handled;
 						v_read_output.writeback_register := v_read_input.writeback_register;
 						v_read_output.alu_function := v_read_input.alu_function;
 						v_read_output.tag := v_read_input.tag;

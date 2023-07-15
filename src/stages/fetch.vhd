@@ -12,9 +12,9 @@ entity fetch is
 		clk: in std_logic;
 		hold_in: in std_logic;
 
-		--continue_in: in std_logic;
-		--pc_indicator_in: in std_logic;
-		--pc_in: in std_logic_vector(19 downto 0);
+		continue_in: in std_logic;
+		pc_indicator_in: in std_logic;
+		pc_in: in std_logic_vector(19 downto 0);
 
 		output: out fetch_output_type := DEFAULT_FETCH_OUTPUT
 	);
@@ -35,6 +35,9 @@ architecture Behavioral of fetch is
 
 	function is_branch(opcode: std_logic_vector(31 downto 0)) return boolean is
 	begin
+		if opcode(6 downto 0) = "1100011" and (opcode(14 downto 12) /= "010" or opcode(14 downto 12) /= "011") then
+			return true;
+		end if;
 		return false;
 	end function;
 begin
@@ -63,12 +66,12 @@ begin
 				if hold_in = '0' then
 					output <= DEFAULT_FETCH_OUTPUT;
 				end if;
-			--	if continue_in = '1' then
-			--		wait_indicator <= '0';
-			--	elsif pc_in_indicator = '1' then
-			--		wait_indicator <= '0';
-			--		pc <= pc_in;
-			--	end if;
+				if continue_in = '1' then
+					wait_indicator <= '0';
+				elsif pc_indicator_in = '1' then
+					wait_indicator <= '0';
+					pc <= pc_in;
+				end if;
 			end if;
 		end if;
 	end process;

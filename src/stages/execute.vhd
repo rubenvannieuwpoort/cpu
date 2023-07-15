@@ -12,11 +12,11 @@ entity execute is
 		input: in register_read_output_type;
 
 		hold_out: out std_logic := '0';
-		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT
+		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 
-		--branch_continue_indicator: out std_logic := '0';
-		--branch_address_indicator: out std_logic := '0';
-		--branch_address: out std_logic_vector(19 downto 0) := "00000000000000000000"
+		continue_out: out std_logic := '0';
+		pc_indicator_out: out std_logic := '0';
+		pc_out: out std_logic_vector(31 downto 0) := (others => '0')
 	);
 end execute;
 
@@ -31,11 +31,15 @@ begin
 		variable v_output: execute_output_type;
 		variable v_temp: std_logic_vector(31 downto 0);
 		variable v_temp2: std_logic_vector(31 downto 0);
+		
+		variable v_branch_continue_indicator: std_logic;
+		variable v_branch_address_indicator: std_logic;
+		variable v_branch_address: std_logic_vector(19 downto 0);
 	begin
 		if rising_edge(clk) then
-			--v_branch_continue_indicator := '0';
-			--v_branch_address_indicator := '0';
-			--v_branch_address := (others => '0');
+			v_branch_continue_indicator := '0';
+			v_branch_address_indicator := '0';
+			v_branch_address := (others => '0');
 		
 			-- select input
 			if buffered_input.valid = '1' then
@@ -170,58 +174,103 @@ begin
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_JAL then
 					v_output.valid := '1';
-					-- TODO: set output branch address to v_input.operand_1 + v_input.operand_2
 					v_output.writeback_value := v_input.operand_3;
 					v_output.writeback_register := v_input.writeback_register;
 					v_output.tag := v_input.tag;
+					
+					v_branch_continue_indicator := '0';
+					v_branch_address_indicator := '1';
+					v_branch_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 				elsif v_input.alu_function = ALU_FUNCTION_BEQ then
 					v_output.valid := '1';
-					if v_input.operand_1 = v_input.operand_2 then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if v_input.operand_1 = v_input.operand_2 then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BNE then
 					v_output.valid := '1';
-					if v_input.operand_1 /= v_input.operand_2 then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if v_input.operand_1 /= v_input.operand_2 then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BLT then
 					v_output.valid := '1';
-					if signed(v_input.operand_1) < signed(v_input.operand_2) then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if signed(v_input.operand_1) < signed(v_input.operand_2) then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BLTU then
 					v_output.valid := '1';
-					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BGE then
 					v_output.valid := '1';
-					if signed(v_input.operand_1) >= signed(v_input.operand_2) then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if signed(v_input.operand_1) >= signed(v_input.operand_2) then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BGEU then
 					v_output.valid := '1';
-					if unsigned(v_input.operand_1) >= unsigned(v_input.operand_2) then
-						-- TODO: set output branch address to v_input.operand_3
-					end if;
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.tag := v_input.tag;
+
+					if unsigned(v_input.operand_1) >= unsigned(v_input.operand_2) then
+						v_branch_continue_indicator := '0';
+						v_branch_address_indicator := '1';
+						v_branch_address := v_input.operand_3;
+					else
+						v_branch_continue_indicator := '1';
+						v_branch_address_indicator := '0';
+						v_branch_address := (others => '0');
+					end if;
 				else
 					-- TODO: this should never happen. Interrupt?
 				end if;
@@ -230,33 +279,20 @@ begin
 					v_output := DEFAULT_EXECUTE_OUTPUT;
 				else
 					buffered_input <= DEFAULT_REGISTER_READ_OUTPUT;
-
-					-- TODO: this should be uncommented when branching is enabled again???
-					---- branching
-					--if v_input.is_branch = '1' then
-					--	-- branches are read directly by fetch stage, they are not subject to the normal pipelining logic
-					--	-- so we need to take care to ignore the hold_in signal and ensure the address is only handed to the fetch unit once
-					--	v_input.is_branch := '0';
-					--	if v_act = '1' then
-					--		v_branch_address_indicator := '1';
-					--		v_branch_address := v_result(19 downto 0);
-					--	else
-					--		v_branch_continue_indicator := '1';
-					--	end if;
-					--end if;
 				end if;
 
 				output <= v_output;
 			end if;
 
-			-- TODO: this should be uncommented when branching is enabled again???
-			--branch_continue_indicator <= v_branch_continue_indicator;
-			--branch_address_indicator <= v_branch_address_indicator;
-			--branch_address <= v_branch_address;
+			if v_input.branch_to_be_handled = '1' then
+				continue_out <= v_branch_continue_indicator;
+				pc_indicator_out <= v_branch_address_indicator;
+				pc_out <= v_branch_address;
+				-- so we don't take the branch again
+				v_input.branch_to_be_handled := '0';
+			end if;
 
 			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
-				-- TODO: not sure if this should be uncommented when branching is enabled again???
-				--v_input.is_branch := '0';
 				buffered_input <= v_input;
 			end if;
 
