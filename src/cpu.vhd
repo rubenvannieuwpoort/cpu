@@ -41,7 +41,7 @@ architecture Behavioral of CPU is
 			hold_in: in std_logic;
 			continue_in: in std_logic;
 			pc_indicator_in: in std_logic;
-			pc_in: in std_logic_vector(19 downto 0);
+			pc_in: in std_logic_vector(31 downto 0);
 			output: out fetch_output_type
 		);
 	end component;

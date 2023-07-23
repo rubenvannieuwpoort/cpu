@@ -92,23 +92,10 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
-	component test_pattern_writer
+	component textmode_vga_generator
 		port(
 			clk: in std_logic;
-			completed: out std_logic;
-			memory_ready: in std_logic;
-			write_port: out write_port_signals;
-			write_status: in write_status_signals
-		);
-	end component;
-
-	component vga_generator
-		port(
-			clk: in std_logic;
-			vga_out: out vga_signals;
-			memory_ready: in std_logic;
-			read_cmd: out read_cmd_signals;
-			read_status: in read_status_signals
+			vga_out: out vga_signals
 		);
 	end component;
 
@@ -136,20 +123,9 @@ begin
 			reset => '0'
 		);
 
-	test_pattern_writer_inst: test_pattern_writer
-		port map(
-			clk => clk_main,
-			memory_ready => memory_ready,
-			completed => open,
-			write_port => open,
-			write_status => write_status
-		);
-
-	vga_gen: vga_generator
+	vga_gen: textmode_vga_generator
 		port map(
 			clk => clk_pixel,
-			memory_ready => memory_ready,
-			read_cmd => read_cmd, read_status => read_status,
 			vga_out => vga
 		);
 
