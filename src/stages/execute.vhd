@@ -23,6 +23,8 @@ end execute;
 
 architecture Behavioral of execute is
 	signal buffered_input: register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
+
+	constant csr_misa: std_logic_vector(31 downto 0) := X"40000100";
 begin
 
 	process(clk)
@@ -34,7 +36,7 @@ begin
 		
 		variable v_branch_continue_indicator: std_logic;
 		variable v_branch_address_indicator: std_logic;
-		variable v_branch_address: std_logic_vector(19 downto 0);
+		variable v_branch_address: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
 			v_branch_continue_indicator := '0';
@@ -271,6 +273,110 @@ begin
 						v_branch_address_indicator := '0';
 						v_branch_address := (others => '0');
 					end if;
+				elsif v_input.alu_function = ALU_FUNCTION_CSRRW then
+					v_output.writeback_register := v_input.writeback_register;
+					v_output.tag := v_input.tag;
+
+					--if v_input.csr_register = CSR_MVENDORID then
+					--elsif v_input.csr_register = CSR_MARCHID then
+					--elsif v_input.csr_register = CSR_MIMPID then
+					--elsif v_input.csr_register = CSR_MHARTID then
+					--elsif v_input.csr_register = CSR_MCONFIGPTR then
+					--elsif v_input.csr_register = CSR_MSTATUS then
+					if v_input.csr_register = CSR_MISA then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_misa;  -- 32-bit RVI
+					--elsif v_input.csr_register = CSR_MEDELEG then
+					--elsif v_input.csr_register = CSR_MIDELEG then
+					--elsif v_input.csr_register = CSR_MIE then
+					--elsif v_input.csr_register = CSR_MTVEC then
+					--elsif v_input.csr_register = CSR_MCOUNTEREN then
+					--elsif v_input.csr_register = CSR_MSTATUSH then
+					--elsif v_input.csr_register = CSR_MSCRATCH then
+					--elsif v_input.csr_register = CSR_MEPC then
+					--elsif v_input.csr_register = CSR_MCAUSE then
+					--elsif v_input.csr_register = CSR_MTVAL then
+					--elsif v_input.csr_register = CSR_MIP then
+					--elsif v_input.csr_register = CSR_MTINST then
+					--elsif v_input.csr_register = CSR_MTVAL2 then
+					--else
+						-- TODO: handle this? fire interrupt?
+					end if;
+
+
+
+
+
+
+				elsif v_input.alu_function = ALU_FUNCTION_CSRRS then
+					v_output.writeback_register := v_input.writeback_register;
+					v_output.tag := v_input.tag;
+
+					-- TODO: v_csr_mtargetreg := csr_mtargetreg or v_input.operand_1;
+
+					--if v_input.csr_register = CSR_MVENDORID then
+					--elsif v_input.csr_register = CSR_MARCHID then
+					--elsif v_input.csr_register = CSR_MIMPID then
+					--elsif v_input.csr_register = CSR_MHARTID then
+					--elsif v_input.csr_register = CSR_MCONFIGPTR then
+					--elsif v_input.csr_register = CSR_MSTATUS then
+					if v_input.csr_register = CSR_MISA then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_misa;  -- 32-bit RVI
+					--elsif v_input.csr_register = CSR_MEDELEG then
+					--elsif v_input.csr_register = CSR_MIDELEG then
+					--elsif v_input.csr_register = CSR_MIE then
+					--elsif v_input.csr_register = CSR_MTVEC then
+					--elsif v_input.csr_register = CSR_MCOUNTEREN then
+					--elsif v_input.csr_register = CSR_MSTATUSH then
+					--elsif v_input.csr_register = CSR_MSCRATCH then
+					--elsif v_input.csr_register = CSR_MEPC then
+					--elsif v_input.csr_register = CSR_MCAUSE then
+					--elsif v_input.csr_register = CSR_MTVAL then
+					--elsif v_input.csr_register = CSR_MIP then
+					--elsif v_input.csr_register = CSR_MTINST then
+					--elsif v_input.csr_register = CSR_MTVAL2 then
+					--else
+						-- TODO: handle this? fire interrupt?
+					end if;
+
+
+
+
+
+
+				elsif v_input.alu_function = ALU_FUNCTION_CSRRC then
+					v_output.writeback_register := v_input.writeback_register;
+					v_output.tag := v_input.tag;
+
+					-- TODO: v_csr_mtargetreg := csr_mtargetreg and not(v_input.operand_1);
+
+					--if v_input.csr_register = CSR_MVENDORID then
+					--elsif v_input.csr_register = CSR_MARCHID then
+					--elsif v_input.csr_register = CSR_MIMPID then
+					--elsif v_input.csr_register = CSR_MHARTID then
+					--elsif v_input.csr_register = CSR_MCONFIGPTR then
+					--elsif v_input.csr_register = CSR_MSTATUS then
+					if v_input.csr_register = CSR_MISA then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_misa;  -- 32-bit RVI
+					--elsif v_input.csr_register = CSR_MEDELEG then
+					--elsif v_input.csr_register = CSR_MIDELEG then
+					--elsif v_input.csr_register = CSR_MIE then
+					--elsif v_input.csr_register = CSR_MTVEC then
+					--elsif v_input.csr_register = CSR_MCOUNTEREN then
+					--elsif v_input.csr_register = CSR_MSTATUSH then
+					--elsif v_input.csr_register = CSR_MSCRATCH then
+					--elsif v_input.csr_register = CSR_MEPC then
+					--elsif v_input.csr_register = CSR_MCAUSE then
+					--elsif v_input.csr_register = CSR_MTVAL then
+					--elsif v_input.csr_register = CSR_MIP then
+					--elsif v_input.csr_register = CSR_MTINST then
+					--elsif v_input.csr_register = CSR_MTVAL2 then
+					--else
+						-- TODO: handle this? fire interrupt?
+					end if;
+
 				else
 					-- TODO: this should never happen. Interrupt?
 				end if;

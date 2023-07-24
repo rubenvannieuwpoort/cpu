@@ -14,7 +14,7 @@ entity fetch is
 
 		continue_in: in std_logic;
 		pc_indicator_in: in std_logic;
-		pc_in: in std_logic_vector(19 downto 0);
+		pc_in: in std_logic_vector(31 downto 0);
 
 		output: out fetch_output_type := DEFAULT_FETCH_OUTPUT
 	);

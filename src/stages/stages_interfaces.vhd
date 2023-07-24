@@ -4,6 +4,9 @@ use ieee.std_logic_1164.all;
 
 package stages_interfaces is
 
+	-- CSRs
+	constant CSR_MISA: std_logic_vector(11 downto 0) := X"301";
+
 	-- FETCH STAGE INTERFACE
 
 	type fetch_output_type is record
@@ -40,6 +43,7 @@ package stages_interfaces is
 
 		branch_to_be_handled: std_logic;
 		writeback_register: std_logic_vector(4 downto 0);
+		csr_register: std_logic_vector(11 downto 0);
 
 		alu_function: std_logic_vector(4 downto 0);
 		-- mem_function: std_logic_vector(4 downto 0);
@@ -92,6 +96,11 @@ package stages_interfaces is
 	constant ALU_FUNCTION_BGE                    : std_logic_vector(4 downto 0) := "01111";
 	constant ALU_FUNCTION_BGEU                   : std_logic_vector(4 downto 0) := "10000";
 
+	-- CSRs
+	constant ALU_FUNCTION_CSRRW                    : std_logic_vector(4 downto 0) := "10001";
+	constant ALU_FUNCTION_CSRRC                    : std_logic_vector(4 downto 0) := "10010";
+	constant ALU_FUNCTION_CSRRS                    : std_logic_vector(4 downto 0) := "10011";
+
 	constant DEFAULT_DECODE_OUTPUT: decode_output_type := (
 		valid => '0',
 		operand_1_type => '0',
@@ -106,6 +115,7 @@ package stages_interfaces is
 
 		branch_to_be_handled => '0',
 		writeback_register => (others => '0'),
+		csr_register => (others => '0'),
 
 		alu_function => (others => '0'),
 		tag => (others => '0')
@@ -123,6 +133,7 @@ package stages_interfaces is
 
 		branch_to_be_handled: std_logic;
 		writeback_register: std_logic_vector(4 downto 0);
+		csr_register: std_logic_vector(11 downto 0);
 
 		alu_function: std_logic_vector(4 downto 0);
 		-- mem_function: std_logic_vector(4 downto 0);
@@ -141,6 +152,7 @@ package stages_interfaces is
 
 		branch_to_be_handled => '0',
 		writeback_register => (others => '0'),
+		csr_register => (others => '0'),
 
 		alu_function => (others => '0'),
 
