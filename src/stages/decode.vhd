@@ -742,6 +742,10 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
 						v_output.tag := v_input.tag;
+					elsif v_input.opcode(31 downto 0) = "00110000001000000000000001110011" then
+						-- TODO: MRET
+					elsif v_input.opcode(31 downto 0) = "00010000010100000000000001110011" then
+						-- TODO: WFI
 					else
 						-- invalid instruction
 						-- TODO: figure this out (interrupt?)
