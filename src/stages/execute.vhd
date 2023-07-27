@@ -25,6 +25,21 @@ architecture Behavioral of execute is
 	signal buffered_input: register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
 
 	constant csr_misa: std_logic_vector(31 downto 0) := X"40000100";
+	constant csr_mimpid: std_logic_vector(31 downto 0) := X"00000001";
+	
+	constant CSR_MVENDORID_ADDRESS: std_logic_vector(11 downto 0) := X"F11";
+	constant CSR_MARCHID_ADDRESS: std_logic_vector(11 downto 0) := X"F12";
+	constant CSR_MIMPID_ADDRESS: std_logic_vector(11 downto 0) := X"F13";
+	constant CSR_MHARTID_ADDRESS: std_logic_vector(11 downto 0) := X"F14";
+	constant CSR_MCONFIGPTR_ADDRESS: std_logic_vector(11 downto 0) := X"F15";
+
+	constant CSR_MSTATUS_ADDRESS: std_logic_vector(11 downto 0) := X"300";
+	constant CSR_MISA_ADDRESS: std_logic_vector(11 downto 0) := X"301";
+
+	signal m_csr_mstatus_mpie: std_logic := '0';
+	signal m_csr_mstatus_spie: std_logic := '0';
+	signal m_csr_mstatus_mie: std_logic := '0';
+	signal m_csr_mstatus_sie: std_logic := '0';
 begin
 
 	process(clk)
@@ -37,11 +52,22 @@ begin
 		variable v_branch_continue_indicator: std_logic;
 		variable v_branch_address_indicator: std_logic;
 		variable v_branch_address: std_logic_vector(31 downto 0);
+		
+		variable v_m_csr_mstatus_mpie: std_logic;
+		variable v_m_csr_mstatus_spie: std_logic;
+		variable v_m_csr_mstatus_mie: std_logic;
+		variable v_m_csr_mstatus_sie: std_logic;
 	begin
 		if rising_edge(clk) then
 			v_branch_continue_indicator := '0';
 			v_branch_address_indicator := '0';
 			v_branch_address := (others => '0');
+
+
+			v_m_csr_mstatus_mpie := v_m_csr_mstatus_mpie;
+			v_m_csr_mstatus_spie := v_m_csr_mstatus_spie;
+			v_m_csr_mstatus_mie := v_m_csr_mstatus_mie;
+			v_m_csr_mstatus_sie := v_m_csr_mstatus_sie;
 		
 			-- select input
 			if buffered_input.valid = '1' then
@@ -277,20 +303,33 @@ begin
 					v_output.writeback_register := v_input.writeback_register;
 					v_output.tag := v_input.tag;
 
-					--if v_input.csr_register = CSR_MVENDORID then
-					--elsif v_input.csr_register = CSR_MARCHID then
-					--elsif v_input.csr_register = CSR_MIMPID then
-					--elsif v_input.csr_register = CSR_MHARTID then
-					--elsif v_input.csr_register = CSR_MCONFIGPTR then
-					--elsif v_input.csr_register = CSR_MSTATUS then
-					if v_input.csr_register = CSR_MISA then
+					if v_input.csr_register = CSR_MVENDORID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
 						v_output.valid := '1';
-						v_output.writeback_value := csr_misa;  -- 32-bit RVI
-					--elsif v_input.csr_register = CSR_MEDELEG then
-					--elsif v_input.csr_register = CSR_MIDELEG then
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MARCHID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MIMPID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_mimpid;
+					elsif v_input.csr_register = CSR_MHARTID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MCONFIGPTR_ADDRESS and v_input.operand_1_is_zero_register = '1'then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MSTATUS_ADDRESS then
+						v_output.valid := '1';
+						v_m_csr_mstatus_mpie := v_input.operand_1(7);
+						v_m_csr_mstatus_spie := v_input.operand_1(5);
+						v_m_csr_mstatus_mie := v_input.operand_1(3);
+						v_m_csr_mstatus_sie := v_input.operand_1(1);
+						v_output.writeback_value := "000000000000000011000000" & m_csr_mstatus_mpie & "0" & m_csr_mstatus_spie & "0" & m_csr_mstatus_mie & "0" & m_csr_mstatus_sie & "0";
+					elsif v_input.csr_register = CSR_MISA_ADDRESS then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_misa;
 					--elsif v_input.csr_register = CSR_MIE then
 					--elsif v_input.csr_register = CSR_MTVEC then
-					--elsif v_input.csr_register = CSR_MCOUNTEREN then
 					--elsif v_input.csr_register = CSR_MSTATUSH then
 					--elsif v_input.csr_register = CSR_MSCRATCH then
 					--elsif v_input.csr_register = CSR_MEPC then
@@ -314,17 +353,31 @@ begin
 
 					-- TODO: v_csr_mtargetreg := csr_mtargetreg or v_input.operand_1;
 
-					--if v_input.csr_register = CSR_MVENDORID then
-					--elsif v_input.csr_register = CSR_MARCHID then
-					--elsif v_input.csr_register = CSR_MIMPID then
-					--elsif v_input.csr_register = CSR_MHARTID then
-					--elsif v_input.csr_register = CSR_MCONFIGPTR then
-					--elsif v_input.csr_register = CSR_MSTATUS then
-					if v_input.csr_register = CSR_MISA then
+					if v_input.csr_register = CSR_MVENDORID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MARCHID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MIMPID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_mimpid;
+					elsif v_input.csr_register = CSR_MHARTID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MCONFIGPTR_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MSTATUS_ADDRESS then
+						v_output.valid := '1';
+						v_m_csr_mstatus_mpie := v_m_csr_mstatus_mpie or v_input.operand_1(7);
+						v_m_csr_mstatus_spie := v_m_csr_mstatus_spie or v_input.operand_1(5);
+						v_m_csr_mstatus_mie := v_m_csr_mstatus_mie or v_input.operand_1(3);
+						v_m_csr_mstatus_sie := v_m_csr_mstatus_sie or v_input.operand_1(1);
+						v_output.writeback_value := "000000000000000011000000" & m_csr_mstatus_mpie & "0" & m_csr_mstatus_spie & "0" & m_csr_mstatus_mie & "0" & m_csr_mstatus_sie & "0";
+					elsif v_input.csr_register = CSR_MISA_ADDRESS then
 						v_output.valid := '1';
 						v_output.writeback_value := csr_misa;  -- 32-bit RVI
-					--elsif v_input.csr_register = CSR_MEDELEG then
-					--elsif v_input.csr_register = CSR_MIDELEG then
 					--elsif v_input.csr_register = CSR_MIE then
 					--elsif v_input.csr_register = CSR_MTVEC then
 					--elsif v_input.csr_register = CSR_MCOUNTEREN then
@@ -351,17 +404,31 @@ begin
 
 					-- TODO: v_csr_mtargetreg := csr_mtargetreg and not(v_input.operand_1);
 
-					--if v_input.csr_register = CSR_MVENDORID then
-					--elsif v_input.csr_register = CSR_MARCHID then
-					--elsif v_input.csr_register = CSR_MIMPID then
-					--elsif v_input.csr_register = CSR_MHARTID then
-					--elsif v_input.csr_register = CSR_MCONFIGPTR then
-					--elsif v_input.csr_register = CSR_MSTATUS then
-					if v_input.csr_register = CSR_MISA then
+					if v_input.csr_register = CSR_MVENDORID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MARCHID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MIMPID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := csr_mimpid;
+					elsif v_input.csr_register = CSR_MHARTID_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MCONFIGPTR_ADDRESS and v_input.operand_1 = "00000" then
+						v_output.valid := '1';
+						v_output.writeback_value := (others => '0');
+					elsif v_input.csr_register = CSR_MSTATUS_ADDRESS then
+						v_output.valid := '1';
+						v_m_csr_mstatus_mpie := v_m_csr_mstatus_mpie and not(v_input.operand_1(7));
+						v_m_csr_mstatus_spie := v_m_csr_mstatus_spie and not(v_input.operand_1(5));
+						v_m_csr_mstatus_mie := v_m_csr_mstatus_mie and not(v_input.operand_1(3));
+						v_m_csr_mstatus_sie := v_m_csr_mstatus_sie and not(v_input.operand_1(1));
+						v_output.writeback_value := "000000000000000011000000" & m_csr_mstatus_mpie & "0" & m_csr_mstatus_spie & "0" & m_csr_mstatus_mie & "0" & m_csr_mstatus_sie & "0";
+					elsif v_input.csr_register = CSR_MISA_ADDRESS then
 						v_output.valid := '1';
 						v_output.writeback_value := csr_misa;  -- 32-bit RVI
-					--elsif v_input.csr_register = CSR_MEDELEG then
-					--elsif v_input.csr_register = CSR_MIDELEG then
 					--elsif v_input.csr_register = CSR_MIE then
 					--elsif v_input.csr_register = CSR_MTVEC then
 					--elsif v_input.csr_register = CSR_MCOUNTEREN then
@@ -388,6 +455,10 @@ begin
 				end if;
 
 				output <= v_output;
+				m_csr_mstatus_mpie <= v_m_csr_mstatus_mpie;
+				m_csr_mstatus_spie <= v_m_csr_mstatus_spie;
+				m_csr_mstatus_mie <= v_m_csr_mstatus_mie;
+				m_csr_mstatus_sie <= v_m_csr_mstatus_sie;
 			end if;
 
 			if v_input.branch_to_be_handled = '1' then

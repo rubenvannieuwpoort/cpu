@@ -130,6 +130,8 @@ package stages_interfaces is
 		operand_1: std_logic_vector(31 downto 0);
 		operand_2: std_logic_vector(31 downto 0);
 		operand_3: std_logic_vector(31 downto 0);
+		
+		operand_1_is_zero_register: std_logic;
 
 		branch_to_be_handled: std_logic;
 		writeback_register: std_logic_vector(4 downto 0);
@@ -149,6 +151,8 @@ package stages_interfaces is
 		operand_1 => (others => '0'),
 		operand_2 => (others => '0'),
 		operand_3 => (others => '0'),
+
+		operand_1_is_zero_register => '0',
 
 		branch_to_be_handled => '0',
 		writeback_register => (others => '0'),

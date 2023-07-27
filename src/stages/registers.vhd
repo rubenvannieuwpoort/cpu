@@ -91,21 +91,31 @@ begin
 						v_read_wait := '0';
 
 						v_read_output.valid := '1';
+
 						if v_read_input.operand_1_type = TYPE_REGISTER then
 							v_read_output.operand_1 := v_register_1_value;
 						else
 							v_read_output.operand_1 := v_read_input.operand_1_immediate;
 						end if;
+
 						if v_read_input.operand_2_type = TYPE_REGISTER then
 							v_read_output.operand_2 := v_register_2_3_value;
 						else
 							v_read_output.operand_2 := v_read_input.operand_2_immediate;
 						end if;
+
 						if v_read_input.operand_3_type = TYPE_REGISTER then
 							v_read_output.operand_3 := v_register_2_3_value;
 						else
 							v_read_output.operand_3 := v_read_input.operand_3_immediate;
 						end if;
+
+						if v_read_input.operand_1_type = TYPE_REGISTER and v_read_input.operand_1_register = "00000" then
+							v_read_output.operand_1_is_zero_register := '1';
+						else
+							v_read_output.operand_1_is_zero_register := '0';
+						end if;
+
 						v_read_output.branch_to_be_handled := v_read_input.branch_to_be_handled;
 						v_read_output.writeback_register := v_read_input.writeback_register;
 						v_read_output.csr_register := v_read_input.csr_register;
