@@ -73,6 +73,22 @@ package stages_interfaces is
 	--constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
 	--constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "10";
 
+	-- ALU_FUNCTION_ADD: writeback_value = op1 + op2
+	-- ALU_FUNCTION_SUB: writeback_value = op1 - op2
+	-- ALU_FUNCTION_SLT: writeback_value = 1 if s32(op1) < s32(op2) else 0
+	-- ALU_FUNCTION_SLTU: writeback_value = 1 if u32(op1) < u32(op2) else 0
+	-- ALU_FUNCTION_AND: writeback_value = op1 & op2
+	-- ALU_FUNCTION_OR: writeback_value = op1 | op2
+	-- ALU_FUNCTION_XOR: writeback_value = op1 ^ op2
+	-- ALU_FUNCTION_SHIFT_LEFT: writeback_value = op1 << op2
+	-- ALU_FUNCTION_SHIFT_RIGHT: writeback_value = op1 >> op2
+	-- ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT: writeback_value = s32(op1) >> op2
+	-- ALU_FUNCTION_JAL: writeback_value = op3, branch to op1 + op2
+	-- ALU_FUNCTION_BXX: branch to op3 if op1 XX op2
+	-- ALU_FUNCTION_CSRRW: writeback_value = <value of CSR>, <CSR> = op1
+	-- ALU_FUNCTION_CSRRC: writeback_value = <value of CSR>, <CSR> = <CSR> | op1
+	-- ALU_FUNCTION_CSRRS: writeback_value = <value of CSR>, <CSR> = <CSR> & !(op1)
+
 	
 	-- arithmetic
 	constant ALU_FUNCTION_ADD                    : std_logic_vector(4 downto 0) := "00000";
