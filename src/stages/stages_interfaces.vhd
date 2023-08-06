@@ -30,6 +30,7 @@ package stages_interfaces is
 
 	type decode_output_type is record
 		valid: std_logic;
+		illegal: std_logic;
 
 		operand_1_type: std_logic;
 		operand_1_immediate: std_logic_vector(31 downto 0);
@@ -51,6 +52,7 @@ package stages_interfaces is
 		-- memory_size: std_logic_vector(1 downto 0);
 
 		tag: std_logic_vector(4 downto 0);
+		pc: std_logic_vector(31 downto 0);
 	end record decode_output_type;
 
 	constant TYPE_REGISTER  : std_logic := '0';
@@ -119,6 +121,7 @@ package stages_interfaces is
 
 	constant DEFAULT_DECODE_OUTPUT: decode_output_type := (
 		valid => '0',
+		illegal => '0',
 		operand_1_type => '0',
 		operand_1_register => (others => '0'),
 		operand_1_immediate => (others => '0'),
@@ -134,7 +137,8 @@ package stages_interfaces is
 		csr_register => (others => '0'),
 
 		alu_function => (others => '0'),
-		tag => (others => '0')
+		tag => (others => '0'),
+		pc => (others => '0')
 	);
 
 
@@ -159,6 +163,7 @@ package stages_interfaces is
 		-- memory_size: std_logic_vector(1 downto 0);
 
 		tag: std_logic_vector(4 downto 0);
+		pc: std_logic_vector(31 downto 0);
 	end record register_read_output_type;
 
 	constant DEFAULT_REGISTER_READ_OUTPUT: register_read_output_type := (
@@ -176,7 +181,8 @@ package stages_interfaces is
 
 		alu_function => (others => '0'),
 
-		tag => (others => '0')
+		tag => (others => '0'),
+		pc => (others => '0')
 	);
 
 

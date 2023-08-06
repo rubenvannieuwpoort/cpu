@@ -88,6 +88,7 @@ begin
 					if v_input.opcode(6 downto 0) = "0110111" then
 						-- LUI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_immediate := v_input.opcode(31 downto 12) & "000000000000";
 						v_output.operand_1_register := (others => '0');
@@ -101,9 +102,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010111" then
 						-- AUIPC (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := v_input.pc;
@@ -117,10 +120,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1101111" then
 						-- JAL (done)
 						-- puts pc in op1, offset in op2, and pc_next in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := v_input.pc;
@@ -134,10 +139,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100111" and v_input.opcode(14 downto 12) = "000" then
 						-- JALR (done)
 						-- puts rs1 in op1, offset in op2, and pc_next in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -151,10 +158,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "000" then
 						-- BEQ (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -168,10 +177,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BEQ;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "001" then
 						-- BNE (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -185,10 +196,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BNE;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "100" then
 						-- BLT (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -202,10 +215,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "101" then
 						-- BGE (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -219,10 +234,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGE;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "110" then
 						-- BLTU (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -236,10 +253,12 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLTU;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "111" then
 						-- BGEU (done)
 						-- puts rs1 in op1, rs2 in op2, and pc + offset in op3
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -253,6 +272,7 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGEU;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					-- TODO (MEMORY STUFF)
 					--elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "000" then
 					--	-- LB (TODO)
@@ -297,6 +317,7 @@ begin
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" then
 						-- ADDI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -310,9 +331,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" then
 						-- SLTI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -326,9 +349,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" then
 						-- SLTIU (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -342,9 +367,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" then
 						-- XORI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -358,9 +385,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" then
 						-- ORI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -374,9 +403,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" then
 						-- ANDI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -390,9 +421,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLLI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -406,9 +439,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SRLI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -422,9 +457,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
 						-- SRAI (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -438,9 +475,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0000000" then
 						-- ADD (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -454,9 +493,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0100000" then
 						-- SUB (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -470,9 +511,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SUB;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLL (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -486,9 +529,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLT (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -502,9 +547,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLTU (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -518,9 +565,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" and v_input.opcode(31 downto 25) = "0000000" then
 						-- XOR (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -534,9 +583,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SRL (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -550,9 +601,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
 						-- SRA (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -566,9 +619,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" and v_input.opcode(31 downto 25) = "0000000" then
 						-- OR (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -582,9 +637,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" and v_input.opcode(31 downto 25) = "0000000" then
 						-- AND (done)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -598,9 +655,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0001111" and v_input.opcode(14 downto 12) = "000" then
 						-- FENCE (implemented as NOP)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := (others => '0');
@@ -614,9 +673,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "00000000000000000000000001110011" then
 						-- ECALL (implemented as NOP)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := (others => '0');
@@ -630,9 +691,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(31 downto 0) = "00000000000100000000000001110011" then
 						-- EBREAK (implemented as NOP)
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := (others => '0');
@@ -646,9 +709,11 @@ begin
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "001" then
 						-- CSRRW
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -662,9 +727,11 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "101" then
 						-- CSRRWI
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := "000000000000000000000000000" & v_input.opcode(19 downto 15);
@@ -678,9 +745,11 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "010" then
 						-- CSRRS
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -694,9 +763,11 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "110" then
 						-- CSRRSI
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := "000000000000000000000000000" & v_input.opcode(19 downto 15);
@@ -710,9 +781,11 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "011" then
 						-- CSRRC
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_REGISTER;
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
@@ -726,9 +799,11 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "111" then
 						-- CSRRCI
 						v_output.valid := '1';
+						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := "000000000000000000000000000" & v_input.opcode(19 downto 15);
@@ -742,14 +817,14 @@ begin
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
 						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(31 downto 0) = "00110000001000000000000001110011" then
 						-- TODO: MRET
 					elsif v_input.opcode(31 downto 0) = "00010000010100000000000001110011" then
 						-- TODO: WFI
 					else
-						-- invalid instruction
-						-- TODO: figure this out (interrupt?)
 						v_output := DEFAULT_DECODE_OUTPUT;
+						v_output.illegal := '1';
 					end if;
 				else
 					v_output := DEFAULT_DECODE_OUTPUT;

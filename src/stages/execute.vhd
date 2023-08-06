@@ -63,22 +63,26 @@ begin
 			v_branch_address_indicator := '0';
 			v_branch_address := (others => '0');
 
-
 			v_m_csr_mstatus_mpie := v_m_csr_mstatus_mpie;
 			v_m_csr_mstatus_spie := v_m_csr_mstatus_spie;
 			v_m_csr_mstatus_mie := v_m_csr_mstatus_mie;
 			v_m_csr_mstatus_sie := v_m_csr_mstatus_sie;
 		
 			-- select input
+			v_input := DEFAULT_REGISTER_READ_OUTPUT;
 			if buffered_input.valid = '1' then
 				v_input := buffered_input;
-			else
+			elsif input.valid = '1' then
 				v_input := input;
 			end if;
 
 			v_wait := '0';
 			if hold_in = '0' then
-				if v_input.alu_function = ALU_FUNCTION_ADD then
+				if v_input.valid = '0' then
+					v_output := DEFAULT_EXECUTE_OUTPUT;
+				--elsif v_input.illegal = '1' then
+				--	v_trap := true;
+				elsif v_input.alu_function = ALU_FUNCTION_ADD then
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
@@ -448,6 +452,8 @@ begin
 					-- TODO: this should never happen. Interrupt?
 				end if;
 				
+				--if v_trap = '1' then
+				--else
 				if v_wait = '1' then
 					v_output := DEFAULT_EXECUTE_OUTPUT;
 				else
@@ -460,6 +466,10 @@ begin
 				m_csr_mstatus_mie <= v_m_csr_mstatus_mie;
 				m_csr_mstatus_sie <= v_m_csr_mstatus_sie;
 			end if;
+
+			--f v_trap then
+			--	-- TODO
+			--end if;
 
 			if v_input.branch_to_be_handled = '1' then
 				continue_out <= v_branch_continue_indicator;
