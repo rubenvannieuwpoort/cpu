@@ -11,17 +11,19 @@ package stages_interfaces is
 
 	type fetch_output_type is record
 		valid: std_logic;
+		opcode: std_logic_vector(31 downto 0);
 		pc: std_logic_vector(31 downto 0);
 		pc_next: std_logic_vector(31 downto 0);
-		opcode: std_logic_vector(31 downto 0);
+		stamp: std_logic_vector(2 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record fetch_output_type;  
 
 	constant DEFAULT_FETCH_OUTPUT: fetch_output_type := (
 		valid => '0',
+		opcode => (others => '0'),
 		pc => (others => '0'),
 		pc_next => (others => '0'),
-		opcode => (others => '0'),
+		stamp => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -51,8 +53,9 @@ package stages_interfaces is
 		-- memory_operation: std_logic_vector(1 downto 0);
 		-- memory_size: std_logic_vector(1 downto 0);
 
-		tag: std_logic_vector(4 downto 0);
 		pc: std_logic_vector(31 downto 0);
+		stamp: std_logic_vector(2 downto 0);
+		tag: std_logic_vector(4 downto 0);
 	end record decode_output_type;
 
 	constant TYPE_REGISTER  : std_logic := '0';
@@ -137,8 +140,9 @@ package stages_interfaces is
 		csr_register => (others => '0'),
 
 		alu_function => (others => '0'),
-		tag => (others => '0'),
-		pc => (others => '0')
+		pc => (others => '0'),
+		stamp => (others => '0'),
+		tag => (others => '0')
 	);
 
 
@@ -162,8 +166,9 @@ package stages_interfaces is
 		-- memory_operation: std_logic_vector(1 downto 0);
 		-- memory_size: std_logic_vector(1 downto 0);
 
-		tag: std_logic_vector(4 downto 0);
 		pc: std_logic_vector(31 downto 0);
+		stamp: std_logic_vector(2 downto 0);
+		tag: std_logic_vector(4 downto 0);
 	end record register_read_output_type;
 
 	constant DEFAULT_REGISTER_READ_OUTPUT: register_read_output_type := (
@@ -181,8 +186,9 @@ package stages_interfaces is
 
 		alu_function => (others => '0'),
 
-		tag => (others => '0'),
-		pc => (others => '0')
+		pc => (others => '0'),
+		stamp => (others => '0'),
+		tag => (others => '0')
 	);
 
 
@@ -190,19 +196,23 @@ package stages_interfaces is
 
 	type execute_output_type is record
 		valid: std_logic;
+		act: std_logic;
 
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
+		stamp: std_logic_vector(2 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
 
 	constant DEFAULT_EXECUTE_OUTPUT: execute_output_type := (
 		valid => '0',
+		act => '0',
 
 		writeback_value => (others => '0'),
 		writeback_register => (others => '0'),
 
+		stamp => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -210,16 +220,20 @@ package stages_interfaces is
 	-- MEMORY STAGE
 
 	type memory_output_type is record
+		act: std_logic;
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
+		stamp: std_logic_vector(2 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record memory_output_type;
 
 	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (
+		act => '0',
 		writeback_value => (others => '0'),
 		writeback_register => (others => '0'),
 
+		stamp => (others => '0'),
 		tag => (others => '0')
 	);
 

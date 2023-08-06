@@ -60,7 +60,11 @@ begin
 							v_register_1_value := reg(to_integer(unsigned(v_read_input.operand_1_register)));
 							v_register_1_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_1_register then
-							v_register_1_value := write_input.writeback_value;
+							if write_input.act = '1' then
+								v_register_1_value := write_input.writeback_value;
+							else
+								v_register_1_value := reg(to_integer(unsigned(v_read_input.operand_1_register)));
+							end if;
 							v_register_1_ready := '1';
 						else
 							v_register_1_value := (others => '0');
@@ -76,7 +80,11 @@ begin
 							v_register_2_3_value := reg(to_integer(unsigned(v_read_input.operand_2_3_register)));
 							v_register_2_3_ready := '1';
 						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_2_3_register then
-							v_register_2_3_value := write_input.writeback_value;
+							if write_input.act = '1' then
+								v_register_2_3_value := write_input.writeback_value;
+							else
+								v_register_2_3_value := reg(to_integer(unsigned(v_read_input.operand_2_3_register)));
+							end if;
 							v_register_2_3_ready := '1';
 						else
 							v_register_2_3_value := (others => '0');
@@ -120,6 +128,7 @@ begin
 						v_read_output.writeback_register := v_read_input.writeback_register;
 						v_read_output.csr_register := v_read_input.csr_register;
 						v_read_output.alu_function := v_read_input.alu_function;
+						v_read_output.stamp := v_read_input.stamp;
 						v_read_output.tag := v_read_input.tag;
 					else
 						v_read_wait := '1';
@@ -180,7 +189,7 @@ begin
 				v_writeback_value := write_input.writeback_value;
 			--end if;
 
-			if write_input.writeback_register /= "00000" then
+			if write_input.writeback_register /= "00000" and write_input.act = '1' then
 				reg(to_integer(unsigned(write_input.writeback_register))) <= v_writeback_value;
 			end if;
 			

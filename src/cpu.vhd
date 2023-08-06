@@ -27,9 +27,9 @@ architecture Behavioral of CPU is
 
 	signal execute_hold_out: std_logic := '0';
 	signal execute_output: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal execute_continue_out: std_logic;
-	signal execute_pc_indicator_out: std_logic;
-	signal execute_pc_out: std_logic_vector(31 downto 0);
+	signal new_pc_indicator: std_logic;
+	signal new_pc: std_logic_vector(31 downto 0);
+	signal new_stamp: std_logic_vector(2 downto 0);
 
 	signal memory_hold_out: std_logic := '0';
 	signal memory_output: memory_output_type := DEFAULT_MEMORY_OUTPUT;
@@ -39,9 +39,9 @@ architecture Behavioral of CPU is
 		port(
 			clk: in std_logic;
 			hold_in: in std_logic;
-			continue_in: in std_logic;
-			pc_indicator_in: in std_logic;
-			pc_in: in std_logic_vector(31 downto 0);
+			new_pc_indicator_in: in std_logic;
+			new_pc_in: in std_logic_vector(31 downto 0);
+			new_stamp_in: in std_logic_vector(2 downto 0);
 			output: out fetch_output_type
 		);
 	end component;
@@ -74,9 +74,9 @@ architecture Behavioral of CPU is
 			input: in register_read_output_type;
 			hold_out: out std_logic;
 			output: out execute_output_type;
-			continue_out: out std_logic;
-			pc_indicator_out: out std_logic;
-			pc_out: out std_logic_vector(31 downto 0)
+			new_pc_indicator_out: out std_logic;
+			new_pc_out: out std_logic_vector(31 downto 0);
+			new_stamp_out: out std_logic_vector(2 downto 0)
 		);
 	end component;
 
@@ -97,9 +97,9 @@ begin
 	stage_fetch: fetch port map(
 		clk => clk,
 		hold_in => decode_hold_out,
-		continue_in => execute_continue_out,
-		pc_indicator_in => execute_pc_indicator_out,
-		pc_in => execute_pc_out,
+		new_pc_indicator_in => new_pc_indicator,
+		new_pc_in => new_pc,
+		new_stamp_in => new_stamp,
 		output => fetch_output
 	);
 
@@ -126,9 +126,9 @@ begin
 		input => register_read_output,
 		hold_out => execute_hold_out,
 		output => execute_output,
-		continue_out => execute_continue_out,
-		pc_indicator_out => execute_pc_indicator_out,
-		pc_out => execute_pc_out
+		new_pc_indicator_out => new_pc_indicator,
+		new_pc_out => new_pc,
+		new_stamp_out => new_stamp
 	);
 
 	stage_memory: memory port map(

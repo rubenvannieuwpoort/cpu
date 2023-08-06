@@ -14,15 +14,16 @@ entity execute is
 		hold_out: out std_logic := '0';
 		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 
-		continue_out: out std_logic := '0';
-		pc_indicator_out: out std_logic := '0';
-		pc_out: out std_logic_vector(31 downto 0) := (others => '0')
+		new_pc_indicator_out: out std_logic := '0';
+		new_pc_out: out std_logic_vector(31 downto 0) := (others => '0');
+		new_stamp_out: out std_logic_vector(2 downto 0) := (others => '0')
 	);
 end execute;
 
 
 architecture Behavioral of execute is
 	signal buffered_input: register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
+	signal stamp: std_logic_vector(2 downto 0) := (others => '0');
 
 	constant csr_misa: std_logic_vector(31 downto 0) := X"40000100";
 	constant csr_mimpid: std_logic_vector(31 downto 0) := X"00000001";
@@ -49,9 +50,13 @@ begin
 		variable v_temp: std_logic_vector(31 downto 0);
 		variable v_temp2: std_logic_vector(31 downto 0);
 		
-		variable v_branch_continue_indicator: std_logic;
-		variable v_branch_address_indicator: std_logic;
-		variable v_branch_address: std_logic_vector(31 downto 0);
+		--variable v_branch_continue_indicator: std_logic;
+		--variable v_branch_address_indicator: std_logic;
+		--variable v_branch_address: std_logic_vector(31 downto 0);
+		
+		variable v_new_pc_indicator: std_logic;
+		variable v_new_pc: std_logic_vector(31 downto 0);
+		variable v_new_stamp: std_logic_vector(2 downto 0);
 		
 		variable v_m_csr_mstatus_mpie: std_logic;
 		variable v_m_csr_mstatus_spie: std_logic;
@@ -59,9 +64,8 @@ begin
 		variable v_m_csr_mstatus_sie: std_logic;
 	begin
 		if rising_edge(clk) then
-			v_branch_continue_indicator := '0';
-			v_branch_address_indicator := '0';
-			v_branch_address := (others => '0');
+			v_new_pc_indicator := '0';
+			v_new_pc := (others => '0');
 
 			v_m_csr_mstatus_mpie := v_m_csr_mstatus_mpie;
 			v_m_csr_mstatus_spie := v_m_csr_mstatus_spie;
@@ -80,17 +84,25 @@ begin
 			if hold_in = '0' then
 				if v_input.valid = '0' then
 					v_output := DEFAULT_EXECUTE_OUTPUT;
+				elsif v_input.stamp /= stamp then
+					-- pass on some data to keep the read/write administration in order
+					v_output := DEFAULT_EXECUTE_OUTPUT;
+					v_output.valid := '1';
+					v_output.act := '0';
+					v_output.writeback_register := v_input.writeback_register;
 				--elsif v_input.illegal = '1' then
 				--	v_trap := true;
 				elsif v_input.alu_function = ALU_FUNCTION_ADD then
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SUB then
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) - unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLT then
 					v_output.valid := '1';
@@ -100,6 +112,7 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLTU then
 					v_output.valid := '1';
@@ -109,21 +122,25 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_AND then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 and v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_OR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 or v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_XOR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 xor v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_LEFT then
 					v_temp := v_input.operand_1;
@@ -150,6 +167,7 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
@@ -176,6 +194,7 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
@@ -203,108 +222,86 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_JAL then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_3;
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
-					
-					v_branch_continue_indicator := '0';
-					v_branch_address_indicator := '1';
-					v_branch_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
+
+					v_new_pc_indicator := '0';
+					v_new_pc := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 				elsif v_input.alu_function = ALU_FUNCTION_BEQ then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if v_input.operand_1 = v_input.operand_2 then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BNE then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if v_input.operand_1 /= v_input.operand_2 then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BLT then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if signed(v_input.operand_1) < signed(v_input.operand_2) then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BLTU then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BGE then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if signed(v_input.operand_1) >= signed(v_input.operand_2) then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_BGEU then
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if unsigned(v_input.operand_1) >= unsigned(v_input.operand_2) then
-						v_branch_continue_indicator := '0';
-						v_branch_address_indicator := '1';
-						v_branch_address := v_input.operand_3;
-					else
-						v_branch_continue_indicator := '1';
-						v_branch_address_indicator := '0';
-						v_branch_address := (others => '0');
+						v_new_pc_indicator := '1';
+						v_new_pc := v_input.operand_3;
 					end if;
 				elsif v_input.alu_function = ALU_FUNCTION_CSRRW then
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if v_input.csr_register = CSR_MVENDORID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
@@ -353,6 +350,7 @@ begin
 
 				elsif v_input.alu_function = ALU_FUNCTION_CSRRS then
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					-- TODO: v_csr_mtargetreg := csr_mtargetreg or v_input.operand_1;
@@ -404,6 +402,7 @@ begin
 
 				elsif v_input.alu_function = ALU_FUNCTION_CSRRC then
 					v_output.writeback_register := v_input.writeback_register;
+					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					-- TODO: v_csr_mtargetreg := csr_mtargetreg and not(v_input.operand_1);
@@ -471,12 +470,17 @@ begin
 			--	-- TODO
 			--end if;
 
-			if v_input.branch_to_be_handled = '1' then
-				continue_out <= v_branch_continue_indicator;
-				pc_indicator_out <= v_branch_address_indicator;
-				pc_out <= v_branch_address;
-				-- so we don't take the branch again
-				v_input.branch_to_be_handled := '0';
+
+			if v_new_pc_indicator = '1' then
+				new_pc_indicator_out <= '1';
+				new_pc_out <= v_new_pc;
+				v_new_stamp := std_logic_vector(unsigned(stamp) + 1);
+				new_stamp_out <= v_new_stamp;
+				stamp <= v_new_stamp;
+			else
+				new_pc_indicator_out <= '0';
+				new_pc_out <= (others => '0');
+				new_stamp_out <= (others => '0');
 			end if;
 
 			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then

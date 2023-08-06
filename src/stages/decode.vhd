@@ -39,8 +39,6 @@ begin
 			if hold_in = '0' then
 				-- output generation
 				if v_input.valid = '1' then
-					v_output.tag := v_input.tag;
-
 					--variable v_imm: std_logic_vector(31 downto 0);
 					--variable v_rs1: std_logic_vector(4 downto 0);
 					--variable v_rs2: std_logic_vector(4 downto 0);
@@ -101,6 +99,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010111" then
@@ -119,6 +118,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1101111" then
@@ -138,6 +138,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100111" and v_input.opcode(14 downto 12) = "000" then
@@ -157,6 +158,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "000" then
@@ -176,6 +178,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BEQ;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "001" then
@@ -195,6 +198,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BNE;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "100" then
@@ -214,6 +218,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "101" then
@@ -233,6 +238,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGE;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "110" then
@@ -252,6 +258,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLTU;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1100011" and v_input.opcode(14 downto 12) = "111" then
@@ -271,6 +278,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGEU;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					-- TODO (MEMORY STUFF)
@@ -330,6 +338,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" then
@@ -348,6 +357,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" then
@@ -366,6 +376,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" then
@@ -384,6 +395,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" then
@@ -402,6 +414,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" then
@@ -420,6 +433,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
@@ -438,6 +452,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
@@ -456,6 +471,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
@@ -474,6 +490,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0000000" then
@@ -492,6 +509,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0100000" then
@@ -510,6 +528,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SUB;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
@@ -528,6 +547,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" and v_input.opcode(31 downto 25) = "0000000" then
@@ -546,6 +566,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" and v_input.opcode(31 downto 25) = "0000000" then
@@ -564,6 +585,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" and v_input.opcode(31 downto 25) = "0000000" then
@@ -582,6 +604,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
@@ -600,6 +623,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
@@ -618,6 +642,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" and v_input.opcode(31 downto 25) = "0000000" then
@@ -636,6 +661,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" and v_input.opcode(31 downto 25) = "0000000" then
@@ -654,6 +680,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0001111" and v_input.opcode(14 downto 12) = "000" then
@@ -672,6 +699,7 @@ begin
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "00000000000000000000000001110011" then
@@ -690,6 +718,7 @@ begin
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(31 downto 0) = "00000000000100000000000001110011" then
@@ -708,6 +737,7 @@ begin
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "001" then
@@ -726,6 +756,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "101" then
@@ -744,6 +775,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "010" then
@@ -762,6 +794,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "110" then
@@ -780,6 +813,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "011" then
@@ -798,6 +832,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "1110011" and v_input.opcode(14 downto 12) = "111" then
@@ -816,6 +851,7 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
+						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
 					elsif v_input.opcode(31 downto 0) = "00110000001000000000000001110011" then
