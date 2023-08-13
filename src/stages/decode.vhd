@@ -8,10 +8,10 @@ use work.stages_interfaces.all;
 entity decode is
 	port(
 		clk: in std_logic;
-		hold_in: in std_logic;
+		stall_in: in std_logic;
 		input: in fetch_output_type;
 
-		hold_out: out std_logic := '0';
+		stall_out: out std_logic := '0';
 		output: out decode_output_type := DEFAULT_DECODE_OUTPUT
 	);
 end decode;
@@ -19,11 +19,10 @@ end decode;
 
 architecture Behavioral of decode is
 	signal buffered_input: fetch_output_type := DEFAULT_FETCH_OUTPUT;
-	signal hold: std_logic := '0';
 begin
+	stall_out <= buffered_input.valid;
 
 	process(clk)
-		variable v_wait: std_logic;
 		variable v_input: fetch_output_type;
 		variable v_output: decode_output_type;
 	begin
@@ -35,8 +34,7 @@ begin
 				v_input := input;
 			end if;
 
-			v_wait := '0';
-			if hold_in = '0' then
+			if stall_in = '0' then
 				-- output generation
 				if v_input.valid = '1' then
 					--variable v_imm: std_logic_vector(31 downto 0);
@@ -866,20 +864,14 @@ begin
 					v_output := DEFAULT_DECODE_OUTPUT;
 				end if;
 				
-				if v_wait = '1' then
-					v_output := DEFAULT_DECODE_OUTPUT;
-				else
-					buffered_input <= DEFAULT_FETCH_OUTPUT;
-				end if;
-				
 				output <= v_output;
 			end if;
 
-			if v_input.valid = '1' and (hold_in = '1' or v_wait = '1') then
+			if v_input.valid = '1' and stall_in = '1' then
 				buffered_input <= v_input;
+			else
+				buffered_input <= DEFAULT_FETCH_OUTPUT;
 			end if;
-
-			hold_out <= hold_in or v_wait;
 		end if;
 	end process;
 

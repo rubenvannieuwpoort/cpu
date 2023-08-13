@@ -10,10 +10,10 @@ entity memory is
 	port(
 		clk: in std_logic;
 		--memory_ready: in std_logic;
-		hold_in: in std_logic;
+		stall_in: in std_logic;
 		input: in execute_output_type;
 
-		hold_out: out std_logic;
+		stall_out: out std_logic;
 		--write_status_in: in write_status_signals;
 		--write_port_out: out write_port_signals;
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -75,7 +75,7 @@ architecture Behavioral of memory is
 begin
 	--write_port_out.clk <= clk;
 	--write_port_out.write_cmd <= write_cmd_out;
-	hold_out <= buffered_input.valid;
+	stall_out <= buffered_input.valid;
 
 	process(clk)
 		variable v_should_stall: boolean;
@@ -88,7 +88,7 @@ begin
 				v_input := input;
 			end if;
 
-			if hold_in = '0' then
+			if stall_in = '0' then
 				-- TODO: replace this line by the commented block
 				v_should_stall := false;
 				--v_should_stall := should_stall(v_input, write_status_in, memory_ready);
@@ -97,7 +97,7 @@ begin
 				--end if;
 			end if;
 
-			if hold_in = '0' and not(v_should_stall) then
+			if stall_in = '0' and not(v_should_stall) then
 				output <= f(v_input);
 				--write_cmd_out <= g(v_input);
 				buffered_input <= DEFAULT_EXECUTE_OUTPUT;

@@ -8,10 +8,10 @@ use work.stages_interfaces.all;
 entity registers is
 	port(
 		clk: in std_logic;
-		read_hold_in: in std_logic;
+		read_stall_in: in std_logic;
 		read_input: in decode_output_type;
 
-		read_hold_out: out std_logic := '0';
+		read_stall_out: out std_logic := '0';
 		read_output: out register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
 		
 		write_input: in memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -28,10 +28,11 @@ architecture Behavioral of registers is
 	type scoreboard is array(0 to 31) of std_logic_vector(1 downto 0);
 	signal writes_in_flight: scoreboard := ("00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00");
 begin
+	read_stall_out <= buffered_read_input.valid;
 
 	process(clk)
 		variable v_read_input: decode_output_type;
-		variable v_read_wait: std_logic;
+		variable v_read_stall: std_logic;
 		variable v_read_output: register_read_output_type;
 		variable v_register_1_value, v_register_2_3_value: std_logic_vector(31 downto 0);
 		variable v_write_incoming, v_write_outgoing: boolean;
@@ -51,9 +52,9 @@ begin
 				v_read_input := read_input;
 			end if;
 
-			v_read_wait := '0';
-			if read_hold_in = '0' then
-				-- compute v_internal_hold and v_data_out based on input
+			v_read_stall := '0';
+			if read_stall_in = '0' then
+				-- compute v_internal_stall and v_data_out based on input
 				if v_read_input.valid = '1' then
 					if v_read_input.operand_1_type = TYPE_REGISTER then
 						if writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "00" then
@@ -96,7 +97,7 @@ begin
 					end if;
 
 					if (v_register_1_ready and v_register_2_3_ready) = '1' then
-						v_read_wait := '0';
+						v_read_stall := '0';
 
 						v_read_output.valid := '1';
 
@@ -131,27 +132,25 @@ begin
 						v_read_output.stamp := v_read_input.stamp;
 						v_read_output.tag := v_read_input.tag;
 					else
-						v_read_wait := '1';
+						v_read_stall := '1';
 						v_read_output := DEFAULT_REGISTER_READ_OUTPUT;
 					end if;
 				else
 					v_read_output := DEFAULT_REGISTER_READ_OUTPUT;
 				end if;
 				
-				if v_read_wait = '1' then
+				if v_read_stall = '1' then
 					v_read_output := DEFAULT_REGISTER_READ_OUTPUT;
-				else
-					buffered_read_input <= DEFAULT_DECODE_OUTPUT;
 				end if;
 				
 				read_output <= v_read_output;
 			end if;
 
-			if v_read_input.valid = '1' and (read_hold_in = '1' or v_read_wait = '1') then
+			if v_read_input.valid = '1' and (read_stall_in = '1' or v_read_stall = '1') then
 				buffered_read_input <= v_read_input;
+			else
+				buffered_read_input <= DEFAULT_DECODE_OUTPUT;
 			end if;
-
-			read_hold_out <= read_hold_in or v_read_wait;
 
 			
 			-- REGISTER WRITE STAGE
@@ -195,7 +194,7 @@ begin
 			
 			-- bookkeeping of in-flight writes
 			v_write_incoming := write_input.writeback_register /= "00000";
-			v_write_outgoing := v_read_input.valid = '1' and v_read_wait = '0' and v_read_output.writeback_register /= "00000";
+			v_write_outgoing := v_read_input.valid = '1' and v_read_stall = '0' and v_read_output.writeback_register /= "00000";
 			if v_write_outgoing and v_write_incoming and v_read_input.writeback_register = write_input.writeback_register then
 				-- both an incoming and an outgoing write to the same register, no change
 			else

@@ -4,20 +4,16 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.types.all;
 use work.stages_interfaces.all;
 
 
 entity fetch is
 	port(
 		clk: in std_logic;
-		hold_in: in std_logic;
+		stall_in: in std_logic;
 
-		--continue_in: in std_logic;
-		--pc_indicator_in: in std_logic;
-		--pc_in: in std_logic_vector(31 downto 0);
-		new_pc_indicator_in: in std_logic;
-		new_pc_in: in std_logic_vector(31 downto 0);
-		new_stamp_in: in std_logic_vector(2 downto 0);
+		branch_in: branch_signals;
 		output: out fetch_output_type := DEFAULT_FETCH_OUTPUT
 	);
 end fetch;
@@ -49,7 +45,7 @@ begin
 	begin
 		if rising_edge(clk) then
 			if wait_indicator = '0' then
-				if hold_in = '0' then
+				if stall_in = '0' then
 					v_opcode := opcodes(to_integer(unsigned(pc(6 downto 2))));
 
 					pc <= pc_next;
@@ -62,14 +58,14 @@ begin
 					output.tag <= pc(6 downto 2);
 				end if;
 			else
-				if hold_in = '0' then
+				if stall_in = '0' then
 					output <= DEFAULT_FETCH_OUTPUT;
 				end if;
 
-				if new_pc_indicator_in = '1' then
-					pc <= new_pc_in;
-					pc_next <= std_logic_vector(unsigned(new_pc_in) + 4);
-					stamp <= new_stamp_in;
+				if branch_in.data.indicator = '1' then
+					pc <= branch_in.data.address;
+					pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
+					stamp <= branch_in.stamp;
 					wait_indicator <= '0';
 				end if;
 			end if;

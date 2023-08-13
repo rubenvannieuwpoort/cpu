@@ -98,4 +98,24 @@ package types is
 		underrun => '0',
 		error => '0'
 	);
+
+	type branch_data is record
+		indicator: std_logic;
+		address: std_logic_vector(31 downto 0);
+	end record;
+
+	constant DEFAULT_BRANCH_DATA: branch_data := (
+		indicator => '0',
+		address => (others => '0')
+	);
+
+	type branch_signals is record
+		data: branch_data;
+		stamp: std_logic_vector(2 downto 0);
+	end record;
+
+	constant DEFAULT_BRANCH_SIGNALS: branch_signals := (
+		data => DEFAULT_BRANCH_DATA,
+		stamp => (others => '0')
+	);
 end package;
