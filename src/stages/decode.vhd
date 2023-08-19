@@ -472,7 +472,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0000000" then
 						-- ADD (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -490,7 +490,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0100000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "000" and v_input.opcode(31 downto 25) = "0100000" then
 						-- SUB (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -508,7 +508,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "001" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLL (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -526,7 +526,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "010" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "010" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLT (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -544,7 +544,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "011" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "011" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SLTU (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -562,7 +562,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "100" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "100" and v_input.opcode(31 downto 25) = "0000000" then
 						-- XOR (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -580,7 +580,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0000000" then
 						-- SRL (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -598,7 +598,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "101" and v_input.opcode(31 downto 25) = "0100000" then
 						-- SRA (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -616,7 +616,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "110" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "110" and v_input.opcode(31 downto 25) = "0000000" then
 						-- OR (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
@@ -634,7 +634,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "0010011" and v_input.opcode(14 downto 12) = "111" and v_input.opcode(31 downto 25) = "0000000" then
+					elsif v_input.opcode(6 downto 0) = "0110011" and v_input.opcode(14 downto 12) = "111" and v_input.opcode(31 downto 25) = "0000000" then
 						-- AND (done)
 						v_output.valid := '1';
 						v_output.illegal := '0';
