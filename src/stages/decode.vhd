@@ -426,7 +426,7 @@ begin
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
 						v_output.operand_2_type := TYPE_IMMEDIATE;
-						v_output.operand_2_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.operand_2_immediate := std_logic_vector(resize(unsigned(v_input.opcode(24 downto 20)), 32));
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
@@ -444,7 +444,7 @@ begin
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
 						v_output.operand_2_type := TYPE_IMMEDIATE;
-						v_output.operand_2_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.operand_2_immediate := std_logic_vector(resize(unsigned(v_input.opcode(24 downto 20)), 32));
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
@@ -462,7 +462,7 @@ begin
 						v_output.operand_1_register := v_input.opcode(19 downto 15);
 						v_output.operand_1_immediate := (others => '0');
 						v_output.operand_2_type := TYPE_IMMEDIATE;
-						v_output.operand_2_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.operand_2_immediate := std_logic_vector(resize(unsigned(v_input.opcode(24 downto 20)), 32));
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
