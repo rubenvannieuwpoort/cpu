@@ -47,6 +47,7 @@ architecture Behavioral of memory is
 		output.writeback_register := input.writeback_register;
 		output.writeback_value := input.writeback_value;
 		output.tag := input.tag;
+		output.act := input.act;
 		--if input.memory_operation = MEMORY_OPERATION_LOAD then
 		--	output.convert_memory_order_indicator := '1';
 		--else
