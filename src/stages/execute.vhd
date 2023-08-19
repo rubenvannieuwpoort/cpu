@@ -99,13 +99,11 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SUB then
 					v_output.valid := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) - unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLT then
 					v_output.valid := '1';
@@ -115,7 +113,6 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SLTU then
 					v_output.valid := '1';
@@ -125,25 +122,21 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_AND then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 and v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_OR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 or v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_XOR then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_1 xor v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_LEFT then
 					v_temp := v_input.operand_1;
@@ -170,7 +163,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
@@ -197,7 +189,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT then
 					v_temp := v_input.operand_1;
@@ -225,13 +216,11 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 				elsif v_input.alu_function = ALU_FUNCTION_JAL then
 					v_output.valid := '1';
 					v_output.writeback_value := v_input.operand_3;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					v_branch.indicator := '0';
@@ -240,7 +229,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if v_input.operand_1 = v_input.operand_2 then
@@ -251,7 +239,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if v_input.operand_1 /= v_input.operand_2 then
@@ -262,7 +249,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if signed(v_input.operand_1) < signed(v_input.operand_2) then
@@ -273,7 +259,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if unsigned(v_input.operand_1) < unsigned(v_input.operand_2) then
@@ -284,7 +269,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if signed(v_input.operand_1) >= signed(v_input.operand_2) then
@@ -295,7 +279,6 @@ begin
 					v_output.valid := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.stamp := v_input.stamp;
 					v_output.tag := v_input.tag;
 
 					if unsigned(v_input.operand_1) >= unsigned(v_input.operand_2) then
@@ -304,7 +287,6 @@ begin
 					end if;
 				--elsif v_input.alu_function = ALU_FUNCTION_CSRRW then
 				--	v_output.writeback_register := v_input.writeback_register;
-				--	v_output.stamp := v_input.stamp;
 				--	v_output.tag := v_input.tag;
 
 				--	if v_input.csr_register = CSR_MVENDORID_ADDRESS and v_input.operand_1_is_zero_register = '1'then
@@ -347,7 +329,6 @@ begin
 				--	end if;
 				--elsif v_input.alu_function = ALU_FUNCTION_CSRRS then
 				--	v_output.writeback_register := v_input.writeback_register;
-				--	v_output.stamp := v_input.stamp;
 				--	v_output.tag := v_input.tag;
 
 				--	-- TODO: v_csr_mtargetreg := csr_mtargetreg or v_input.operand_1;
@@ -393,7 +374,6 @@ begin
 				--	end if;
 				--elsif v_input.alu_function = ALU_FUNCTION_CSRRC then
 				--	v_output.writeback_register := v_input.writeback_register;
-				--	v_output.stamp := v_input.stamp;
 				--	v_output.tag := v_input.tag;
 
 				--	-- TODO: v_csr_mtargetreg := csr_mtargetreg and not(v_input.operand_1);

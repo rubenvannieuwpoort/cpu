@@ -201,7 +201,6 @@ package stages_interfaces is
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
-		stamp: std_logic_vector(2 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
 
@@ -212,7 +211,6 @@ package stages_interfaces is
 		writeback_value => (others => '0'),
 		writeback_register => (others => '0'),
 
-		stamp => (others => '0'),
 		tag => (others => '0')
 	);
 
@@ -224,7 +222,6 @@ package stages_interfaces is
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
-		stamp: std_logic_vector(2 downto 0);
 		tag: std_logic_vector(4 downto 0);
 	end record memory_output_type;
 
@@ -233,7 +230,6 @@ package stages_interfaces is
 		writeback_value => (others => '0'),
 		writeback_register => (others => '0'),
 
-		stamp => (others => '0'),
 		tag => (others => '0')
 	);
 

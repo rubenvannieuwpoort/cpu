@@ -21,7 +21,7 @@ end fetch;
 architecture Behavioral of fetch is
 	signal pc: std_logic_vector(31 downto 0) := (others => '0');
 	signal pc_next: std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4, 32));
-	signal wait_indicator: std_logic := '0';
+	-- signal wait_indicator: std_logic := '0';
 	signal stamp: std_logic_vector(2 downto 0) := (others => '0');
 
 	type opcodes_list is array(0 to 31) of std_logic_vector(31 downto 0);
@@ -44,7 +44,7 @@ begin
 		variable v_opcode: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
-			if wait_indicator = '0' then
+			--if wait_indicator = '0' then
 				if stall_in = '0' then
 					v_opcode := opcodes(to_integer(unsigned(pc(6 downto 2))));
 
@@ -57,18 +57,18 @@ begin
 					output.opcode <= v_opcode;
 					output.tag <= pc(6 downto 2);
 				end if;
-			else
-				if stall_in = '0' then
-					output <= DEFAULT_FETCH_OUTPUT;
-				end if;
+			--else
+			--	if stall_in = '0' then
+			--		output <= DEFAULT_FETCH_OUTPUT;
+			--	end if;
 
-				if branch_in.data.indicator = '1' then
-					pc <= branch_in.data.address;
-					pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
-					stamp <= branch_in.stamp;
-					wait_indicator <= '0';
-				end if;
-			end if;
+			--	if branch_in.data.indicator = '1' then
+			--		pc <= branch_in.data.address;
+			--		pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
+			--		stamp <= branch_in.stamp;
+			--		wait_indicator <= '0';
+			--	end if;
+			--end if;
 		end if;
 	end process;
 end Behavioral;
