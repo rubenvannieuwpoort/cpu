@@ -44,31 +44,35 @@ begin
 		variable v_opcode: std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(clk) then
-			--if wait_indicator = '0' then
-				if stall_in = '0' then
-					v_opcode := opcodes(to_integer(unsigned(pc(6 downto 2))));
+			if stall_in = '1' then
+				if branch_in.data.indicator = '1' then	
+					pc <= branch_in.data.address;
+					pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
+					stamp <= branch_in.stamp;
+				end if;
+			elsif branch_in.data.indicator = '1' then
+				output.valid <= '1';
 
+				pc <= std_logic_vector(unsigned(branch_in.data.address) + 4);
+				pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 8);
+				stamp <= branch_in.stamp;
+
+				output.pc <= branch_in.data.address;
+				output.pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
+				output.opcode <= opcodes(to_integer(unsigned(branch_in.data.address(6 downto 2))));
+				output.stamp <= branch_in.stamp;
+				output.tag <= branch_in.data.address(6 downto 2);
+			else
 					pc <= pc_next;
 					pc_next <= std_logic_vector(unsigned(pc_next) + 4);
 
 					output.valid <= '1';
 					output.pc <= pc;
 					output.pc_next <= pc_next;
-					output.opcode <= v_opcode;
+				output.opcode <= opcodes(to_integer(unsigned(pc(6 downto 2))));
+				output.stamp <= stamp;
 					output.tag <= pc(6 downto 2);
 				end if;
-			--else
-			--	if stall_in = '0' then
-			--		output <= DEFAULT_FETCH_OUTPUT;
-			--	end if;
-
-			--	if branch_in.data.indicator = '1' then
-			--		pc <= branch_in.data.address;
-			--		pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
-			--		stamp <= branch_in.stamp;
-			--		wait_indicator <= '0';
-			--	end if;
-			--end if;
 		end if;
 	end process;
 end Behavioral;
