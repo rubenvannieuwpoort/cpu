@@ -235,7 +235,7 @@ begin
 					v_output.writeback_register := v_input.writeback_register;
 					v_output.tag := v_input.tag;
 
-					v_branch.indicator := '0';
+					v_branch.indicator := '1';
 					v_branch.address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 				elsif v_input.alu_function = ALU_FUNCTION_BEQ then
 					v_output.valid := '1';
