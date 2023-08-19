@@ -93,7 +93,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -112,7 +111,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -132,7 +130,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := v_input.pc_next;
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
@@ -152,7 +149,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := v_input.pc_next;
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_JAL;
@@ -172,7 +168,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BEQ;
@@ -192,7 +187,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BNE;
@@ -212,7 +206,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLT;
@@ -232,7 +225,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGE;
@@ -252,7 +244,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLTU;
@@ -272,7 +263,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.branch_to_be_handled := '1';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGEU;
@@ -332,7 +322,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -351,7 +340,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
@@ -370,7 +358,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
@@ -389,7 +376,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
@@ -408,7 +394,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
@@ -427,7 +412,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
@@ -446,7 +430,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
@@ -465,7 +448,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
@@ -484,7 +466,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
@@ -503,7 +484,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -522,7 +502,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SUB;
@@ -541,7 +520,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_LEFT;
@@ -560,7 +538,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLT;
@@ -579,7 +556,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SLTU;
@@ -598,7 +574,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_XOR;
@@ -617,7 +592,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_SHIFT_RIGHT;
@@ -636,7 +610,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ARITHMETIC_SHIFT_RIGHT;
@@ -655,7 +628,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_OR;
@@ -674,7 +646,6 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_AND;
@@ -693,7 +664,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -712,7 +682,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -731,7 +700,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
@@ -750,7 +718,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
@@ -769,7 +736,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRW;
@@ -788,7 +754,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
@@ -807,7 +772,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRS;
@@ -826,7 +790,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;
@@ -845,7 +808,6 @@ begin
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := (others => '0');
-						v_output.branch_to_be_handled := '0';
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := v_input.opcode(31 downto 20);
 						v_output.alu_function := ALU_FUNCTION_CSRRC;

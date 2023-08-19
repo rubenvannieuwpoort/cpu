@@ -125,7 +125,6 @@ begin
 							v_read_output.operand_1_is_zero_register := '0';
 						end if;
 
-						v_read_output.branch_to_be_handled := v_read_input.branch_to_be_handled;
 						v_read_output.writeback_register := v_read_input.writeback_register;
 						v_read_output.csr_register := v_read_input.csr_register;
 						v_read_output.alu_function := v_read_input.alu_function;
