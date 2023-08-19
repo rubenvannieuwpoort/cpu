@@ -821,6 +821,7 @@ begin
 					else
 						v_output := DEFAULT_DECODE_OUTPUT;
 						v_output.illegal := '1';
+						v_output.tag := v_input.tag;
 					end if;
 				else
 					v_output := DEFAULT_DECODE_OUTPUT;
