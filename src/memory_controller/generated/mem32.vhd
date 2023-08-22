@@ -72,7 +72,7 @@ generic
           C3_P0_DATA_PORT_SIZE      : integer := 32;
           C3_P1_MASK_SIZE           : integer := 4;
           C3_P1_DATA_PORT_SIZE      : integer := 32;
-    C3_MEMCLK_PERIOD        : integer := 10000; 
+    C3_MEMCLK_PERIOD        : integer := 6000; 
                                        -- Memory data transfer clock period.
     C3_RST_ACT_LOW          : integer := 0; 
                                        -- # = 1 for active low reset,
