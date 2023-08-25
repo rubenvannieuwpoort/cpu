@@ -48,9 +48,6 @@ package stages_interfaces is
 		csr_register: std_logic_vector(11 downto 0);
 
 		alu_function: std_logic_vector(4 downto 0);
-		-- mem_function: std_logic_vector(4 downto 0);
-		-- memory_operation: std_logic_vector(1 downto 0);
-		-- memory_size: std_logic_vector(1 downto 0);
 
 		pc: std_logic_vector(31 downto 0);
 		stamp: std_logic_vector(2 downto 0);
@@ -59,23 +56,6 @@ package stages_interfaces is
 
 	constant TYPE_REGISTER  : std_logic := '0';
 	constant TYPE_IMMEDIATE : std_logic := '1';
-
-	--constant MEMORY_OPERATION_LOAD_BYTE     : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_LOAD_BYTE     : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_LOAD_HALFWORD : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_LOAD_HALFWORD : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_LOAD_WORD     : std_logic_vector(1 downto 0) := "00";
-	
-	--constant MEMORY_OPERATION_STORE_BYTE     : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_STORE_HALFWORD : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_OPERATION_STORE_WORD     : std_logic_vector(1 downto 0) := "00";
-
-	--constant MEMORY_OPERATION_LOAD : std_logic_vector(1 downto 0) := "01";
-	--constant MEMORY_OPERATION_STORE: std_logic_vector(1 downto 0) := "10";
-
-	--constant MEMORY_SIZE_BYTE     : std_logic_vector(1 downto 0) := "00";
-	--constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
-	--constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "10";
 
 	-- ALU_FUNCTION_ADD: writeback_value = op1 + op2
 	-- ALU_FUNCTION_SUB: writeback_value = op1 - op2
@@ -92,6 +72,14 @@ package stages_interfaces is
 	-- ALU_FUNCTION_CSRRW: writeback_value = <value of CSR>, <CSR> = op1
 	-- ALU_FUNCTION_CSRRC: writeback_value = <value of CSR>, <CSR> = <CSR> | op1
 	-- ALU_FUNCTION_CSRRS: writeback_value = <value of CSR>, <CSR> = <CSR> & !(op1)
+	-- ALU_FUNCTION_STORE_BYTE: <store byte in op2 at op1 + op3>
+	-- ALU_FUNCTION_STORE_HALFWORD: <store halfword in op2 at op1 + op3>
+	-- ALU_FUNCTION_STORE_WORD: <store word in op2 at op1 + op3>
+	-- ALU_FUNCTION_LOAD_BYTE: writeback_value = <byte at op1 + op3> (with sign extension)
+	-- ALU_FUNCTION_LOAD_HALFWORD: writeback_value = <halfword at op1 + op3> (with sign extension)
+	-- ALU_FUNCTION_LOAD_WORD: writeback_value = <word at op1 + op3> (with sign extension)
+	-- ALU_FUNCTION_LOAD_BYTE_UNSIGNED: writeback_value = <byte at op1 + op3> (no sign extension)
+	-- ALU_FUNCTION_LOAD_HALFWORD_UNSIGNED: writeback_value = <byte at op1 + op3> (no sign extension)
 
 	
 	-- arithmetic
@@ -117,9 +105,19 @@ package stages_interfaces is
 	constant ALU_FUNCTION_BGEU                   : std_logic_vector(4 downto 0) := "10000";
 
 	-- CSRs
-	constant ALU_FUNCTION_CSRRW                    : std_logic_vector(4 downto 0) := "10001";
-	constant ALU_FUNCTION_CSRRC                    : std_logic_vector(4 downto 0) := "10010";
-	constant ALU_FUNCTION_CSRRS                    : std_logic_vector(4 downto 0) := "10011";
+	constant ALU_FUNCTION_CSRRW                  : std_logic_vector(4 downto 0) := "10001";
+	constant ALU_FUNCTION_CSRRC                  : std_logic_vector(4 downto 0) := "10010";
+	constant ALU_FUNCTION_CSRRS                  : std_logic_vector(4 downto 0) := "10011";
+
+	-- memory
+	constant ALU_FUNCTION_STORE_BYTE             : std_logic_vector(4 downto 0) := "10100";
+	constant ALU_FUNCTION_STORE_HALFWORD         : std_logic_vector(4 downto 0) := "10101";
+	constant ALU_FUNCTION_STORE_WORD             : std_logic_vector(4 downto 0) := "10110";
+	constant ALU_FUNCTION_LOAD_BYTE              : std_logic_vector(4 downto 0) := "11000";
+	constant ALU_FUNCTION_LOAD_HALFWORD          : std_logic_vector(4 downto 0) := "11001";
+	constant ALU_FUNCTION_LOAD_WORD              : std_logic_vector(4 downto 0) := "11010";
+	constant ALU_FUNCTION_LOAD_BYTE_UNSIGNED     : std_logic_vector(4 downto 0) := "11100";
+	constant ALU_FUNCTION_LOAD_HALFWORD_UNSIGNED : std_logic_vector(4 downto 0) := "11101";
 
 	constant DEFAULT_DECODE_OUTPUT: decode_output_type := (
 		valid => '0',
@@ -159,9 +157,6 @@ package stages_interfaces is
 		csr_register: std_logic_vector(11 downto 0);
 
 		alu_function: std_logic_vector(4 downto 0);
-		-- mem_function: std_logic_vector(4 downto 0);
-		-- memory_operation: std_logic_vector(1 downto 0);
-		-- memory_size: std_logic_vector(1 downto 0);
 
 		pc: std_logic_vector(31 downto 0);
 		stamp: std_logic_vector(2 downto 0);
@@ -197,8 +192,17 @@ package stages_interfaces is
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
+		memory_op: std_logic_vector(1 downto 0);
+		memory_data: std_logic_vector(31 downto 0);
+		memory_write_mask: std_logic_vector(3 downto 0);
+		memory_address: std_logic_vector(31 downto 0);
+
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
+
+	constant MEMORY_OP_NOP : std_logic_vector(1 downto 0) := "00";
+	constant MEMORY_OP_LOAD : std_logic_vector(1 downto 0) := "01";
+	constant MEMORY_OP_STORE : std_logic_vector(1 downto 0) := "10";
 
 	constant DEFAULT_EXECUTE_OUTPUT: execute_output_type := (
 		valid => '0',
@@ -206,6 +210,11 @@ package stages_interfaces is
 
 		writeback_value => (others => '0'),
 		writeback_register => (others => '0'),
+		
+		memory_op => MEMORY_OP_NOP,
+		memory_data => (others => '0'),
+		memory_write_mask => (others => '0'),
+		memory_address => (others => '0'),
 
 		tag => (others => '0')
 	);
