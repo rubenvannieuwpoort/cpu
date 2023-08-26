@@ -43,6 +43,8 @@ architecture Behavioral of top_level is
 	signal clk_main, clk_pixel: std_logic;
 	signal clk_mem: memory_clock_signals;
 
+	-- memory
+	signal read_write_port_clk: std_logic;
 	signal memory_ready: std_logic;
 
 	-- vga
@@ -57,15 +59,16 @@ architecture Behavioral of top_level is
 	signal read_status: read_status_signals;
 
 	-- write port
-	signal write_port: write_port_signals;
+	signal read_write_port: read_write_port_signals;
 	signal write_status: write_status_signals;
 
 	component CPU is
 		port(
 			clk: in std_logic;
-			memory_ready: in std_logic;
-			write_status: in write_status_signals;
-			write_port: out write_port_signals
+			memory_ready_in: in std_logic;
+			read_write_port_clk_out: out std_logic;
+			read_write_port_out: out read_write_port_signals;
+			write_status_in: in write_status_signals
 		);
 	end component;
 
@@ -81,13 +84,13 @@ architecture Behavioral of top_level is
 	component memory_interface
 		port(
 			clk: memory_clock_signals;
-			write_port: in write_port_signals;
-			write_status: out write_status_signals;
-			read_cmd: in read_cmd_signals;
-			read_status: out read_status_signals;
-			ram: out ram_signals;
+			read_write_port_clk_in: in std_logic;
+			read_write_port_in: in read_write_port_signals;
+			read_status_out: out read_status_signals;
+			write_status_out: out write_status_signals;
+			ram_out: out ram_signals;
 			ram_bus: inout ram_bus_signals;
-			reset: in std_logic;
+			reset_in: in std_logic;
 			calib_done: out std_logic
 		);
 	end component;
@@ -111,16 +114,24 @@ begin
 			clk_pixel => clk_pixel
 		);
 
-	cpu_inst: CPU port map(clk => clk_main, memory_ready => memory_ready, write_status => write_status, write_port => write_port);
+	cpu_inst: CPU port map(
+		clk => clk_main,
+		memory_ready_in => memory_ready,
+		read_write_port_clk_out => read_write_port_clk,
+		write_status_in => write_status,
+		read_write_port_out => read_write_port
+	);
 
 	mem_if: memory_interface
 		port map(
 			clk => clk_mem,
-			write_port => write_port, write_status => write_status,
-			read_cmd => read_cmd, read_status => read_status,
-			ram => ram, ram_bus => ram_bus,
+			read_write_port_clk_in => read_write_port_clk,
+			read_write_port_in => read_write_port,
+			read_status_out => read_status,
+			write_status_out => write_status,
+			ram_out => ram, ram_bus => ram_bus,
 			calib_done => memory_ready,
-			reset => '0'
+			reset_in => '0'
 		);
 
 	vga_gen: textmode_vga_generator
