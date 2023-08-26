@@ -2,13 +2,14 @@
 
 .text
 _start:
+li x1, 0
+li x2, 0
 li x3, 25
-xor x1, x1, x1
 
 loop:
-sw x0, 0(x1)
-addi x0, x0, 1
-addi x1, x1, 4
+sw x1, 0(x2)
+addi x1, x1, 1
+addi x2, x2, 4
 
 blt x1, x3, loop
 
@@ -19,10 +20,11 @@ jal x0, 0
 # 0 to 25 written to the first 25 words in RAM
 
 # machine code and disassembly:
-#   0:   01900193                li      gp,25
-#   4:   0010c0b3                xor     ra,ra,ra
-#   8:   0000a023                sw      zero,0(ra)
-#   c:   00100013                li      zero,1
-#  10:   00408093                add     ra,ra,4
-#  14:   fe30cae3                blt     ra,gp,8 <loop>
-#  18:   0000006f                j       18 <done>
+#   0:   00000093                li      ra,0
+#   4:   00000113                li      sp,0
+#   8:   01900193                li      gp,25
+#   c:   00112023                sw      ra,0(sp)
+#  10:   00108093                add     ra,ra,1
+#  14:   00410113                add     sp,sp,4
+#  18:   fe30cae3                blt     ra,gp,c <loop>
+#  1c:   0000006f                j       1c <done>
