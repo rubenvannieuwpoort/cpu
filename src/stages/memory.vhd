@@ -15,6 +15,8 @@ entity memory is
 
 		read_write_port_clk_out: out std_logic;
 		read_write_port_out: out read_write_port_signals := DEFAULT_READ_WRITE_PORT_SIGNALS;
+
+		read_status_in: in read_status_signals;
 		write_status_in: in write_status_signals;
 
 		stall_out: out std_logic := '0';
@@ -46,7 +48,7 @@ begin
 
 			if stall_in = '0' then
 				if (input.memory_operation = MEMORY_OPERATION_STORE or input.memory_operation = MEMORY_OPERATION_LOAD) and
-					 not(memory_ready_in = '1' and write_status_in.data_empty = '1' and write_status_in.cmd_empty = '1') then
+					 not(memory_ready_in = '1' and read_status_in.data_empty = '1' and write_status_in.data_empty = '1' and write_status_in.cmd_empty = '1') then
 					v_should_stall := true;
 				else
 					v_should_stall := false;

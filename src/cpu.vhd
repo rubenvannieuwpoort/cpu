@@ -14,6 +14,7 @@ entity CPU is
 		read_write_port_clk_out: out std_logic;
 		read_write_port_out: out read_write_port_signals;
 
+		read_status_in: in read_status_signals;
 		write_status_in: in write_status_signals
 	);
 end CPU;
@@ -85,6 +86,7 @@ architecture Behavioral of CPU is
 			input: in execute_output_type;
 			read_write_port_clk_out: out std_logic;
 			read_write_port_out: out read_write_port_signals;
+			read_status_in: in read_status_signals;
 			write_status_in: in write_status_signals;
 			stall_out: out std_logic;
 			output: out memory_output_type
@@ -132,6 +134,7 @@ begin
 		input => execute_output,
 		read_write_port_clk_out => read_write_port_clk_out,
 		read_write_port_out => read_write_port_out,
+		read_status_in => read_status_in,
 		write_status_in => write_status_in,
 		stall_out => memory_stall_out,
 		output => memory_output

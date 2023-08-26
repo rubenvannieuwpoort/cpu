@@ -68,6 +68,7 @@ architecture Behavioral of top_level is
 			memory_ready_in: in std_logic;
 			read_write_port_clk_out: out std_logic;
 			read_write_port_out: out read_write_port_signals;
+			read_status_in: in read_status_signals;
 			write_status_in: in write_status_signals
 		);
 	end component;
@@ -118,6 +119,7 @@ begin
 		clk => clk_main,
 		memory_ready_in => memory_ready,
 		read_write_port_clk_out => read_write_port_clk,
+		read_status_in => read_status,
 		write_status_in => write_status,
 		read_write_port_out => read_write_port
 	);
