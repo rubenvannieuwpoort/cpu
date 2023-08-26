@@ -94,7 +94,7 @@ begin
 					v_output.valid := '1';
 					v_output.act := '0';
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -105,7 +105,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -115,7 +115,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := std_logic_vector(unsigned(v_input.operand_1) - unsigned(v_input.operand_2));
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -129,7 +129,7 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -143,7 +143,7 @@ begin
 						v_output.writeback_value := (others => '0');
 					end if;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -153,7 +153,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_input.operand_1 and v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -163,7 +163,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_input.operand_1 or v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -173,7 +173,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_input.operand_1 xor v_input.operand_2;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -204,7 +204,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -235,7 +235,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -267,7 +267,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_temp;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -277,7 +277,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := v_input.operand_3;
 					v_output.writeback_register := v_input.writeback_register;
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -290,7 +290,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -305,7 +305,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -320,7 +320,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -335,7 +335,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -350,7 +350,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');
@@ -365,7 +365,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
-					v_output.memory_op := MEMORY_OP_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
 					v_output.memory_address := (others => '0');

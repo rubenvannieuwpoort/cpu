@@ -96,8 +96,6 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
-						v_output.memory_operation := MEMORY_OPERATION_NOP;
-						v_output.memory_size := MEMORY_SIZE_BYTE;
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
@@ -116,8 +114,6 @@ begin
 						v_output.writeback_register := v_input.opcode(11 downto 7);
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_ADD;
-						v_output.memory_operation := MEMORY_OPERATION_NOP;
-						v_output.memory_size := MEMORY_SIZE_BYTE;
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
@@ -311,7 +307,7 @@ begin
 						v_output.operand_2_immediate := (others => '0');
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
-						v_output.operand_3_immediate := std_logic_vector(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)));
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32));
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_STORE_BYTE;
@@ -330,7 +326,7 @@ begin
 						v_output.operand_2_immediate := (others => '0');
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
-						v_output.operand_3_immediate := std_logic_vector(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)));
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32));
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_STORE_HALFWORD;
@@ -349,7 +345,7 @@ begin
 						v_output.operand_2_immediate := (others => '0');
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
-						v_output.operand_3_immediate := std_logic_vector(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)));
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32));
 						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_STORE_WORD;
