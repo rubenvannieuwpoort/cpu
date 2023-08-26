@@ -859,7 +859,23 @@ begin
 					elsif v_input.opcode(31 downto 0) = "00110000001000000000000001110011" then
 						-- TODO: MRET
 					elsif v_input.opcode(31 downto 0) = "00010000010100000000000001110011" then
-						-- TODO: WFI
+						-- WFI (implemented as NOP)
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_IMMEDIATE;
+						v_output.operand_1_register := (others => '0');
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_IMMEDIATE;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := (others => '0');
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := (others => '0');
+						v_output.writeback_register := (others => '0');
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_ADD;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					else
 						v_output := DEFAULT_DECODE_OUTPUT;
 						v_output.illegal := '1';
