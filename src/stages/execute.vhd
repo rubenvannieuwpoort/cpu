@@ -537,7 +537,7 @@ begin
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');  -- to be overwritten by memory stage
 					v_output.writeback_register := (others => '0');
-					v_output.memory_operation := MEMORY_OPERATION_NOP;
+					v_output.memory_operation := MEMORY_OPERATION_STORE;
 					v_output.memory_data := v_input.operand_2;
 					v_output.memory_write_mask := "1111";
 					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
