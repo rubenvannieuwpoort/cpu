@@ -528,6 +528,22 @@ begin
 				--	--else
 				--		-- TODO: handle this? fire interrupt?
 				--	end if;
+				elsif v_input.alu_function = ALU_FUNCTION_STORE_BYTE then
+					-- TODO
+				elsif v_input.alu_function = ALU_FUNCTION_STORE_HALFWORD then
+					-- TODO
+				elsif v_input.alu_function = ALU_FUNCTION_STORE_WORD then
+					v_output.valid := '1';
+					v_output.act := '1';
+					v_output.writeback_value := (others => '0');  -- to be overwritten by memory stage
+					v_output.writeback_register := (others => '0');
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
+					v_output.memory_data := v_input.operand_2;
+					v_output.memory_write_mask := "1111";
+					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
+					v_output.tag := v_input.tag;
+					v_branch.indicator := '0';
+					v_branch.address := (others => '0');
 				else
 					-- TODO: this should never happen. Interrupt?
 				end if;
