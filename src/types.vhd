@@ -62,7 +62,7 @@ package types is
 
 	type read_port_signals is record
 		enable: std_logic;
-		address: std_logic_vector(31 downto 0);
+		address: std_logic_vector(29 downto 0);
 		cmd: read_cmd_signals;
 	end record;
 

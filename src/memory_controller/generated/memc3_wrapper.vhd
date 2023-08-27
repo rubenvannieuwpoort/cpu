@@ -205,34 +205,34 @@ generic (
 
       --User Port1 Interface Signals
 
-      --p1_cmd_clk                            : in std_logic;
-      --p1_cmd_en                             : in std_logic;
-      --p1_cmd_instr                          : in std_logic_vector(2 downto 0) ;
-      --p1_cmd_bl                             : in std_logic_vector(5 downto 0) ;
-      --p1_cmd_byte_addr                      : in std_logic_vector(29 downto 0) ;
-      --p1_cmd_empty                          : out std_logic;
-      --p1_cmd_full                           : out std_logic;
+      p1_cmd_clk                            : in std_logic;
+      p1_cmd_en                             : in std_logic;
+      p1_cmd_instr                          : in std_logic_vector(2 downto 0) ;
+      p1_cmd_bl                             : in std_logic_vector(5 downto 0) ;
+      p1_cmd_byte_addr                      : in std_logic_vector(29 downto 0) ;
+      p1_cmd_empty                          : out std_logic;
+      p1_cmd_full                           : out std_logic;
 
       -- Data Wr Port signals
-      --p1_wr_clk                             : in std_logic;
-      --p1_wr_en                              : in std_logic;
-      --p1_wr_mask                            : in std_logic_vector(C_P1_MASK_SIZE - 1 downto 0) ;
-      --p1_wr_data                            : in std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0) ;
-      --p1_wr_full                            : out std_logic;
-      --p1_wr_empty                           : out std_logic;
-      --p1_wr_count                           : out std_logic_vector(6 downto 0) ;
-      --p1_wr_underrun                        : out std_logic;
-      --p1_wr_error                           : out std_logic;
+      p1_wr_clk                             : in std_logic;
+      p1_wr_en                              : in std_logic;
+      p1_wr_mask                            : in std_logic_vector(C_P1_MASK_SIZE - 1 downto 0) ;
+      p1_wr_data                            : in std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0) ;
+      p1_wr_full                            : out std_logic;
+      p1_wr_empty                           : out std_logic;
+      p1_wr_count                           : out std_logic_vector(6 downto 0) ;
+      p1_wr_underrun                        : out std_logic;
+      p1_wr_error                           : out std_logic;
 
       --Data Rd Port signals
-      --p1_rd_clk                             : in std_logic;
-      --p1_rd_en                              : in std_logic;
-      --p1_rd_data                            : out std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0) ;
-      --p1_rd_full                            : out std_logic;
-      --p1_rd_empty                           : out std_logic;
-      --p1_rd_count                           : out std_logic_vector(6 downto 0) ;
-      --p1_rd_overflow                        : out std_logic;
-      --p1_rd_error                           : out std_logic;
+      p1_rd_clk                             : in std_logic;
+      p1_rd_en                              : in std_logic;
+      p1_rd_data                            : out std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0) ;
+      p1_rd_full                            : out std_logic;
+      p1_rd_empty                           : out std_logic;
+      p1_rd_count                           : out std_logic_vector(6 downto 0) ;
+      p1_rd_overflow                        : out std_logic;
+      p1_rd_error                           : out std_logic;
 
 
 
@@ -586,23 +586,23 @@ end component;
 
 signal uo_data : std_logic_vector(7 downto 0);
 
- constant C_PORT_ENABLE              : std_logic_vector(5 downto 0) := "000001";
+ constant C_PORT_ENABLE              : std_logic_vector(5 downto 0) := "000011";
 
 constant C_PORT_CONFIG             : string :=  "B32_B32_R32_R32_R32_R32";
 
 
-constant ARB_TIME_SLOT_0    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_0(2 downto 0));
-constant ARB_TIME_SLOT_1    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_1(2 downto 0));
-constant ARB_TIME_SLOT_2    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_2(2 downto 0));
-constant ARB_TIME_SLOT_3    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_3(2 downto 0));
-constant ARB_TIME_SLOT_4    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_4(2 downto 0));
-constant ARB_TIME_SLOT_5    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_5(2 downto 0));
-constant ARB_TIME_SLOT_6    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_6(2 downto 0));
-constant ARB_TIME_SLOT_7    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_7(2 downto 0));
-constant ARB_TIME_SLOT_8    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_8(2 downto 0));
-constant ARB_TIME_SLOT_9    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_9(2 downto 0));
-constant ARB_TIME_SLOT_10   : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_10(2 downto 0));
-constant ARB_TIME_SLOT_11   : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_11(2 downto 0));
+constant ARB_TIME_SLOT_0    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_0(5 downto 3) & C_ARB_TIME_SLOT_0(2 downto 0));
+constant ARB_TIME_SLOT_1    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_1(5 downto 3) & C_ARB_TIME_SLOT_1(2 downto 0));
+constant ARB_TIME_SLOT_2    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_2(5 downto 3) & C_ARB_TIME_SLOT_2(2 downto 0));
+constant ARB_TIME_SLOT_3    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_3(5 downto 3) & C_ARB_TIME_SLOT_3(2 downto 0));
+constant ARB_TIME_SLOT_4    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_4(5 downto 3) & C_ARB_TIME_SLOT_4(2 downto 0));
+constant ARB_TIME_SLOT_5    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_5(5 downto 3) & C_ARB_TIME_SLOT_5(2 downto 0));
+constant ARB_TIME_SLOT_6    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_6(5 downto 3) & C_ARB_TIME_SLOT_6(2 downto 0));
+constant ARB_TIME_SLOT_7    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_7(5 downto 3) & C_ARB_TIME_SLOT_7(2 downto 0));
+constant ARB_TIME_SLOT_8    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_8(5 downto 3) & C_ARB_TIME_SLOT_8(2 downto 0));
+constant ARB_TIME_SLOT_9    : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_9(5 downto 3) & C_ARB_TIME_SLOT_9(2 downto 0));
+constant ARB_TIME_SLOT_10   : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_10(5 downto 3) & C_ARB_TIME_SLOT_10(2 downto 0));
+constant ARB_TIME_SLOT_11   : bit_vector(17 downto 0) := ("000" & "000" & "000" & "000" & C_ARB_TIME_SLOT_11(5 downto 3) & C_ARB_TIME_SLOT_11(2 downto 0));
 
 
 constant C_MC_CALIBRATION_CLK_DIV  : integer  := 1;
@@ -623,7 +623,7 @@ attribute X_CORE_INFO of acch : architecture IS
   "mig_v3_92_lpddr_s6, Coregen 14.7";
 
 attribute CORE_GENERATION_INFO : string;
-attribute CORE_GENERATION_INFO of acch : architecture IS "mcb3_lpddr_s6,mig_v3_92,{LANGUAGE=VHDL, SYNTHESIS_TOOL=ISE,  NO_OF_CONTROLLERS=1, AXI_ENABLE=0, MEM_INTERFACE_TYPE=LPDDR, CLK_PERIOD=6000, MEMORY_PART=mt46h32m16xxxx-5, MEMORY_DEVICE_WIDTH=16, PA_SR=FULL, OUTPUT_DRV=FULL, PORT_CONFIG=Two 32-bit bi-directional and four 32-bit unidirectional ports, MEM_ADDR_ORDER=ROW_BANK_COLUMN, PORT_ENABLE=Port0, INPUT_PIN_TERMINATION=EXTERN_TERM, DATA_TERMINATION=25 Ohms, CLKFBOUT_MULT_F=4, CLKOUT_DIVIDE=2, DEBUG_PORT=0, INPUT_CLK_TYPE=Single-Ended}";
+attribute CORE_GENERATION_INFO of acch : architecture IS "mcb3_lpddr_s6,mig_v3_92,{LANGUAGE=VHDL, SYNTHESIS_TOOL=ISE,  NO_OF_CONTROLLERS=1, AXI_ENABLE=0, MEM_INTERFACE_TYPE=LPDDR, CLK_PERIOD=6000, MEMORY_PART=mt46h32m16xxxx-5, MEMORY_DEVICE_WIDTH=16, PA_SR=FULL, OUTPUT_DRV=FULL, PORT_CONFIG=Two 32-bit bi-directional and four 32-bit unidirectional ports, MEM_ADDR_ORDER=ROW_BANK_COLUMN, PORT_ENABLE=Port0_Port1, INPUT_PIN_TERMINATION=EXTERN_TERM, DATA_TERMINATION=25 Ohms, CLKFBOUT_MULT_F=4, CLKOUT_DIVIDE=2, DEBUG_PORT=0, INPUT_CLK_TYPE=Single-Ended}";
 
 begin
 
@@ -810,56 +810,31 @@ port map
    p0_rd_count                          =>  p0_rd_count,
    p0_rd_overflow                       =>  p0_rd_overflow,
    p0_rd_error                          =>  p0_rd_error,
-   --p1_arb_en                            =>  '1',
-   --p1_cmd_clk                           =>  p1_cmd_clk,
-   --p1_cmd_en                            =>  p1_cmd_en,
-   --p1_cmd_instr                         =>  p1_cmd_instr,
-   --p1_cmd_bl                            =>  p1_cmd_bl,
-   --p1_cmd_byte_addr                     =>  p1_cmd_byte_addr,
-   --p1_cmd_empty                         =>  p1_cmd_empty,
-   --p1_cmd_full                          =>  p1_cmd_full,
-   --p1_wr_clk                            =>  p1_wr_clk,
-   --p1_wr_en                             =>  p1_wr_en,
-   --p1_wr_mask                           =>  p1_wr_mask,
-   --p1_wr_data                           =>  p1_wr_data,
-   --p1_wr_full                           =>  p1_wr_full,
-   --p1_wr_empty                          =>  p1_wr_empty,
-   --p1_wr_count                          =>  p1_wr_count,
-   --p1_wr_underrun                       =>  p1_wr_underrun,
-   --p1_wr_error                          =>  p1_wr_error,
-   --p1_rd_clk                            =>  p1_rd_clk,
-   --p1_rd_en                             =>  p1_rd_en,
-   --p1_rd_data                           =>  p1_rd_data,
-   --p1_rd_full                           =>  p1_rd_full,
-   --p1_rd_empty                          =>  p1_rd_empty,
-   --p1_rd_count                          =>  p1_rd_count,
-   --p1_rd_overflow                       =>  p1_rd_overflow,
-   --p1_rd_error                          =>  p1_rd_error,
-   p1_arb_en                            =>  '0',
-   p1_cmd_clk                           =>  '0',
-   p1_cmd_en                            =>  '0',
-   p1_cmd_instr                         =>  (others => '0'),
-   p1_cmd_bl                            =>  (others => '0'),
-   p1_cmd_byte_addr                     =>  (others => '0'),
-   p1_cmd_empty                         =>  open,
-   p1_cmd_full                          =>  open,
-   p1_rd_clk                            =>  '0',
-   p1_rd_en                             =>  '0',
-   p1_rd_data                           =>  open,
-   p1_rd_full                           =>  open,
-   p1_rd_empty                          =>  open,
-   p1_rd_count                          =>  open,
-   p1_rd_overflow                       =>  open,
-   p1_rd_error                          =>  open,
-   p1_wr_clk                            =>  '0',
-   p1_wr_en                             =>  '0',
-   p1_wr_mask                           =>  (others => '0'),
-   p1_wr_data                           =>  (others => '0'),
-   p1_wr_full                           =>  open,
-   p1_wr_empty                          =>  open,
-   p1_wr_count                          =>  open,
-   p1_wr_underrun                       =>  open,
-   p1_wr_error                          =>  open,
+   p1_arb_en                            =>  '1',
+   p1_cmd_clk                           =>  p1_cmd_clk,
+   p1_cmd_en                            =>  p1_cmd_en,
+   p1_cmd_instr                         =>  p1_cmd_instr,
+   p1_cmd_bl                            =>  p1_cmd_bl,
+   p1_cmd_byte_addr                     =>  p1_cmd_byte_addr,
+   p1_cmd_empty                         =>  p1_cmd_empty,
+   p1_cmd_full                          =>  p1_cmd_full,
+   p1_wr_clk                            =>  p1_wr_clk,
+   p1_wr_en                             =>  p1_wr_en,
+   p1_wr_mask                           =>  p1_wr_mask,
+   p1_wr_data                           =>  p1_wr_data,
+   p1_wr_full                           =>  p1_wr_full,
+   p1_wr_empty                          =>  p1_wr_empty,
+   p1_wr_count                          =>  p1_wr_count,
+   p1_wr_underrun                       =>  p1_wr_underrun,
+   p1_wr_error                          =>  p1_wr_error,
+   p1_rd_clk                            =>  p1_rd_clk,
+   p1_rd_en                             =>  p1_rd_en,
+   p1_rd_data                           =>  p1_rd_data,
+   p1_rd_full                           =>  p1_rd_full,
+   p1_rd_empty                          =>  p1_rd_empty,
+   p1_rd_count                          =>  p1_rd_count,
+   p1_rd_overflow                       =>  p1_rd_overflow,
+   p1_rd_error                          =>  p1_rd_error,
    p2_arb_en                            =>  '0',
    p2_cmd_clk                           =>  '0',
    p2_cmd_en                            =>  '0',

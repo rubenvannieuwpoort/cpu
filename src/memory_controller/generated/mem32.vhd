@@ -101,13 +101,13 @@ generic
    
   port
   (
-  async_rst                                : in  std_logic;
-  sysclk_2x                                : in  std_logic;
-  sysclk_2x_180                            : in  std_logic;
-  pll_ce_0                                 : in  std_logic;
-  pll_ce_90                                : in  std_logic;
-  pll_lock                                 : in  std_logic;
-  c3_mcb_drp_clk                           : in  std_logic;
+    async_rst                                : in  std_logic;
+    sysclk_2x                                : in  std_logic;
+    sysclk_2x_180                            : in  std_logic;
+    pll_ce_0                                 : in  std_logic;
+    pll_ce_90                                : in  std_logic;
+    pll_lock                                 : in  std_logic;
+    c3_mcb_drp_clk                           : in  std_logic;
 
 
    mcb3_dram_dq                            : inout  std_logic_vector(C3_NUM_DQ_PINS-1 downto 0);
@@ -153,6 +153,30 @@ generic
    c3_p0_rd_count                          : out std_logic_vector(6 downto 0);
    c3_p0_rd_overflow                       : out std_logic;
    c3_p0_rd_error                          : out std_logic;
+   c3_p1_cmd_clk                           : in std_logic;
+   c3_p1_cmd_en                            : in std_logic;
+   c3_p1_cmd_instr                         : in std_logic_vector(2 downto 0);
+   c3_p1_cmd_bl                            : in std_logic_vector(5 downto 0);
+   c3_p1_cmd_byte_addr                     : in std_logic_vector(29 downto 0);
+   c3_p1_cmd_empty                         : out std_logic;
+   c3_p1_cmd_full                          : out std_logic;
+   c3_p1_wr_clk                            : in std_logic;
+   c3_p1_wr_en                             : in std_logic;
+   c3_p1_wr_mask                           : in std_logic_vector(C3_P1_MASK_SIZE - 1 downto 0);
+   c3_p1_wr_data                           : in std_logic_vector(C3_P1_DATA_PORT_SIZE - 1 downto 0);
+   c3_p1_wr_full                           : out std_logic;
+   c3_p1_wr_empty                          : out std_logic;
+   c3_p1_wr_count                          : out std_logic_vector(6 downto 0);
+   c3_p1_wr_underrun                       : out std_logic;
+   c3_p1_wr_error                          : out std_logic;
+   c3_p1_rd_clk                            : in std_logic;
+   c3_p1_rd_en                             : in std_logic;
+   c3_p1_rd_data                           : out std_logic_vector(C3_P1_DATA_PORT_SIZE - 1 downto 0);
+   c3_p1_rd_full                           : out std_logic;
+   c3_p1_rd_empty                          : out std_logic;
+   c3_p1_rd_count                          : out std_logic_vector(6 downto 0);
+   c3_p1_rd_overflow                       : out std_logic;
+   c3_p1_rd_error                          : out std_logic;
    mcb_drp_clk                             : out std_logic
   );
 end mem32;
@@ -170,18 +194,18 @@ component memc3_wrapper is
       C_P1_MASK_SIZE       : integer;
       C_P1_DATA_PORT_SIZE   : integer;
       C_ARB_NUM_TIME_SLOTS   : integer;
-      C_ARB_TIME_SLOT_0    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_1    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_2    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_3    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_4    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_5    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_6    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_7    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_8    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_9    : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_10   : bit_vector(2 downto 0);
-      C_ARB_TIME_SLOT_11   : bit_vector(2 downto 0);
+      C_ARB_TIME_SLOT_0    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_1    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_2    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_3    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_4    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_5    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_6    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_7    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_8    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_9    : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_10   : bit_vector(5 downto 0);
+      C_ARB_TIME_SLOT_11   : bit_vector(5 downto 0);
       C_MEM_TRAS           : integer;
       C_MEM_TRCD           : integer;
       C_MEM_TREFI          : integer;
@@ -285,6 +309,30 @@ component memc3_wrapper is
       p0_rd_count                           : out std_logic_vector(6 downto 0);
       p0_rd_overflow                        : out std_logic;
       p0_rd_error                           : out std_logic;
+      p1_cmd_clk                            : in std_logic;
+      p1_cmd_en                             : in std_logic;
+      p1_cmd_instr                          : in std_logic_vector(2 downto 0);
+      p1_cmd_bl                             : in std_logic_vector(5 downto 0);
+      p1_cmd_byte_addr                      : in std_logic_vector(29 downto 0);
+      p1_cmd_empty                          : out std_logic;
+      p1_cmd_full                           : out std_logic;
+      p1_wr_clk                             : in std_logic;
+      p1_wr_en                              : in std_logic;
+      p1_wr_mask                            : in std_logic_vector(C_P1_MASK_SIZE - 1 downto 0);
+      p1_wr_data                            : in std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0);
+      p1_wr_full                            : out std_logic;
+      p1_wr_empty                           : out std_logic;
+      p1_wr_count                           : out std_logic_vector(6 downto 0);
+      p1_wr_underrun                        : out std_logic;
+      p1_wr_error                           : out std_logic;
+      p1_rd_clk                             : in std_logic;
+      p1_rd_en                              : in std_logic;
+      p1_rd_data                            : out std_logic_vector(C_P1_DATA_PORT_SIZE - 1 downto 0);
+      p1_rd_full                            : out std_logic;
+      p1_rd_empty                           : out std_logic;
+      p1_rd_count                           : out std_logic_vector(6 downto 0);
+      p1_rd_overflow                        : out std_logic;
+      p1_rd_error                           : out std_logic;
       selfrefresh_enter                     : in std_logic;
       selfrefresh_mode                      : out std_logic
 
@@ -297,18 +345,18 @@ component memc3_wrapper is
 
 
    constant C3_ARB_NUM_TIME_SLOTS   : integer := 12; 
-   constant C3_ARB_TIME_SLOT_0      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_1      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_2      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_3      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_4      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_5      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_6      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_7      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_8      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_9      : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_10     : bit_vector(2 downto 0) := o"0"; 
-   constant C3_ARB_TIME_SLOT_11     : bit_vector(2 downto 0) := o"0"; 
+   constant C3_ARB_TIME_SLOT_0      : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_1      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_2      : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_3      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_4      : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_5      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_6      : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_7      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_8      : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_9      : bit_vector(5 downto 0) := o"10"; 
+   constant C3_ARB_TIME_SLOT_10     : bit_vector(5 downto 0) := o"01"; 
+   constant C3_ARB_TIME_SLOT_11     : bit_vector(5 downto 0) := o"10"; 
    constant C3_MEM_TRAS             : integer := 40000; 
    constant C3_MEM_TRCD             : integer := 15000; 
    constant C3_MEM_TREFI            : integer := 7800000; 
@@ -378,7 +426,7 @@ component memc3_wrapper is
 
 
 begin
-
+ 
   mcb_drp_clk <= c3_mcb_drp_clk;
   c3_selfrefresh_enter <= '0';
 
@@ -512,6 +560,30 @@ port map
    p0_rd_count                          =>  c3_p0_rd_count,
    p0_rd_overflow                       =>  c3_p0_rd_overflow,
    p0_rd_error                          =>  c3_p0_rd_error,
+   p1_cmd_clk                           =>  c3_p1_cmd_clk,
+   p1_cmd_en                            =>  c3_p1_cmd_en,
+   p1_cmd_instr                         =>  c3_p1_cmd_instr,
+   p1_cmd_bl                            =>  c3_p1_cmd_bl,
+   p1_cmd_byte_addr                     =>  c3_p1_cmd_byte_addr,
+   p1_cmd_empty                         =>  c3_p1_cmd_empty,
+   p1_cmd_full                          =>  c3_p1_cmd_full,
+   p1_wr_clk                            =>  c3_p1_wr_clk,
+   p1_wr_en                             =>  c3_p1_wr_en,
+   p1_wr_mask                           =>  c3_p1_wr_mask,
+   p1_wr_data                           =>  c3_p1_wr_data,
+   p1_wr_full                           =>  c3_p1_wr_full,
+   p1_wr_empty                          =>  c3_p1_wr_empty,
+   p1_wr_count                          =>  c3_p1_wr_count,
+   p1_wr_underrun                       =>  c3_p1_wr_underrun,
+   p1_wr_error                          =>  c3_p1_wr_error,
+   p1_rd_clk                            =>  c3_p1_rd_clk,
+   p1_rd_en                             =>  c3_p1_rd_en,
+   p1_rd_data                           =>  c3_p1_rd_data,
+   p1_rd_full                           =>  c3_p1_rd_full,
+   p1_rd_empty                          =>  c3_p1_rd_empty,
+   p1_rd_count                          =>  c3_p1_rd_count,
+   p1_rd_overflow                       =>  c3_p1_rd_overflow,
+   p1_rd_error                          =>  c3_p1_rd_error,
    selfrefresh_enter                    =>  c3_selfrefresh_enter,
    selfrefresh_mode                     =>  c3_selfrefresh_mode
 );
