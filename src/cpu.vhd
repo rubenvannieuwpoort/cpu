@@ -74,7 +74,8 @@ architecture Behavioral of CPU is
 			input: in register_read_output_type;
 			stall_out: out std_logic;
 			output: out execute_output_type;
-			branch_out: out branch_signals
+			branch_out: out branch_signals;
+			leds_out: out std_logic_vector(7 downto 0)
 		);
 	end component;
 
@@ -124,7 +125,8 @@ begin
 		input => register_read_output,
 		stall_out => execute_stall_out,
 		output => execute_output,
-		branch_out => branch
+		branch_out => branch,
+		leds_out => leds_out
 	);
 
 	stage_memory: memory port map(

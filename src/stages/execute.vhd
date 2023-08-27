@@ -15,7 +15,9 @@ entity execute is
 		stall_out: out std_logic := '0';
 		output: out execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 
-		branch_out: out branch_signals := DEFAULT_BRANCH_SIGNALS
+		branch_out: out branch_signals := DEFAULT_BRANCH_SIGNALS;
+
+		leds_out: out std_logic_vector(7 downto 0) := (others => '0')
 	);
 end execute;
 
@@ -100,6 +102,17 @@ begin
 					v_output.memory_address := (others => '0');
 				--elsif v_input.illegal = '1' then
 				--	v_trap := true;
+				elsif v_input.alu_function = ALU_FUNCTION_LEDS then
+					v_output.valid := '1';
+					v_output.act := '1';
+					v_output.writeback_value := (others => '0');
+					v_output.writeback_register := (others => '0');
+					v_output.memory_operation := MEMORY_OPERATION_NOP;
+					v_output.memory_data := (others => '0');
+					v_output.memory_write_mask := (others => '0');
+					v_output.memory_address := (others => '0');
+					v_output.tag := v_input.tag;
+					leds_out <= v_input.operand_1(7 downto 0);
 				elsif v_input.alu_function = ALU_FUNCTION_ADD then
 					v_output.valid := '1';
 					v_output.act := '1';

@@ -22,14 +22,14 @@ NET "vga_blue[1]"            LOC = B11 | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLE
 
 # LEDs
 
-net "led(0)" loc = p15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(1)" loc = p16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(2)" loc = n15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(3)" loc = n16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(4)" loc = u17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(5)" loc = u18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(6)" loc = t17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
-net "led(7)" loc = t18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(0)" loc = p15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(1)" loc = p16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(2)" loc = n15 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(3)" loc = n16 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(4)" loc = u17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(5)" loc = u18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(6)" loc = t17 | iostandard = lvcmos33 | drive = 8 | slew = fast;
+net "leds_out(7)" loc = t18 | iostandard = lvcmos33 | drive = 8 | slew = fast;
 
 
 # seven segment display

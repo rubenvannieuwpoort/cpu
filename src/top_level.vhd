@@ -15,7 +15,7 @@ entity top_level is
 		vga_green: out std_logic_vector(2 downto 0);
 		vga_blue: out std_logic_vector(2 downto 1);
 		-- LEDs
-		led: out std_logic_vector(7 downto 0);
+		leds_out: out std_logic_vector(7 downto 0);
 		-- seven segment display
 		seven_segment_enable: out std_logic_vector(2 downto 0);
 		seven_segment: out std_logic_vector(7 downto 0);
@@ -69,7 +69,8 @@ architecture Behavioral of top_level is
 			read_write_port_clk_out: out std_logic;
 			read_write_port_out: out read_write_port_signals;
 			read_status_in: in read_status_signals;
-			write_status_in: in write_status_signals
+			write_status_in: in write_status_signals;
+			leds_out: out std_logic_vector(7 downto 0)
 		);
 	end component;
 
@@ -135,7 +136,8 @@ begin
 		read_write_port_clk_out => read_write_port_0_clk,
 		read_status_in => read_status_1,
 		write_status_in => write_status_0,
-		read_write_port_out => read_write_port_0
+		read_write_port_out => read_write_port_0,
+		leds_out => leds_out
 	);
 
 	mem_if: memory_interface
@@ -175,7 +177,7 @@ begin
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
 
-	led <= read_status_1.overflow & read_status_1.error & write_status_0.underrun & write_status_0.error & "0000";
+	-- leds_out <= read_status_1.overflow & read_status_1.error & write_status_0.underrun & write_status_0.error & "0000";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;

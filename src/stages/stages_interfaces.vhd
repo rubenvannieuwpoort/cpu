@@ -119,6 +119,9 @@ package stages_interfaces is
 	constant ALU_FUNCTION_LOAD_BYTE_UNSIGNED     : std_logic_vector(4 downto 0) := "11100";
 	constant ALU_FUNCTION_LOAD_HALFWORD_UNSIGNED : std_logic_vector(4 downto 0) := "11101";
 
+	-- custom
+	constant ALU_FUNCTION_LEDS                   : std_logic_vector(4 downto 0) := "11111";
+
 	constant DEFAULT_DECODE_OUTPUT: decode_output_type := (
 		valid => '0',
 		illegal => '0',
