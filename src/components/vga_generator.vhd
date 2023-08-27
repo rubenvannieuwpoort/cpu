@@ -8,10 +8,9 @@ use work.types.all;
 entity vga_generator is
 	port(
 		clk: in std_logic;
-		memory_ready: in std_logic;
+		memory_ready_in: in std_logic;
 		vga_out: out vga_signals;
-		read_port_clk_out: out std_logic;
-		read_port_out: out read_port_signals;
+		read_port_out: out read_cmd_signals;
 		read_status_in: in read_status_signals
 	);
 end vga_generator;
@@ -64,13 +63,13 @@ architecture Behavioral of vga_generator is
 	constant vSyncActive: std_logic := '1';
 	signal hCounter : unsigned(10 downto 0) := (others => '0');
 	signal vCounter : unsigned(10 downto 0) := (others => '0');
-	signal address  : unsigned(29 downto 0) := (others => '0');
+	signal address  : unsigned(29 downto 0) := "000001000000000000000000000000";
 	signal read_cmd_enable_local : std_logic := '0';
 
 begin
+	read_port_out.clk <= clk;
 	read_port_out.address <= std_logic_vector(address);
 	read_port_out.enable  <= read_cmd_enable_local;
-	read_port_clk_out <= clk;
 
 	process(clk)
 	begin
@@ -90,26 +89,27 @@ begin
 				if vCounter < height - 1 then
 					if hCounter < width then 
 						-- issue a read every 64th cycle of a visible line (except last)
-						read_cmd_enable_local <= memory_ready and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
 					end if;
 				elsif vCounter = height - 1 then
 					-- don't issue the last three reads on the last line
 					if hCounter < (width - 4 * 64) then 
-						read_cmd_enable_local <= memory_ready and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
 					end if;
 				elsif vCounter = vMax-1 then 
 					-- prime the read queue just before the first line with 3 read * 16 words * 4 bytes = 192 bytes
 					if hCounter < 4 * 64 then
-						read_cmd_enable_local <= memory_ready and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
 					end if;
 				end if;
 			end if;
 
-			read_port_out.cmd.enable <= '0';  -- indicates a read should be read from FIFO
+			read_port_out.data_enable <= '0';  -- indicates a read should be read from FIFO
 
 			-- flush read port at end of frame
 			if vCounter = height then
-				-- read_data_enable <= memory_ready and not read_data_empty;
+				-- read_data_enable <= memory_ready_in and not read_data_empty;
+				--address <= "000001000000000000000000000000";
 				address <= (others => '0');
 			end if;
 
@@ -129,7 +129,7 @@ begin
 						vga_out.green <= read_status_in.data(12 downto 10);
 						vga_out.blue  <= read_status_in.data( 9 downto  8);
 						-- read_data_enable will be asserted next cycle so read_data will change the one following that
-						read_port_out.cmd.enable <= memory_ready and not read_status_in.data_empty;
+						read_port_out.data_enable <= memory_ready_in and not read_status_in.data_empty;
 					when others =>
 						vga_out.red   <= read_status_in.data( 7 downto 5);
 						vga_out.green <= read_status_in.data( 4 downto 2);

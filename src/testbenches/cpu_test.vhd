@@ -9,14 +9,13 @@ entity cpu_test is
 end cpu_test;
 
 architecture behavior of cpu_test is
-	component CPU
+	component CPU is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
-			read_write_port_clk_out: out std_logic;
-			read_write_port_out: out read_write_port_signals;
-			read_status_in: in read_status_signals;
-			write_status_in: in write_status_signals
+			write_status_in: in write_status_signals;
+			write_port_out: out write_port_signals;
+			leds_out: out std_logic_vector(7 downto 0)
 		);
 	end component;
 
@@ -24,17 +23,15 @@ architecture behavior of cpu_test is
 	signal clk: std_logic := '0';
 	constant clk_period: time := 10 ns;
 
-	signal read_status: read_status_signals := DEFAULT_READ_STATUS_SIGNALS;
-	signal write_status: write_status_signals := DEFAULT_WRITE_STATUS_SIGNALS;
+	signal write_port: write_port_signals;
 begin
 
 	uut: CPU port map(
 		clk => clk,
 		memory_ready_in => '1',
-		read_write_port_clk_out => open,
-		read_write_port_out => open,
-		read_status_in => read_status,
-		write_status_in => write_status
+		write_status_in => DEFAULT_WRITE_STATUS,
+		write_port_out => write_port,
+		leds_out => open
 	);
 
 	clk_process :process

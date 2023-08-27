@@ -46,14 +46,11 @@ architecture Behavioral of top_level is
 	-- memory
 	signal memory_ready: std_logic;
 
-	signal read_write_port_0_clk: std_logic;
-	signal read_write_port_0: read_write_port_signals;
-	signal read_status_0: read_status_signals;
-	signal write_status_0: write_status_signals;
+	signal write_port: write_port_signals;
+	signal write_status: write_status_signals;
 
-	signal read_port_1_clk: std_logic;
-	signal read_port_1: read_port_signals;
-	signal read_status_1: read_status_signals;
+	signal read_port: read_cmd_signals;
+	signal read_status: read_status_signals;
 
 	-- vga
 	signal vga: vga_signals;
@@ -66,10 +63,8 @@ architecture Behavioral of top_level is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
-			read_write_port_clk_out: out std_logic;
-			read_write_port_out: out read_write_port_signals;
-			read_status_in: in read_status_signals;
 			write_status_in: in write_status_signals;
+			write_port_out: out write_port_signals;
 			leds_out: out std_logic_vector(7 downto 0)
 		);
 	end component;
@@ -83,20 +78,27 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
-	component memory_interface
+	component memory_interface is
 		port(
 			clk: in memory_clock_signals;
-			read_write_port_0_clk_in: in std_logic;
-			read_write_port_0_in: in read_write_port_signals;
-			read_status_0_out: out read_status_signals;
-			write_status_0_out: out write_status_signals;
-			read_port_1_clk_in: in std_logic;
-			read_port_1_in: in read_port_signals;
-			read_status_1_out: out read_status_signals;
+			write_port_in: in write_port_signals;
+			write_status_out: out write_status_signals;
+			read_port_in: in read_cmd_signals;
+			read_status_out: out read_status_signals;
 			ram_out: out ram_signals;
 			ram_bus: inout ram_bus_signals;
 			calib_done: out std_logic;
 			reset_in: in std_logic
+		);
+	end component;
+
+	component test_pattern_writer
+		port(
+			clk: in std_logic;
+			completed: out std_logic;
+			memory_ready: in std_logic;
+			write_port: out write_port_signals;
+			write_status: in write_status_signals
 		);
 	end component;
 
@@ -110,10 +112,9 @@ architecture Behavioral of top_level is
 	component vga_generator is
 		port(
 			clk: in std_logic;
-			memory_ready: in std_logic;
+			memory_ready_in: in std_logic;
 			vga_out: out vga_signals;
-			read_port_clk_out: out std_logic;
-			read_port_out: out read_port_signals;
+			read_port_out: out read_cmd_signals;
 			read_status_in: in read_status_signals
 		);
 	end component;
@@ -133,27 +134,32 @@ begin
 	cpu_inst: CPU port map(
 		clk => clk_main,
 		memory_ready_in => memory_ready,
-		read_write_port_clk_out => read_write_port_0_clk,
-		read_status_in => read_status_1,
-		write_status_in => write_status_0,
-		read_write_port_out => read_write_port_0,
-		leds_out => leds_out
+		write_status_in => write_status,
+		write_port_out => write_port,
+		leds_out => open
 	);
 
 	mem_if: memory_interface
 		port map(
 			clk => clk_mem,
-			read_write_port_0_clk_in => read_write_port_0_clk,
-			read_write_port_0_in => read_write_port_0,
-			read_status_0_out => read_status_0,
-			write_status_0_out => write_status_0,
-			read_port_1_clk_in => read_port_1_clk,
-			read_port_1_in => read_port_1,
-			read_status_1_out => read_status_1,
-			ram_out => ram, ram_bus => ram_bus,
+			write_port_in => write_port,
+			write_status_out => write_status,
+			read_port_in => read_port,
+			read_status_out => read_status,
+			ram_out => ram,
+			ram_bus => ram_bus,
 			calib_done => memory_ready,
 			reset_in => '0'
 		);
+
+	--test_pattern_writer_inst: test_pattern_writer
+	--port map(
+	--	clk => clk_main,
+	--	memory_ready => memory_ready,
+	--	completed => open,
+	--	write_port => write_port,
+	--	write_status => write_status
+	--);
 
 	--vga_gen: textmode_vga_generator
 	--	port map(
@@ -164,11 +170,10 @@ begin
 	vga_gen: vga_generator
 		port map(
 			clk => clk_pixel,
-			memory_ready => memory_ready,
+			memory_ready_in => memory_ready,
 			vga_out => vga,
-			read_port_clk_out => read_port_1_clk,
-			read_port_out => read_port_1,
-			read_status_in => read_status_1
+			read_port_out => read_port,
+			read_status_in => read_status
 		);
 
 	vga_hsync <= vga.hsync;
@@ -177,7 +182,7 @@ begin
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
 
-	-- leds_out <= read_status_1.overflow & read_status_1.error & write_status_0.underrun & write_status_0.error & "0000";
+	leds_out <= read_status.overflow & read_status.error & write_status.underrun & write_status.error & "0000";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;

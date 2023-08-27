@@ -40,63 +40,12 @@ package types is
 		dqs: std_logic;
 	end record;
 
-	type read_cmd_signals is record
+	type read_cmd_signals is record 
+		clk: std_logic;
 		enable: std_logic;
-	end record;
-
-	constant DEFAULT_READ_CMD_SIGNALS: read_cmd_signals := (
-		enable => '0'
-	);
-
-	type write_cmd_signals is record
-		enable: std_logic;
-		data: std_logic_vector(31 downto 0);
-		mask: std_logic_vector(3 downto 0);
-	end record;
-
-	constant DEFAULT_WRITE_CMD_SIGNALS: write_cmd_signals := (
-		enable => '0',
-		data => (others => '0'),
-		mask => (others => '0')
-	);
-
-	type read_port_signals is record
-		enable: std_logic;
+		data_enable: std_logic;
 		address: std_logic_vector(29 downto 0);
-		cmd: read_cmd_signals;
 	end record;
-
-	constant DEFAULT_READ_PORT_SIGNALS: read_port_signals := (
-		enable => '0',
-		address => (others => '0'),
-		cmd => DEFAULT_READ_CMD_SIGNALS
-	);
-
-	type write_port_signals is record
-		enable: std_logic;
-		address: std_logic_vector(31 downto 0);
-		cmd: write_cmd_signals;
-	end record;
-
-	constant DEFAULT_WRITE_PORT_SIGNALS: write_port_signals := (
-		enable => '0',
-		address => (others => '0'),
-		cmd => DEFAULT_WRITE_CMD_SIGNALS
-	);
-
-	type read_write_port_signals is record
-		enable: std_logic;
-		address: std_logic_vector(29 downto 0);
-		read_cmd: read_cmd_signals;
-		write_cmd: write_cmd_signals;
-	end record;
-
-	constant DEFAULT_READ_WRITE_PORT_SIGNALS: read_write_port_signals := (
-		enable => '0',
-		address => (others => '0'),
-		read_cmd => DEFAULT_READ_CMD_SIGNALS,
-		write_cmd => DEFAULT_WRITE_CMD_SIGNALS
-	);
 
 	type read_status_signals is record
 		cmd_full: std_logic;
@@ -109,16 +58,26 @@ package types is
 		overflow: std_logic;
 	end record;
 
-	constant DEFAULT_READ_STATUS_SIGNALS: read_status_signals := (
-		cmd_full => '0',
-		cmd_empty => '1',
-		data => (others => '0'),
-		data_full => '0',
-		data_empty => '1',
-		data_count => (others => '0'),
-		error => '0',
-		overflow => '0'
+	type write_cmd_signals is record
+		enable: std_logic;
+		data_enable: std_logic;
+		address: std_logic_vector(29 downto 0);
+		write_mask: std_logic_vector(3 downto 0);
+		data: std_logic_vector(31 downto 0);
+	end record;
+
+	constant DEFAULT_WRITE_CMD: write_cmd_signals := (
+		enable => '0',
+		data_enable => '0',
+		address => (others => '0'),
+		write_mask => "1111",
+		data => (others => '0')
 	);
+
+	type write_port_signals is record
+		clk: std_logic;
+		write_cmd: write_cmd_signals;
+	end record;
 
 	type write_status_signals is record
 		cmd_full: std_logic;
@@ -130,7 +89,7 @@ package types is
 		error: std_logic;
 	end record;
 
-	constant DEFAULT_WRITE_STATUS_SIGNALS: write_status_signals := (
+	constant DEFAULT_WRITE_STATUS: write_status_signals := (
 		cmd_full => '0',
 		cmd_empty => '1',
 		data_full => '0',
