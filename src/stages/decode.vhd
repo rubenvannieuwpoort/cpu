@@ -143,7 +143,7 @@ begin
 						v_output.operand_1_register := (others => '0');
 						v_output.operand_1_immediate := v_input.pc;
 						v_output.operand_2_type := TYPE_IMMEDIATE;
-						v_output.operand_2_immediate := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(19 downto 12) & v_input.opcode(20) & v_input.opcode(20) & v_input.opcode(30 downto 25) & v_input.opcode(24 downto 12) & "0"), 32));
+						v_output.operand_2_immediate := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(19 downto 12) & v_input.opcode(20) & v_input.opcode(20) & v_input.opcode(30 downto 21) & "0"), 32));
 						v_output.operand_2_3_register := (others => '0');
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := v_input.pc_next;
