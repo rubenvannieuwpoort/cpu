@@ -63,7 +63,8 @@ architecture Behavioral of vga_generator is
 	constant vSyncActive: std_logic := '1';
 	signal hCounter : unsigned(10 downto 0) := (others => '0');
 	signal vCounter : unsigned(10 downto 0) := (others => '0');
-	signal address  : unsigned(29 downto 0) := "000001000000000000000000000000";
+	--signal address  : unsigned(29 downto 0) := "000000010000000000000000000000";
+	signal address  : unsigned(29 downto 0) := (others => '0');
 	signal read_cmd_enable_local : std_logic := '0';
 
 begin
@@ -109,7 +110,7 @@ begin
 			-- flush read port at end of frame
 			if vCounter = height then
 				-- read_data_enable <= memory_ready_in and not read_data_empty;
-				--address <= "000001000000000000000000000000";
+				--address <= "000000010000000000000000000000";
 				address <= (others => '0');
 			end if;
 
