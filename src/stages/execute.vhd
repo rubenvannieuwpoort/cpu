@@ -542,16 +542,59 @@ begin
 				--		-- TODO: handle this? fire interrupt?
 				--	end if;
 				elsif v_input.alu_function = ALU_FUNCTION_STORE_BYTE then
-					-- TODO
+					v_output.valid := '1';
+					v_output.act := '1';
+					v_output.writeback_value := (others => '0');
+					v_output.writeback_register := (others => '0');
+					v_output.memory_operation := MEMORY_OPERATION_STORE;
+
+					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
+	
+					if v_output.memory_address(1 downto 0) = "00" then
+						v_output.memory_data := v_input.operand_2(7 downto 0) & "000000000000000000000000";
+						v_output.memory_write_mask := "1000";
+					elsif v_output.memory_address(1 downto 0) = "01" then
+						v_output.memory_data := "00000000" & v_input.operand_2(7 downto 0) & "0000000000000000";
+						v_output.memory_write_mask := "0100";
+					elsif v_output.memory_address(1 downto 0) = "10" then
+						v_output.memory_data := "0000000000000000" & v_input.operand_2(7 downto 0) & "00000000";
+						v_output.memory_write_mask := "0010";
+					else
+						v_output.memory_data := "000000000000000000000000" & v_input.operand_2(7 downto 0);
+						v_output.memory_write_mask := "0001";
+					end if;
+
+					v_output.tag := v_input.tag;
+					v_branch.indicator := '0';
+					v_branch.address := (others => '0');
 				elsif v_input.alu_function = ALU_FUNCTION_STORE_HALFWORD then
-					-- TODO
+					v_output.valid := '1';
+					v_output.act := '1';
+					v_output.writeback_value := (others => '0');
+					v_output.writeback_register := (others => '0');
+					v_output.memory_operation := MEMORY_OPERATION_STORE;
+
+					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
+	
+					if v_output.memory_address(1) = '0' then
+						v_output.memory_data := v_input.operand_2(15 downto 0) & "0000000000000000";
+						v_output.memory_write_mask := "1100";
+					else
+						v_output.memory_data := "0000000000000000" & v_input.operand_2(15 downto 0);
+						v_output.memory_write_mask := "0011";
+					end if;
+
+					v_output.tag := v_input.tag;
+					v_branch.indicator := '0';
+					v_branch.address := (others => '0');
 				elsif v_input.alu_function = ALU_FUNCTION_STORE_WORD then
 					v_output.valid := '1';
 					v_output.act := '1';
-					v_output.writeback_value := (others => '0');  -- to be overwritten by memory stage
+					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.memory_operation := MEMORY_OPERATION_STORE;
-					v_output.memory_data := v_input.operand_2;
+					-- convert to little-endian
+					v_output.memory_data := v_input.operand_2(31 downto 24) & v_input.operand_2(23 downto 16) & v_input.operand_2(15 downto 8) & v_input.operand_2(7 downto 0);
 					v_output.memory_write_mask := "1111";
 					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
 					v_output.tag := v_input.tag;
