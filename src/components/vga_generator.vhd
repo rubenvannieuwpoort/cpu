@@ -68,7 +68,6 @@ architecture Behavioral of vga_generator is
 	signal read_cmd_enable_local : std_logic := '0';
 
 begin
-	read_port_out.clk <= clk;
 	read_port_out.address <= std_logic_vector(address);
 	read_port_out.enable  <= read_cmd_enable_local;
 

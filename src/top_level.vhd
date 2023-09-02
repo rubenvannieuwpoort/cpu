@@ -46,7 +46,7 @@ architecture Behavioral of top_level is
 	-- memory
 	signal memory_ready: std_logic;
 
-	signal write_port: write_port_signals;
+	signal write_port: write_cmd_signals;
 	signal write_status: write_status_signals;
 
 	signal read_port: read_cmd_signals;
@@ -64,7 +64,7 @@ architecture Behavioral of top_level is
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
 			write_status_in: in write_status_signals;
-			write_port_out: out write_port_signals;
+			write_port_out: out write_cmd_signals;
 			leds_out: out std_logic_vector(0 to 7)
 		);
 	end component;
@@ -81,8 +81,10 @@ architecture Behavioral of top_level is
 	component memory_interface is
 		port(
 			clk: in memory_clock_signals;
-			write_port_in: in write_port_signals;
+			write_port_clk_in: in std_logic;
+			write_port_in: in write_cmd_signals;
 			write_status_out: out write_status_signals;
+			read_port_clk_in: in std_logic;
 			read_port_in: in read_cmd_signals;
 			read_status_out: out read_status_signals;
 			ram_out: out ram_signals;
@@ -97,7 +99,8 @@ architecture Behavioral of top_level is
 			clk: in std_logic;
 			completed: out std_logic;
 			memory_ready: in std_logic;
-			write_port: out write_port_signals;
+			write_port_clk: out std_logic;
+			write_port: out write_cmd_signals;
 			write_status: in write_status_signals
 		);
 	end component;
@@ -143,8 +146,10 @@ begin
 	mem_if: memory_interface
 		port map(
 			clk => clk_mem,
+			write_port_clk_in => clk_main,
 			write_port_in => write_port,
 			write_status_out => write_status,
+			read_port_clk_in => clk_pixel,
 			read_port_in => read_port,
 			read_status_out => read_status,
 			ram_out => ram,

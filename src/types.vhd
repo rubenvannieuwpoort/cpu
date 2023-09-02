@@ -40,8 +40,7 @@ package types is
 		dqs: std_logic;
 	end record;
 
-	type read_cmd_signals is record 
-		clk: std_logic;
+	type read_cmd_signals is record
 		enable: std_logic;
 		data_enable: std_logic;
 		address: std_logic_vector(29 downto 0);
@@ -73,11 +72,6 @@ package types is
 		write_mask => "1111",
 		data => (others => '0')
 	);
-
-	type write_port_signals is record
-		clk: std_logic;
-		write_cmd: write_cmd_signals;
-	end record;
 
 	type write_status_signals is record
 		cmd_full: std_logic;

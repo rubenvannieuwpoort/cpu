@@ -14,7 +14,7 @@ entity memory is
 		input: in execute_output_type;
 
 		write_status_in: in write_status_signals;
-		write_port_out: out write_port_signals;
+		write_port_out: out write_cmd_signals;
 
 		stall_out: out std_logic := '0';
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -24,7 +24,7 @@ end memory;
 
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal write_cmd_out: write_cmd_signals := DEFAULT_WRITE_CMD;
+	signal write_cmd: write_cmd_signals := DEFAULT_WRITE_CMD;
 
 	function should_stall(input: execute_output_type; write_status: write_status_signals; memory_ready: std_logic) return boolean is
 		variable is_write_cmd: boolean;
@@ -62,8 +62,7 @@ architecture Behavioral of memory is
 	end function;
 
 begin
-	write_port_out.clk <= clk;
-	write_port_out.write_cmd <= write_cmd_out;
+	write_port_out <= write_cmd;
 	stall_out <= buffered_input.valid;
 
 	process(clk)
@@ -86,10 +85,10 @@ begin
 
 			if stall_in = '0' and not(v_should_stall) then
 				output <= f(v_input);
-				write_cmd_out <= g(v_input);
+				write_cmd <= g(v_input);
 				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 			else
-				write_cmd_out <= DEFAULT_WRITE_CMD;
+				write_cmd <= DEFAULT_WRITE_CMD;
 				buffered_input <= v_input;
 			end if;
 		end if;
