@@ -9,7 +9,7 @@ entity memory_interface is
 		clk: in memory_clock_signals;
 		read_write_port_clk_in: in std_logic;
 		read_write_port_in: in read_write_cmd_signals;
-		write_status_out: out write_status_signals;
+		read_write_status_out: out read_write_status_signals;
 		read_port_clk_in: in std_logic;
 		read_port_in: in read_cmd_signals;
 		read_status_out: out read_status_signals;
@@ -120,7 +120,7 @@ component mem32
 end component;
 
 begin
-	p0_cmd_instr <= "00" & read_port_in.enable; -- read when read_cmd.enable is set, otherwise write
+	p0_cmd_instr <= "00" & read_write_port_in.enable; -- read when read_cmd.enable is set, otherwise write
 
 	u_mem32 : mem32
 		port map(
@@ -157,30 +157,30 @@ begin
 
 			c3_p0_cmd_clk => read_write_port_clk_in,
 			c3_p0_cmd_en => read_write_port_in.enable,
-			c3_p0_cmd_instr => "000", -- write
+			c3_p0_cmd_instr => p0_cmd_instr,
 			c3_p0_cmd_bl => "000000", -- 1 word
 			c3_p0_cmd_byte_addr => read_write_port_in.address,
-			c3_p0_cmd_empty => write_status_out.cmd_empty,
-			c3_p0_cmd_full => write_status_out.cmd_full,
+			c3_p0_cmd_empty => read_write_status_out.cmd_empty,
+			c3_p0_cmd_full => read_write_status_out.cmd_full,
 
 			c3_p0_wr_clk => read_write_port_clk_in,
 			c3_p0_wr_en => read_write_port_in.write_enable,
 			c3_p0_wr_mask => read_write_port_in.write_mask,
-			c3_p0_wr_data => read_write_port_in.data,
-			c3_p0_wr_full => write_status_out.data_full,
-			c3_p0_wr_empty => write_status_out.data_empty,
-			c3_p0_wr_count => write_status_out.data_count,
-			c3_p0_wr_underrun => write_status_out.underrun,
-			c3_p0_wr_error => write_status_out.error,
+			c3_p0_wr_data => read_write_port_in.write_data,
+			c3_p0_wr_full => read_write_status_out.write_full,
+			c3_p0_wr_empty => read_write_status_out.write_empty,
+			c3_p0_wr_count => read_write_status_out.write_count,
+			c3_p0_wr_underrun => read_write_status_out.write_underrun,
+			c3_p0_wr_error => read_write_status_out.write_error,
 
 			c3_p0_rd_clk => read_write_port_clk_in,
-			c3_p0_rd_en => '0',
-			c3_p0_rd_data => open, --read_status_0_out.data,
-			c3_p0_rd_full => open, --read_status_0_out.data_full,
-			c3_p0_rd_empty => open, --read_status_0_out.data_empty,
-			c3_p0_rd_count => open, --read_status_0_out.data_count,
-			c3_p0_rd_overflow => open, --read_status_0_out.overflow,
-			c3_p0_rd_error => open, --read_status_0_out.error,
+			c3_p0_rd_en => read_write_port_in.read_enable,
+			c3_p0_rd_data => read_write_status_out.read_data,
+			c3_p0_rd_full => read_write_status_out.read_full,
+			c3_p0_rd_empty => read_write_status_out.read_empty,
+			c3_p0_rd_count => read_write_status_out.read_count,
+			c3_p0_rd_overflow => read_write_status_out.read_overflow,
+			c3_p0_rd_error => read_write_status_out.read_error,
 
 			c3_p1_cmd_clk => read_port_clk_in,
 			c3_p1_cmd_en => read_port_in.enable,

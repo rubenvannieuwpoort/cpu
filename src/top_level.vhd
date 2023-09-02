@@ -47,7 +47,7 @@ architecture Behavioral of top_level is
 	signal memory_ready: std_logic;
 
 	signal read_write_port: read_write_cmd_signals;
-	signal write_status: write_status_signals;
+	signal read_write_status: read_write_status_signals;
 
 	signal read_port: read_cmd_signals;
 	signal read_status: read_status_signals;
@@ -63,7 +63,7 @@ architecture Behavioral of top_level is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
-			write_status_in: in write_status_signals;
+			read_write_status_in: in read_write_status_signals;
 			read_write_port_out: out read_write_cmd_signals;
 			leds_out: out std_logic_vector(0 to 7)
 		);
@@ -83,7 +83,7 @@ architecture Behavioral of top_level is
 			clk: in memory_clock_signals;
 			read_write_port_clk_in: in std_logic;
 			read_write_port_in: in read_write_cmd_signals;
-			write_status_out: out write_status_signals;
+			read_write_status_out: out read_write_status_signals;
 			read_port_clk_in: in std_logic;
 			read_port_in: in read_cmd_signals;
 			read_status_out: out read_status_signals;
@@ -137,7 +137,7 @@ begin
 	cpu_inst: CPU port map(
 		clk => clk_main,
 		memory_ready_in => memory_ready,
-		write_status_in => write_status,
+		read_write_status_in => read_write_status,
 		read_write_port_out => read_write_port,
 		leds_out => leds_out
 		--leds_out => open
@@ -148,7 +148,7 @@ begin
 			clk => clk_mem,
 			read_write_port_clk_in => clk_main,
 			read_write_port_in => read_write_port,
-			write_status_out => write_status,
+			read_write_status_out => read_write_status,
 			read_port_clk_in => clk_pixel,
 			read_port_in => read_port,
 			read_status_out => read_status,

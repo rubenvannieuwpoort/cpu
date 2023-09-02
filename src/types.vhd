@@ -48,7 +48,7 @@ package types is
 
 		address: std_logic_vector(29 downto 0);
 		write_mask: std_logic_vector(3 downto 0);
-		data: std_logic_vector(31 downto 0);
+		write_data: std_logic_vector(31 downto 0);
 	end record;
 	
 	constant DEFAULT_READ_WRITE_CMD: read_write_cmd_signals := (
@@ -57,7 +57,7 @@ package types is
 		write_enable => '0',
 		address => (others => '0'),
 		write_mask => "1111",
-		data => (others => '0')
+		write_data => (others => '0')
 	);
 
 	type read_cmd_signals is record
@@ -112,6 +112,24 @@ package types is
 		underrun => '0',
 		error => '0'
 	);
+
+	type read_write_status_signals is record
+		cmd_full: std_logic;
+		cmd_empty: std_logic;
+
+		read_data: std_logic_vector(31 downto 0);
+		read_full: std_logic;
+		read_empty: std_logic;
+		read_count: std_logic_vector(6 downto 0);
+		read_overflow: std_logic;
+		read_error: std_logic;
+
+		write_full: std_logic;
+		write_empty: std_logic;
+		write_count: std_logic_vector(6 downto 0);
+		write_underrun: std_logic;
+		write_error: std_logic;
+	end record;
 
 	type branch_data is record
 		indicator: std_logic;

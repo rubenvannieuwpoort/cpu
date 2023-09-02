@@ -13,7 +13,7 @@ entity memory is
 		stall_in: in std_logic;
 		input: in execute_output_type;
 
-		write_status_in: in write_status_signals;
+		read_write_status_in: in read_write_status_signals;
 		read_write_port_out: out read_write_cmd_signals;
 
 		stall_out: out std_logic := '0';
@@ -49,7 +49,7 @@ begin
 				if reading = '1' then
 					-- TODO
 				else
-					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(write_status_in.data_count) >= 16 or write_status_in.cmd_full = '1');
+					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.write_full = '1');
 					               --or v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or write_status_in.cmd_full = '1');
 				end if;
 
@@ -68,7 +68,7 @@ begin
 						v_read_write_cmd.write_enable := '1';
 						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
 						v_read_write_cmd.write_mask := not(input.memory_write_mask);
-						v_read_write_cmd.data := input.memory_data;
+						v_read_write_cmd.write_data := input.memory_data;
 
 						v_output.act := input.act;
 						v_output.writeback_value := input.writeback_value;
@@ -82,7 +82,7 @@ begin
 						v_read_write_cmd.write_enable := '0';
 						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
 						v_read_write_cmd.write_mask := "1111";
-						v_read_write_cmd.data := (others => '0');
+						v_read_write_cmd.write_data := (others => '0');
 
 						v_output := DEFAULT_MEMORY_OUTPUT;
 					else
