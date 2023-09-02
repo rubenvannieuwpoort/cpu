@@ -25,6 +25,7 @@ end memory;
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 	signal read_write_cmd: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
+	signal reading: std_logic := '0';
 
 begin
 	read_write_port_out <= read_write_cmd;
@@ -45,7 +46,13 @@ begin
 			end if;
 
 			if stall_in = '0' then
-				v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(write_status_in.data_count) >= 16 or write_status_in.cmd_full = '1');
+				if reading = '1' then
+					-- TODO
+				else
+					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(write_status_in.data_count) >= 16 or write_status_in.cmd_full = '1');
+					               --or v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or write_status_in.cmd_full = '1');
+				end if;
+
 				if v_should_stall then
 					output <= DEFAULT_MEMORY_OUTPUT;
 				end if;
@@ -55,11 +62,6 @@ begin
 				if reading = '1' then
 					-- TODO
 				else
-					v_output.act := input.act;
-					v_output.writeback_value := input.writeback_value;
-					v_output.writeback_register := input.writeback_register;
-					v_output.tag := input.tag;
-
 					if input.memory_operation = MEMORY_OPERATION_STORE then
 						v_read_write_cmd.enable := '1';
 						v_read_write_cmd.read_enable := '0';
@@ -67,8 +69,29 @@ begin
 						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
 						v_read_write_cmd.write_mask := not(input.memory_write_mask);
 						v_read_write_cmd.data := input.memory_data;
+
+						v_output.act := input.act;
+						v_output.writeback_value := input.writeback_value;
+						v_output.writeback_register := input.writeback_register;
+						v_output.tag := input.tag;
+					elsif input.memory_operation = MEMORY_OPERATION_LOAD then
+						reading <= '1';
+
+						v_read_write_cmd.enable := '1';
+						v_read_write_cmd.read_enable := '1';
+						v_read_write_cmd.write_enable := '0';
+						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
+						v_read_write_cmd.write_mask := "1111";
+						v_read_write_cmd.data := (others => '0');
+
+						v_output := DEFAULT_MEMORY_OUTPUT;
 					else
 						v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
+
+						v_output.act := input.act;
+						v_output.writeback_value := input.writeback_value;
+						v_output.writeback_register := input.writeback_register;
+						v_output.tag := input.tag;
 					end if;
 				end if;
 
