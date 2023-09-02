@@ -40,6 +40,26 @@ package types is
 		dqs: std_logic;
 	end record;
 
+	type read_write_cmd_signals is record
+		enable: std_logic;
+
+		read_enable: std_logic;
+		write_enable: std_logic;
+
+		address: std_logic_vector(29 downto 0);
+		write_mask: std_logic_vector(3 downto 0);
+		data: std_logic_vector(31 downto 0);
+	end record;
+	
+	constant DEFAULT_READ_WRITE_CMD: read_write_cmd_signals := (
+		enable => '0',
+		read_enable => '0',
+		write_enable => '0',
+		address => (others => '0'),
+		write_mask => "1111",
+		data => (others => '0')
+	);
+
 	type read_cmd_signals is record
 		enable: std_logic;
 		data_enable: std_logic;

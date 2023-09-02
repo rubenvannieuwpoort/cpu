@@ -14,7 +14,7 @@ entity memory is
 		input: in execute_output_type;
 
 		write_status_in: in write_status_signals;
-		write_port_out: out write_cmd_signals;
+		read_write_port_out: out read_write_cmd_signals;
 
 		stall_out: out std_logic := '0';
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -24,7 +24,7 @@ end memory;
 
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal write_cmd: write_cmd_signals := DEFAULT_WRITE_CMD;
+	signal read_write_cmd: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
 
 	function should_stall(input: execute_output_type; write_status: write_status_signals; memory_ready: std_logic) return boolean is
 		variable is_write_cmd: boolean;
@@ -45,24 +45,25 @@ architecture Behavioral of memory is
 		return output;
 	end function;
 
-	function g(input: execute_output_type) return write_cmd_signals is
-		variable write_cmd: write_cmd_signals;
+	function g(input: execute_output_type) return read_write_cmd_signals is
+		variable write_cmd: read_write_cmd_signals;
 		variable is_memory_operation: boolean;
 	begin
 		if input.memory_operation = MEMORY_OPERATION_STORE then
 			write_cmd.enable := '1';
-			write_cmd.data_enable := '1';
+			write_cmd.read_enable := '0';
+			write_cmd.write_enable := '1';
 			write_cmd.address := input.memory_address(29 downto 2) & "00";
 			write_cmd.write_mask := not(input.memory_write_mask);
 			write_cmd.data := input.memory_data;
 			return write_cmd;
 		end if;
 
-		return DEFAULT_WRITE_CMD;
+		return DEFAULT_READ_WRITE_CMD;
 	end function;
 
 begin
-	write_port_out <= write_cmd;
+	read_write_port_out <= read_write_cmd;
 	stall_out <= buffered_input.valid;
 
 	process(clk)
@@ -85,10 +86,10 @@ begin
 
 			if stall_in = '0' and not(v_should_stall) then
 				output <= f(v_input);
-				write_cmd <= g(v_input);
+				read_write_cmd <= g(v_input);
 				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 			else
-				write_cmd <= DEFAULT_WRITE_CMD;
+				read_write_cmd <= DEFAULT_READ_WRITE_CMD;
 				buffered_input <= v_input;
 			end if;
 		end if;

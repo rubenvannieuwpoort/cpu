@@ -7,8 +7,8 @@ use work.types.all;
 entity memory_interface is
 	port(
 		clk: in memory_clock_signals;
-		write_port_clk_in: in std_logic;
-		write_port_in: in write_cmd_signals;
+		read_write_port_clk_in: in std_logic;
+		read_write_port_in: in read_write_cmd_signals;
 		write_status_out: out write_status_signals;
 		read_port_clk_in: in std_logic;
 		read_port_in: in read_cmd_signals;
@@ -155,25 +155,25 @@ begin
 			mcb3_dram_dm => ram_out.dm,
 			mcb3_rzq => ram_bus.rzq,
 
-			c3_p0_cmd_clk => write_port_clk_in,
-			c3_p0_cmd_en => write_port_in.enable,
+			c3_p0_cmd_clk => read_write_port_clk_in,
+			c3_p0_cmd_en => read_write_port_in.enable,
 			c3_p0_cmd_instr => "000", -- write
 			c3_p0_cmd_bl => "000000", -- 1 word
-			c3_p0_cmd_byte_addr => write_port_in.address,
+			c3_p0_cmd_byte_addr => read_write_port_in.address,
 			c3_p0_cmd_empty => write_status_out.cmd_empty,
 			c3_p0_cmd_full => write_status_out.cmd_full,
 
-			c3_p0_wr_clk => write_port_clk_in,
-			c3_p0_wr_en => write_port_in.data_enable,
-			c3_p0_wr_mask => write_port_in.write_mask,
-			c3_p0_wr_data => write_port_in.data,
+			c3_p0_wr_clk => read_write_port_clk_in,
+			c3_p0_wr_en => read_write_port_in.write_enable,
+			c3_p0_wr_mask => read_write_port_in.write_mask,
+			c3_p0_wr_data => read_write_port_in.data,
 			c3_p0_wr_full => write_status_out.data_full,
 			c3_p0_wr_empty => write_status_out.data_empty,
 			c3_p0_wr_count => write_status_out.data_count,
 			c3_p0_wr_underrun => write_status_out.underrun,
 			c3_p0_wr_error => write_status_out.error,
 
-			c3_p0_rd_clk => write_port_clk_in,
+			c3_p0_rd_clk => read_write_port_clk_in,
 			c3_p0_rd_en => '0',
 			c3_p0_rd_data => open, --read_status_0_out.data,
 			c3_p0_rd_full => open, --read_status_0_out.data_full,

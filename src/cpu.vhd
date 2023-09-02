@@ -11,7 +11,7 @@ entity CPU is
 		clk: in std_logic;
 		memory_ready_in: in std_logic;
 		write_status_in: in write_status_signals;
-		write_port_out: out write_cmd_signals;
+		read_write_port_out: out read_write_cmd_signals;
 		leds_out: out std_logic_vector(7 downto 0)
 	);
 end CPU;
@@ -83,7 +83,7 @@ architecture Behavioral of CPU is
 			stall_in: in std_logic;
 			input: in execute_output_type;
 			write_status_in: in write_status_signals;
-			write_port_out: out write_cmd_signals;
+			read_write_port_out: out read_write_cmd_signals;
 			stall_out: out std_logic;
 			output: out memory_output_type
 		);
@@ -130,7 +130,7 @@ begin
 		stall_in => '0',
 		input => execute_output,
 		write_status_in => write_status_in,
-		write_port_out => write_port_out,
+		read_write_port_out => read_write_port_out,
 		stall_out => memory_stall_out,
 		output => memory_output
 	);
