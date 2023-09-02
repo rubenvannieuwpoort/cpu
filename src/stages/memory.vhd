@@ -26,42 +26,6 @@ architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
 	signal read_write_cmd: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
 
-	function should_stall(input: execute_output_type; write_status: write_status_signals; memory_ready: std_logic) return boolean is
-		variable is_write_cmd: boolean;
-		variable write_port_ready: boolean;
-	begin
-		is_write_cmd := input.memory_operation = MEMORY_OPERATION_STORE;
-		write_port_ready := memory_ready = '1' and unsigned(write_status.data_count) < 16 and write_status.cmd_full = '0';
-		return is_write_cmd and not(write_port_ready);
-	end function;
-
-	function f(input: execute_output_type) return memory_output_type is
-		variable output: memory_output_type;
-	begin
-		output.act := input.act;
-		output.writeback_value := input.writeback_value;
-		output.writeback_register := input.writeback_register;
-		output.tag := input.tag;
-		return output;
-	end function;
-
-	function g(input: execute_output_type) return read_write_cmd_signals is
-		variable write_cmd: read_write_cmd_signals;
-		variable is_memory_operation: boolean;
-	begin
-		if input.memory_operation = MEMORY_OPERATION_STORE then
-			write_cmd.enable := '1';
-			write_cmd.read_enable := '0';
-			write_cmd.write_enable := '1';
-			write_cmd.address := input.memory_address(29 downto 2) & "00";
-			write_cmd.write_mask := not(input.memory_write_mask);
-			write_cmd.data := input.memory_data;
-			return write_cmd;
-		end if;
-
-		return DEFAULT_READ_WRITE_CMD;
-	end function;
-
 begin
 	read_write_port_out <= read_write_cmd;
 	stall_out <= buffered_input.valid;
@@ -69,6 +33,9 @@ begin
 	process(clk)
 		variable v_should_stall: boolean;
 		variable v_input: execute_output_type;
+
+		variable v_read_write_cmd: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
+		variable v_output: memory_output_type := DEFAULT_MEMORY_OUTPUT;
 	begin
 		if rising_edge(clk) then
 			if buffered_input.valid = '1' then
@@ -78,15 +45,35 @@ begin
 			end if;
 
 			if stall_in = '0' then
-				v_should_stall := should_stall(v_input, write_status_in, memory_ready_in);
+				v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(write_status_in.data_count) >= 16 or write_status_in.cmd_full = '1');
 				if v_should_stall then
 					output <= DEFAULT_MEMORY_OUTPUT;
 				end if;
 			end if;
 
 			if stall_in = '0' and not(v_should_stall) then
-				output <= f(v_input);
-				read_write_cmd <= g(v_input);
+				if reading = '1' then
+					-- TODO
+				else
+					v_output.act := input.act;
+					v_output.writeback_value := input.writeback_value;
+					v_output.writeback_register := input.writeback_register;
+					v_output.tag := input.tag;
+
+					if input.memory_operation = MEMORY_OPERATION_STORE then
+						v_read_write_cmd.enable := '1';
+						v_read_write_cmd.read_enable := '0';
+						v_read_write_cmd.write_enable := '1';
+						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
+						v_read_write_cmd.write_mask := not(input.memory_write_mask);
+						v_read_write_cmd.data := input.memory_data;
+					else
+						v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
+					end if;
+				end if;
+
+				output <= v_output;
+				read_write_cmd <= v_read_write_cmd;
 				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 			else
 				read_write_cmd <= DEFAULT_READ_WRITE_CMD;
