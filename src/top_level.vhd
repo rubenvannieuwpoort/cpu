@@ -15,7 +15,7 @@ entity top_level is
 		vga_green: out std_logic_vector(2 downto 0);
 		vga_blue: out std_logic_vector(2 downto 1);
 		-- LEDs
-		leds_out: out std_logic_vector(7 downto 0);
+		leds_out: out std_logic_vector(0 to 7);
 		-- seven segment display
 		seven_segment_enable: out std_logic_vector(2 downto 0);
 		seven_segment: out std_logic_vector(7 downto 0);
@@ -65,7 +65,7 @@ architecture Behavioral of top_level is
 			memory_ready_in: in std_logic;
 			write_status_in: in write_status_signals;
 			write_port_out: out write_port_signals;
-			leds_out: out std_logic_vector(7 downto 0)
+			leds_out: out std_logic_vector(0 to 7)
 		);
 	end component;
 
