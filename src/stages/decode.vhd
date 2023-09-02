@@ -80,13 +80,12 @@ begin
 					--v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(19 downto 12) & v_input.opcode(20) & v_input.opcode(20) & v_input.opcode(30 downto 25) & v_input.opcode(24 downto 12) & "0"), 32))
 					--v_rd := v_input.opcode(11 downto 7);
 
-					if v_input.opcode(31 downto 20) = "111111111111" and v_input.opcode(14 downto 0) = "111111111111111" then
+					if v_input.opcode(31 downto 8) = "111111111111111111111111" then
 						-- custom instruction (LEDs on)
 						v_output.valid := '1';
 						v_output.illegal := '0';
-						v_output.operand_1_type := TYPE_REGISTER;
-						v_output.operand_1_immediate := (others => '0');
-						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_type := TYPE_IMMEDIATE;
+						v_output.operand_1_immediate := "000000000000000000000000" & v_input.opcode(7 downto 0);
 						v_output.operand_2_type := TYPE_IMMEDIATE;
 						v_output.operand_2_immediate := (others => '0');
 						v_output.operand_2_3_register := (others => '0');

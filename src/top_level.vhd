@@ -136,7 +136,8 @@ begin
 		memory_ready_in => memory_ready,
 		write_status_in => write_status,
 		write_port_out => write_port,
-		leds_out => open
+		leds_out => leds_out
+		--leds_out => open
 	);
 
 	mem_if: memory_interface
@@ -182,7 +183,7 @@ begin
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
 
-	leds_out <= read_status.overflow & read_status.error & write_status.underrun & write_status.error & "0000";
+	-- leds_out <= read_status.overflow & read_status.error & write_status.underrun & write_status.error & "0000";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;
