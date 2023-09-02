@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 use work.types.all;
+use work.addresses.all;
 
 
 entity vga_generator is
@@ -63,8 +64,7 @@ architecture Behavioral of vga_generator is
 	constant vSyncActive: std_logic := '1';
 	signal hCounter : unsigned(10 downto 0) := (others => '0');
 	signal vCounter : unsigned(10 downto 0) := (others => '0');
-	--signal address  : unsigned(29 downto 0) := "000000010000000000000000000000";
-	signal address  : unsigned(29 downto 0) := (others => '0');
+	signal address  : unsigned(29 downto 0) := unsigned(SCREENBUFFER_ADDRESS(29 downto 0));
 	signal read_cmd_enable_local : std_logic := '0';
 
 begin
@@ -110,8 +110,7 @@ begin
 			-- flush read port at end of frame
 			if vCounter = height then
 				-- read_data_enable <= memory_ready_in and not read_data_empty;
-				--address <= "000000010000000000000000000000";
-				address <= (others => '0');
+				address <= unsigned(SCREENBUFFER_ADDRESS(29 downto 0));
 			end if;
 
 			-- display pixels and trigger data FIFO reads
