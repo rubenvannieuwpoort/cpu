@@ -13,8 +13,8 @@ architecture behavior of cpu_test is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
-			write_status_in: in write_status_signals;
-			write_port_out: out write_port_signals;
+			read_write_status_in: in read_write_status_signals;
+			read_write_port_out: out read_write_cmd_signals;
 			leds_out: out std_logic_vector(7 downto 0)
 		);
 	end component;
@@ -23,14 +23,14 @@ architecture behavior of cpu_test is
 	signal clk: std_logic := '0';
 	constant clk_period: time := 10 ns;
 
-	signal write_port: write_port_signals;
+	signal read_write_port: read_write_cmd_signals;
 begin
 
 	uut: CPU port map(
 		clk => clk,
 		memory_ready_in => '1',
-		write_status_in => DEFAULT_WRITE_STATUS,
-		write_port_out => write_port,
+		read_write_status_in => DEFAULT_READ_WRITE_STATUS_SIGNALS,
+		read_write_port_out => read_write_port,
 		leds_out => open
 	);
 

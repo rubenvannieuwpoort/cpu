@@ -131,6 +131,22 @@ package types is
 		write_error: std_logic;
 	end record;
 
+	constant DEFAULT_READ_WRITE_STATUS_SIGNALS: read_write_status_signals := (
+		cmd_full => '0',
+		cmd_empty => '0',
+		read_data => (others => '0'),
+		read_full => '0',
+		read_empty => '0',
+		read_count => (others => '0'),
+		read_overflow => '0',
+		read_error => '0',
+		write_full => '0',
+		write_empty => '0',
+		write_count => (others => '0'),
+		write_underrun => '0',
+		write_error => '0'
+	);
+
 	type branch_data is record
 		indicator: std_logic;
 		address: std_logic_vector(31 downto 0);
