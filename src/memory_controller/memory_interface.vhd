@@ -120,7 +120,7 @@ component mem32
 end component;
 
 begin
-	p0_cmd_instr <= "00" & read_write_port_in.enable; -- read when read_cmd.enable is set, otherwise write
+	p0_cmd_instr <= "00" & read_write_port_in.read_enable; -- read when read_cmd.enable is set, otherwise write
 
 	u_mem32 : mem32
 		port map(
