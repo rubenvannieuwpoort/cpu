@@ -47,10 +47,10 @@ begin
 
 			if stall_in = '0' then
 				if reading = '1' then
-					-- TODO
+					v_should_stall := read_write_status_in.cmd_empty = '0' or read_write_status_in.read_empty = '0'; -- wait as long as the command is in the FIFO or the 
 				else
-					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.cmd_full = '1');
-					               --or v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or write_status_in.cmd_full = '1');
+					v_should_stall := (v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.cmd_full = '1'))
+					               or (v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or read_write_status_in.cmd_empty = '0'));
 				end if;
 
 				if v_should_stall then
@@ -60,7 +60,14 @@ begin
 
 			if stall_in = '0' and not(v_should_stall) then
 				if reading = '1' then
-					-- TODO
+					reading <= '0';
+
+					v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
+
+					v_output.act := v_input.act;
+					v_output.writeback_value := read_write_status_in.read_data;
+					v_output.writeback_register := v_input.writeback_register;
+					v_output.tag := v_input.tag;
 				else
 					if v_input.memory_operation = MEMORY_OPERATION_STORE then
 						v_read_write_cmd.enable := '1';
@@ -99,7 +106,10 @@ begin
 				read_write_cmd <= v_read_write_cmd;
 				buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 			else
-				read_write_cmd <= DEFAULT_READ_WRITE_CMD;
+				v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
+				v_read_write_cmd.read_enable := reading;
+
+				read_write_cmd <= v_read_write_cmd;
 				buffered_input <= v_input;
 			end if;
 		end if;
