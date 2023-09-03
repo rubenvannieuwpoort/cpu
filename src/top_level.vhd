@@ -188,7 +188,7 @@ begin
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
 
-	-- leds_out <= read_status.overflow & read_status.error & write_status.underrun & write_status.error & "0000";
+	--leds_out <= read_status.overflow & read_status.error & read_write_status.read_overflow & read_write_status.read_error & read_write_status.write_underrun & read_write_status.write_error & "00";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;
