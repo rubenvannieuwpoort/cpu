@@ -49,7 +49,7 @@ begin
 				if reading = '1' then
 					-- TODO
 				else
-					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.write_full = '1');
+					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.cmd_full = '1');
 					               --or v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or write_status_in.cmd_full = '1');
 				end if;
 
@@ -62,25 +62,25 @@ begin
 				if reading = '1' then
 					-- TODO
 				else
-					if input.memory_operation = MEMORY_OPERATION_STORE then
+					if v_input.memory_operation = MEMORY_OPERATION_STORE then
 						v_read_write_cmd.enable := '1';
 						v_read_write_cmd.read_enable := '0';
 						v_read_write_cmd.write_enable := '1';
-						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
-						v_read_write_cmd.write_mask := not(input.memory_write_mask);
-						v_read_write_cmd.write_data := input.memory_data;
+						v_read_write_cmd.address := v_input.memory_address(29 downto 2) & "00";
+						v_read_write_cmd.write_mask := not(v_input.memory_write_mask);
+						v_read_write_cmd.write_data := v_input.memory_data;
 
-						v_output.act := input.act;
-						v_output.writeback_value := input.writeback_value;
-						v_output.writeback_register := input.writeback_register;
-						v_output.tag := input.tag;
-					elsif input.memory_operation = MEMORY_OPERATION_LOAD then
+						v_output.act := v_input.act;
+						v_output.writeback_value := v_input.writeback_value;
+						v_output.writeback_register := v_input.writeback_register;
+						v_output.tag := v_input.tag;
+					elsif v_input.memory_operation = MEMORY_OPERATION_LOAD then
 						reading <= '1';
 
 						v_read_write_cmd.enable := '1';
 						v_read_write_cmd.read_enable := '1';
 						v_read_write_cmd.write_enable := '0';
-						v_read_write_cmd.address := input.memory_address(29 downto 2) & "00";
+						v_read_write_cmd.address := v_input.memory_address(29 downto 2) & "00";
 						v_read_write_cmd.write_mask := "1111";
 						v_read_write_cmd.write_data := (others => '0');
 
@@ -88,10 +88,10 @@ begin
 					else
 						v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
 
-						v_output.act := input.act;
-						v_output.writeback_value := input.writeback_value;
-						v_output.writeback_register := input.writeback_register;
-						v_output.tag := input.tag;
+						v_output.act := v_input.act;
+						v_output.writeback_value := v_input.writeback_value;
+						v_output.writeback_register := v_input.writeback_register;
+						v_output.tag := v_input.tag;
 					end if;
 				end if;
 
