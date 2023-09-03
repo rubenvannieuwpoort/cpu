@@ -86,6 +86,25 @@ begin
 						v_output.illegal := '0';
 						v_output.operand_1_type := TYPE_IMMEDIATE;
 						v_output.operand_1_immediate := "000000000000000000000000" & v_input.opcode(7 downto 0);
+						v_output.operand_1_register := (others => '0');
+						v_output.operand_2_type := TYPE_IMMEDIATE;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := (others => '0');
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := (others => '0');
+						v_output.writeback_register := (others => '0');
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LEDS;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
+					elsif v_input.opcode(31 downto 8) = "111111111111111111111110" then
+						-- custom instruction (LEDs on)
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_1_register := v_input.opcode(4 downto 0);
 						v_output.operand_2_type := TYPE_IMMEDIATE;
 						v_output.operand_2_immediate := (others => '0');
 						v_output.operand_2_3_register := (others => '0');
