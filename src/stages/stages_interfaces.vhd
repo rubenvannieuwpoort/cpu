@@ -199,6 +199,9 @@ package stages_interfaces is
 		memory_data: std_logic_vector(31 downto 0);
 		memory_write_mask: std_logic_vector(3 downto 0);
 		memory_address: std_logic_vector(31 downto 0);
+		memory_size: std_logic_vector(1 downto 0);
+
+		sign_extend: std_logic;
 
 		tag: std_logic_vector(4 downto 0);
 	end record execute_output_type;
@@ -206,6 +209,10 @@ package stages_interfaces is
 	constant MEMORY_OPERATION_NOP   : std_logic_vector(1 downto 0) := "00";
 	constant MEMORY_OPERATION_LOAD  : std_logic_vector(1 downto 0) := "01";
 	constant MEMORY_OPERATION_STORE : std_logic_vector(1 downto 0) := "10";
+
+	constant MEMORY_SIZE_BYTE     : std_logic_vector(1 downto 0) := "00";
+	constant MEMORY_SIZE_HALFWORD : std_logic_vector(1 downto 0) := "01";
+	constant MEMORY_SIZE_WORD     : std_logic_vector(1 downto 0) := "10";
 
 	constant DEFAULT_EXECUTE_OUTPUT: execute_output_type := (
 		valid => '0',
@@ -218,6 +225,9 @@ package stages_interfaces is
 		memory_data => (others => '0'),
 		memory_write_mask => (others => '0'),
 		memory_address => (others => '0'),
+		memory_size => (others => '0'),
+
+		sign_extend => '0',
 
 		tag => (others => '0')
 	);

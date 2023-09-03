@@ -306,30 +306,100 @@ begin
 						v_output.pc := v_input.pc;
 					-- TODO (MEMORY STUFF)
 					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "000" then
-					--	-- LB (TODO)
-					--	v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--	v_rs1 := v_input.opcode(19 downto 15);
-					--	v_rd := v_input.opcode(11 downto 7);
-					--elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "001" then
-					--	-- LH (TODO)
-					--	v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--	v_rs1 := v_input.opcode(19 downto 15);
-					--	v_rd := v_input.opcode(11 downto 7);
-					--elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "010" then
-					--	-- LW (TODO)
-					--	v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--	v_rs1 := v_input.opcode(19 downto 15);
-					--	v_rd := v_input.opcode(11 downto 7);
-					--elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "100" then
-					--	-- LBU (TODO)
-					--	v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--	v_rs1 := v_input.opcode(19 downto 15);
-					--	v_rd := v_input.opcode(11 downto 7);
-					--elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "101" then
-					--	-- LHU (TODO)
-					--	v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--	v_rs1 := v_input.opcode(19 downto 15);
-					--	v_rd := v_input.opcode(11 downto 7);
+						-- LB (done)
+						-- sign extends byte at address rs1 + immediate and loads into destination
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_REGISTER;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LOAD_BYTE;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "001" then
+						-- LH (done)
+						-- sign extends halfword at address rs1 + immediate and loads into destination
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_REGISTER;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LOAD_HALFWORD;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "010" then
+						-- LW (done)
+						-- take word at address rs1 + immediate and loads into destination
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_REGISTER;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LOAD_WORD;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "100" then
+						-- LBU (done)
+						-- take byte at address rs1 + immediate and loads into destination
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_REGISTER;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LOAD_BYTE_UNSIGNED;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
+					elsif v_input.opcode(6 downto 0) = "0000011" and v_input.opcode(14 downto 12) = "101" then
+						-- LHU (TODO)
+						-- take halfword at address rs1 + immediate and loads into destination
+						v_output.valid := '1';
+						v_output.illegal := '0';
+						v_output.operand_1_type := TYPE_REGISTER;
+						v_output.operand_1_register := v_input.opcode(19 downto 15);
+						v_output.operand_1_immediate := (others => '0');
+						v_output.operand_2_type := TYPE_REGISTER;
+						v_output.operand_2_immediate := (others => '0');
+						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
+						v_output.operand_3_type := TYPE_IMMEDIATE;
+						v_output.operand_3_immediate := std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));
+						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.csr_register := (others => '0');
+						v_output.alu_function := ALU_FUNCTION_LOAD_HALFWORD_UNSIGNED;
+						v_output.stamp := v_input.stamp;
+						v_output.tag := v_input.tag;
+						v_output.pc := v_input.pc;
 					elsif v_input.opcode(6 downto 0) = "0100011" and v_input.opcode(14 downto 12) = "000" then
 						-- SB (done)
 						-- stores low bits in rs2 at address rs1 + immediate
