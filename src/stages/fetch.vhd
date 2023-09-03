@@ -24,8 +24,12 @@ architecture Behavioral of fetch is
 	-- signal wait_indicator: std_logic := '0';
 	signal stamp: std_logic_vector(2 downto 0) := (others => '0');
 
-	type opcodes_list is array(0 to 31) of std_logic_vector(31 downto 0);
+	type opcodes_list is array(0 to 63) of std_logic_vector(31 downto 0);
 	signal opcodes: opcodes_list := (
+		X"50000313", X"2d000393", X"03c00437", X"00000113", X"00040193", X"00000093", X"00508233", X"00224233",
+		X"00418023", X"00118193", X"00108093", X"fe60c6e3", X"00110113", X"50018193", X"406181b3", X"fc714ce3",
+		X"ffffff00", X"0000006f", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
+		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
@@ -59,20 +63,20 @@ begin
 
 				output.pc <= branch_in.data.address;
 				output.pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
-				output.opcode <= opcodes(to_integer(unsigned(branch_in.data.address(6 downto 2))));
+				output.opcode <= opcodes(to_integer(unsigned(branch_in.data.address(7 downto 2))));
 				output.stamp <= branch_in.stamp;
 				output.tag <= branch_in.data.address(6 downto 2);
 			else
-					pc <= pc_next;
-					pc_next <= std_logic_vector(unsigned(pc_next) + 4);
+				pc <= pc_next;
+				pc_next <= std_logic_vector(unsigned(pc_next) + 4);
 
-					output.valid <= '1';
-					output.pc <= pc;
-					output.pc_next <= pc_next;
+				output.valid <= '1';
+				output.pc <= pc;
+				output.pc_next <= pc_next;
 				output.opcode <= opcodes(to_integer(unsigned(pc(6 downto 2))));
 				output.stamp <= stamp;
-					output.tag <= pc(6 downto 2);
-				end if;
+				output.tag <= pc(6 downto 2);
+			end if;
 		end if;
 	end process;
 end Behavioral;
