@@ -10,3 +10,10 @@ Now, `mem32.vhd` needs to be changed slightly. I recommend using an IDE with dif
   2. Removing the clocking logic
 
 If you add or remove ports, `src/memory_controller/memory_interface.vhd` should be changed accordingly.
+
+
+## Memory map
+
+0x00000000
+          main memory
+0x04000000
