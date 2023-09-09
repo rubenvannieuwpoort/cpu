@@ -110,9 +110,9 @@ package types is
 
 	constant DEFAULT_WRITE_STATUS: write_status_signals := (
 		cmd_full => '0',
-		cmd_empty => '1',
+		cmd_empty => '0',
 		data_full => '0',
-		data_empty => '1',
+		data_empty => '0',
 		data_count => (others => '0'),
 		underrun => '0',
 		error => '0'

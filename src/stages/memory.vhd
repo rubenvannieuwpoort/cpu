@@ -38,8 +38,13 @@ begin
 	read_write_port_out.write_data <= read_write_port.write_data;
 
 	process(clk)
+		variable v_extn: std_logic_vector(31 downto 0);
+		variable v_temp_halfword: std_logic_vector(15 downto 0);
+		variable v_temp_byte: std_logic_vector(7 downto 0);
 		variable v_input: execute_output_type;
 	begin
+		stall_out <= buffered_input.valid;
+
 		if rising_edge(clk) then
 			if buffered_input.valid = '1' then
 				v_input := buffered_input;
@@ -91,6 +96,17 @@ begin
 						output <= DEFAULT_MEMORY_OUTPUT;
 						read_write_port <= DEFAULT_READ_WRITE_CMD;
 					end if;
+				else
+					state <= STATE_DEFAULT;
+
+					buffered_input <= DEFAULT_EXECUTE_OUTPUT;
+
+					output.act <= v_input.act;
+					output.writeback_value <= v_input.writeback_value;
+					output.writeback_register <= v_input.writeback_register;
+					output.tag <= v_input.tag;
+
+					read_write_port <= DEFAULT_READ_WRITE_CMD;
 				end if;
 			elsif state = STATE_READING then
 				if read_write_status_in.read_empty = '0' then
@@ -99,8 +115,33 @@ begin
 					buffered_input <= DEFAULT_EXECUTE_OUTPUT;
 
 					output.act <= v_input.act;
-					-- TODO: take into account size, sign extension, and endianness
-					output.writeback_value <= read_write_status_in.read_data;
+
+					if (v_input.memory_size = MEMORY_SIZE_BYTE) then
+						if (v_input.memory_address(1 downto 0) = "00") then
+							v_temp_byte := read_write_status_in.read_data(31 downto 24);
+						elsif (v_input.memory_address(1 downto 0) = "01") then
+							v_temp_byte := read_write_status_in.read_data(23 downto 16);
+						elsif (v_input.memory_address(1 downto 0) = "10") then
+							v_temp_byte := read_write_status_in.read_data(15 downto 8);
+						else
+							v_temp_byte := read_write_status_in.read_data(7 downto 0);
+						end if;
+
+						v_extn := (others => (v_input.sign_extend and v_temp_byte(7)));
+						output.writeback_value <= v_extn(31 downto 8) & v_temp_byte;
+					elsif (v_input.memory_size = MEMORY_SIZE_BYTE) then
+						if (v_input.memory_address(1 downto 0) = "00") then
+							v_temp_halfword := read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
+						else
+							v_temp_halfword := read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8);
+						end if;
+
+						v_extn := (others => (v_input.sign_extend and v_temp_halfword(15)));
+						output.writeback_value <= v_extn(31 downto 16) & v_temp_halfword;
+					else
+						output.writeback_value <= read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8) & read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
+					end if;
+
 					output.writeback_register <= v_input.writeback_register;
 					output.tag <= v_input.tag;
 

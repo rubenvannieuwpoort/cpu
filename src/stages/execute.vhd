@@ -618,10 +618,10 @@ begin
 					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
 	
 					if v_output.memory_address(1) = '0' then
-						v_output.memory_data := v_input.operand_2(15 downto 0) & "0000000000000000";
+						v_output.memory_data := v_input.operand_2(7 downto 0) & v_input.operand_2(15 downto 8) & "0000000000000000";
 						v_output.memory_write_mask := "1100";
 					else
-						v_output.memory_data := "0000000000000000" & v_input.operand_2(15 downto 0);
+						v_output.memory_data := "0000000000000000" & v_input.operand_2(7 downto 0) & v_input.operand_2(15 downto 8);
 						v_output.memory_write_mask := "0011";
 					end if;
 
@@ -637,8 +637,7 @@ begin
 					v_output.writeback_value := (others => '0');
 					v_output.writeback_register := (others => '0');
 					v_output.memory_operation := MEMORY_OPERATION_STORE;
-					-- convert to little-endian
-					v_output.memory_data := v_input.operand_2(31 downto 24) & v_input.operand_2(23 downto 16) & v_input.operand_2(15 downto 8) & v_input.operand_2(7 downto 0);
+					v_output.memory_data := v_input.operand_2(7 downto 0) & v_input.operand_2(15 downto 8) & v_input.operand_2(23 downto 16) & v_input.operand_2(31 downto 24);
 					v_output.memory_write_mask := "1111";
 					v_output.memory_address := std_logic_vector(unsigned(v_input.operand_1) + unsigned(v_input.operand_3));
 					v_output.memory_size := (others => '0');
@@ -652,6 +651,7 @@ begin
 					v_output.valid := '1';
 					v_output.act := '1';
 					v_output.writeback_value := (others => '0');
+					v_output.writeback_register := v_input.writeback_register;
 					v_output.memory_operation := MEMORY_OPERATION_LOAD;
 					v_output.memory_data := (others => '0');
 					v_output.memory_write_mask := (others => '0');
