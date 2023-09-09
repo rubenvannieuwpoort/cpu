@@ -10,7 +10,6 @@ entity memory is
 	port(
 		clk: in std_logic;
 		memory_ready_in: in std_logic;
-		stall_in: in std_logic;
 		input: in execute_output_type;
 
 		read_write_status_in: in read_write_status_signals;
@@ -44,57 +43,59 @@ begin
 		variable v_read_write_cmd: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
 		variable v_output: memory_output_type := DEFAULT_MEMORY_OUTPUT;
 	begin
-		read_empty_prev <= read_write_status_in.read_empty;
-
 		if rising_edge(clk) then
+			read_empty_prev <= read_write_status_in.read_empty;
+		
 			if buffered_input.valid = '1' then
 				v_input := buffered_input;
 			else
 				v_input := input;
 			end if;
 
-			if stall_in = '0' then
-				if reading = '1' then
-					v_should_stall := not(read_write_status_in.read_empty = '0'); -- wait until data disappears from the FIFO
-				else
-					v_should_stall := v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.cmd_full = '1');
-					               --or (v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or read_write_status_in.cmd_empty = '0' or read_write_status_in.write_empty = '0' or read_write_status_in.read_empty = '0'));
-				end if;
-
-				if v_should_stall then
-					output <= DEFAULT_MEMORY_OUTPUT;
-				end if;
+			if reading = '1' then
+				v_should_stall := false;
+				--v_should_stall := read_write_status_in.read_empty = '1'; -- wait until there's data in the FIFO
+				--v_should_stall := not(read_empty_prev = '0' and read_write_status_in.read_empty = '1');
+			else
+				v_should_stall := (v_input.memory_operation = MEMORY_OPERATION_STORE and (memory_ready_in = '0' or unsigned(read_write_status_in.write_count) >= 16 or read_write_status_in.cmd_full = '1'))
+								or (v_input.memory_operation = MEMORY_OPERATION_LOAD and (memory_ready_in = '0' or read_write_status_in.cmd_empty = '0' or read_write_status_in.write_empty = '0' or read_write_status_in.read_empty = '0'));
 			end if;
 
-			if stall_in = '0' and not(v_should_stall) then
+			if v_should_stall then
+				output <= DEFAULT_MEMORY_OUTPUT;
+			end if;
+
+			if not(v_should_stall) then
 				if reading = '1' then
 					reading <= '0';
 
-					if (v_input.memory_size = MEMORY_SIZE_BYTE) then
-						if (v_input.memory_address(1 downto 0) = "00") then
-							v_temp_byte := read_write_status_in.read_data(31 downto 24);
-						elsif (v_input.memory_address(1 downto 0) = "01") then
-							v_temp_byte := read_write_status_in.read_data(23 downto 16);
-						elsif (v_input.memory_address(1 downto 0) = "10") then
-							v_temp_byte := read_write_status_in.read_data(15 downto 8);
-						else
-							v_temp_byte := read_write_status_in.read_data(15 downto 8);
-						end if;
+					v_output.writeback_value := (others => '1'); -- read_write_status_in.read_data;
 
-						v_extn := (others => (v_input.sign_extend and v_temp_byte(7)));
-						v_output.writeback_value := v_extn(31 downto 8) & v_temp(7 downto 0);
-					elsif (v_input.memory_size = MEMORY_SIZE_BYTE) then
-						if (v_input.memory_address(1 downto 0) = "00") then
-							v_temp_halfword := read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
-						else
-							v_temp_halfword := read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8);
-						end if;
+					--if (v_input.memory_size = MEMORY_SIZE_BYTE) then
+					--	if (v_input.memory_address(1 downto 0) = "00") then
+					--		v_temp_byte := read_write_status_in.read_data(31 downto 24);
+					--	elsif (v_input.memory_address(1 downto 0) = "01") then
+					--		v_temp_byte := read_write_status_in.read_data(23 downto 16);
+					--	elsif (v_input.memory_address(1 downto 0) = "10") then
+					--		v_temp_byte := read_write_status_in.read_data(15 downto 8);
+					--	else
+					--		v_temp_byte := read_write_status_in.read_data(7 downto 0);
+					--	end if;
 
-						v_extn := (others => (v_input.sign_extend and v_temp_halfword(15)));
-						v_output.writeback_value := v_extn(31 downto 16) & v_temp(15 downto 0);
-					else
-						v_output.writeback_value := read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8) & read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
-					end if;
+					--	v_extn := (others => (v_input.sign_extend and v_temp_byte(7)));
+					--	v_output.writeback_value := v_extn(31 downto 8) & v_temp(7 downto 0);
+					--elsif (v_input.memory_size = MEMORY_SIZE_BYTE) then
+					--	if (v_input.memory_address(1 downto 0) = "00") then
+					--		v_temp_halfword := read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
+					--	else
+					--		v_temp_halfword := read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8);
+					--	end if;
+
+					--	v_extn := (others => (v_input.sign_extend and v_temp_halfword(15)));
+					--	v_output.writeback_value := v_extn(31 downto 16) & v_temp(15 downto 0);
+					--else
+					--	v_output.writeback_value := read_write_status_in.read_data(7 downto 0) & read_write_status_in.read_data(15 downto 8) & read_write_status_in.read_data(23 downto 16) & read_write_status_in.read_data(31 downto 24);
+					--end if;
 
 					v_read_write_cmd := DEFAULT_READ_WRITE_CMD;
 					v_output.act := v_input.act;
@@ -103,6 +104,7 @@ begin
 				else
 					if v_input.memory_operation = MEMORY_OPERATION_STORE then
 						v_read_write_cmd.enable := '1';
+						v_read_write_cmd.command := CMD_WRITE;
 						v_read_write_cmd.read_enable := '0';
 						v_read_write_cmd.write_enable := '1';
 						v_read_write_cmd.address := v_input.memory_address(29 downto 2) & "00";
@@ -117,6 +119,7 @@ begin
 						reading <= '1';
 
 						v_read_write_cmd.enable := '1';
+						v_read_write_cmd.command := CMD_READ;
 						v_read_write_cmd.read_enable := '1';
 						v_read_write_cmd.write_enable := '0';
 						v_read_write_cmd.address := v_input.memory_address(29 downto 2) & "00";

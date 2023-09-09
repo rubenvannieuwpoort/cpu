@@ -157,7 +157,7 @@ begin
 
 			c3_p0_cmd_clk => read_write_port_clk_in,
 			c3_p0_cmd_en => read_write_port_in.enable,
-			c3_p0_cmd_instr => p0_cmd_instr,
+			c3_p0_cmd_instr => read_write_port_in.command,
 			c3_p0_cmd_bl => "000000", -- 1 word
 			c3_p0_cmd_byte_addr => read_write_port_in.address,
 			c3_p0_cmd_empty => read_write_status_out.cmd_empty,

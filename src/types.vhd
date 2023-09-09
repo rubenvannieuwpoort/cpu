@@ -42,6 +42,7 @@ package types is
 
 	type read_write_cmd_signals is record
 		enable: std_logic;
+		command: std_logic_vector(2 downto 0);
 
 		read_enable: std_logic;
 		write_enable: std_logic;
@@ -50,9 +51,13 @@ package types is
 		write_mask: std_logic_vector(3 downto 0);
 		write_data: std_logic_vector(31 downto 0);
 	end record;
+
+	constant CMD_WRITE: std_logic_vector(2 downto 0) := "000";
+	constant CMD_READ: std_logic_vector(2 downto 0) := "001";
 	
 	constant DEFAULT_READ_WRITE_CMD: read_write_cmd_signals := (
 		enable => '0',
+		command => (others => '0'),
 		read_enable => '0',
 		write_enable => '0',
 		address => (others => '0'),

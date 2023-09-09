@@ -80,7 +80,6 @@ architecture Behavioral of CPU is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
-			stall_in: in std_logic;
 			input: in execute_output_type;
 			read_write_status_in: in read_write_status_signals;
 			read_write_port_out: out read_write_cmd_signals;
@@ -127,7 +126,6 @@ begin
 	stage_memory: memory port map(
 		clk => clk,
 		memory_ready_in => memory_ready_in,
-		stall_in => '0',
 		input => execute_output,
 		read_write_status_in => read_write_status_in,
 		read_write_port_out => read_write_port_out,
