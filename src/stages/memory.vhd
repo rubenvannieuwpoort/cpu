@@ -88,7 +88,7 @@ begin
 						read_write_port.command <= CMD_WRITE;
 						read_write_port.write_enable <= '1';
 						read_write_port.address <= v_input.memory_address(29 downto 2) & "00";
-						read_write_port.write_mask <= not(v_input.memory_write_mask);
+						read_write_port.write_mask <= v_input.memory_write_mask;
 						read_write_port.write_data <= v_input.memory_data;
 					else
 						state <= STATE_DEFAULT;

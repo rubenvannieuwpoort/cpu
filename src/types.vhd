@@ -61,7 +61,7 @@ package types is
 		read_enable => '0',
 		write_enable => '0',
 		address => (others => '0'),
-		write_mask => "1111",
+		write_mask => "0000",
 		write_data => (others => '0')
 	);
 
@@ -94,7 +94,7 @@ package types is
 		enable => '0',
 		data_enable => '0',
 		address => (others => '0'),
-		write_mask => "1111",
+		write_mask => "0000",
 		data => (others => '0')
 	);
 

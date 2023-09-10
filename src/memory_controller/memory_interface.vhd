@@ -165,7 +165,7 @@ begin
 
 			c3_p0_wr_clk => read_write_port_clk_in,
 			c3_p0_wr_en => read_write_port_in.write_enable,
-			c3_p0_wr_mask => read_write_port_in.write_mask,
+			c3_p0_wr_mask => not(read_write_port_in.write_mask),
 			c3_p0_wr_data => read_write_port_in.write_data,
 			c3_p0_wr_full => read_write_status_out.write_full,
 			c3_p0_wr_empty => read_write_status_out.write_empty,

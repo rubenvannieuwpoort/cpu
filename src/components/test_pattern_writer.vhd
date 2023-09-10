@@ -61,10 +61,10 @@ process(clk)
 				pending_write_address <= std_logic_vector(address(21 downto 2) & "00");
 				write_port.write_cmd.data_enable <= '1';
 				case address(1 downto 0) is
-					when "00"   => write_port.write_cmd.write_mask <= "1110";
-					when "01"   => write_port.write_cmd.write_mask <= "1101";
-					when "10"   => write_port.write_cmd.write_mask <= "1011";
-					when others => write_port.write_cmd.write_mask <= "0111";
+					when "00"   => write_port.write_cmd.write_mask <= "0001";
+					when "01"   => write_port.write_cmd.write_mask <= "0010";
+					when "10"   => write_port.write_cmd.write_mask <= "0100";
+					when others => write_port.write_cmd.write_mask <= "1000";
 				end case;
 				
 				address <= address + 1;
