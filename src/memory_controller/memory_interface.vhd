@@ -10,6 +10,8 @@ entity memory_interface is
 		read_write_port_clk_in: in std_logic;
 		read_write_port_in: in read_write_cmd_signals;
 		read_write_status_out: out read_write_status_signals;
+
+		-- for vga signal
 		read_port_clk_in: in std_logic;
 		read_port_in: in read_cmd_signals;
 		read_status_out: out read_status_signals;

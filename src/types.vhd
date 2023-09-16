@@ -171,4 +171,58 @@ package types is
 		data => DEFAULT_BRANCH_DATA,
 		stamp => (others => '0')
 	);
+
+
+
+
+
+	type read_write_port is record
+		enable: std_logic;
+		command: std_logic;
+		address: std_logic_vector(26 downto 2);
+		write_data: std_logic_vector(31 downto 0);
+		write_mask: std_logic_vector(3 downto 0);
+	end record;
+
+	constant DEFAULT_READ_WRITE_PORT: read_write_port := (
+		enable => '0',
+		command => '0',
+		address => (others => '0'),
+		write_data => (others => '0'),
+		write_mask => (others => '0')
+	);
+
+	type read_write_status is record
+		read_data: std_logic_vector(31 downto 0);
+		data_valid: std_logic;
+		ready: std_logic;
+	end record;
+	
+	constant DEFAULT_READ_WRITE_STATUS: read_write_status := (
+		read_data => (others => '0'),
+		data_valid => '0',
+		ready => '0'
+	);
+
+	type read_port is record
+		act: std_logic;
+		address: std_logic_vector(26 downto 2);
+	end record;
+
+	constant DEFAULT_READ_PORT: read_port := (
+		act => '0',
+		address => (others => '0')
+	);
+
+	type read_status is record
+		read_data: std_logic_vector(31 downto 0);
+		data_valid: std_logic;
+		ready: std_logic;
+	end record;
+
+	constant DEFAULT_READ_STATUS: read_status := (
+		read_data => (others => '0'),
+		data_valid => '0',
+		ready => '0'
+	);
 end package;
