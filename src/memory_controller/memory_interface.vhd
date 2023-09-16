@@ -64,7 +64,6 @@ component mem32
 		c3_sys_clk: in std_logic;
 		c3_sys_rst_i: in std_logic;
 		c3_calib_done: out std_logic;
-		c3_clk0: out std_logic;
 		c3_rst0: out std_logic;
 		mcb_drp_clk: out std_logic;
 		mcb3_dram_dqs: inout std_logic;
@@ -137,7 +136,6 @@ begin
 			c3_sys_clk => '0',
 			c3_sys_rst_i => reset_in,
 
-			c3_clk0 => open,
 			mcb_drp_clk => open,
 			c3_rst0 => open,
 			c3_calib_done => calib_done,
