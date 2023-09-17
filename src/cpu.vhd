@@ -9,9 +9,8 @@ use work.stages_interfaces.all;
 entity CPU is
 	port(
 		clk: in std_logic;
-		memory_ready_in: in std_logic;
-		read_write_status_in: in read_write_status_signals;
-		read_write_port_out: out read_write_cmd_signals;
+		read_write_status_in: in read_write_status;
+		read_write_port_out: out read_write_port;
 		leds_out: out std_logic_vector(7 downto 0)
 	);
 end CPU;
@@ -79,10 +78,9 @@ architecture Behavioral of CPU is
 	component memory is
 		port(
 			clk: in std_logic;
-			memory_ready_in: in std_logic;
 			input: in execute_output_type;
-			read_write_status_in: in read_write_status_signals;
-			read_write_port_out: out read_write_cmd_signals;
+			read_write_port_out: out read_write_port;
+			read_write_status_in: in read_write_status;
 			stall_out: out std_logic;
 			output: out memory_output_type
 		);
@@ -125,7 +123,6 @@ begin
 
 	stage_memory: memory port map(
 		clk => clk,
-		memory_ready_in => memory_ready_in,
 		input => execute_output,
 		read_write_status_in => read_write_status_in,
 		read_write_port_out => read_write_port_out,

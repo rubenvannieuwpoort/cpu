@@ -817,7 +817,7 @@ begin
 						v_output.stamp := v_input.stamp;
 						v_output.tag := v_input.tag;
 						v_output.pc := v_input.pc;
-					elsif v_input.opcode(6 downto 0) = "00000000000000000000000001110011" then
+					elsif v_input.opcode(31 downto 0) = "00000000000000000000000001110011" then
 						-- ECALL (implemented as NOP)
 						v_output.valid := '1';
 						v_output.illegal := '0';

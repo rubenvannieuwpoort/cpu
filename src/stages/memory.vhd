@@ -9,11 +9,10 @@ use work.stages_interfaces.all;
 entity memory is
 	port(
 		clk: in std_logic;
-		memory_ready_in: in std_logic;
 		input: in execute_output_type;
 
-		read_write_status_in: in read_write_status_signals;
-		read_write_port_out: out read_write_cmd_signals;
+		read_write_status_in: in read_write_status;
+		read_write_port_out: out read_write_port;
 
 		stall_out: out std_logic := '0';
 		output: out memory_output_type := DEFAULT_MEMORY_OUTPUT
@@ -23,19 +22,11 @@ end memory;
 
 architecture Behavioral of memory is
 	signal buffered_input: execute_output_type := DEFAULT_EXECUTE_OUTPUT;
-	signal read_write_port: read_write_cmd_signals := DEFAULT_READ_WRITE_CMD;
 
 	constant STATE_DEFAULT: std_logic := '0';
 	constant STATE_READING: std_logic := '1';
 	signal state: std_logic := STATE_DEFAULT;
 begin
-	read_write_port_out.enable <= read_write_port.enable;
-	read_write_port_out.command <= read_write_port.command;
-	read_write_port_out.read_enable <= '1';
-	read_write_port_out.write_enable <= read_write_port.write_enable;
-	read_write_port_out.address <= read_write_port.address;
-	read_write_port_out.write_mask <= read_write_port.write_mask;
-	read_write_port_out.write_data <= read_write_port.write_data;
 
 	process(clk)
 		variable v_extn: std_logic_vector(31 downto 0);
@@ -54,27 +45,26 @@ begin
 
 			if state = STATE_DEFAULT then
 				if v_input.memory_operation = MEMORY_OPERATION_LOAD then
-					if memory_ready_in = '1' and read_write_status_in.cmd_empty = '1' and read_write_status_in.write_empty = '1' and read_write_status_in.read_empty = '1' then
+					if read_write_status_in.ready = '1' then
 						state <= STATE_READING;
 
 						buffered_input <= v_input;
 
 						output <= DEFAULT_MEMORY_OUTPUT;
 
-						read_write_port.enable <= '1';
-						read_write_port.command <= CMD_READ;
-						read_write_port.write_enable <= '0';
-						read_write_port.address <= v_input.memory_address(29 downto 2) & "00";
-						read_write_port.write_mask <= "1111";
-						read_write_port.write_data <= (others => '0');
+						read_write_port_out.enable <= '1';
+						read_write_port_out.command <= CMD_READ;
+						read_write_port_out.address <= v_input.memory_address(26 downto 2);
+						read_write_port_out.write_data <= (others => '0');
+						read_write_port_out.write_mask <= "0000";
 					else
 						state <= STATE_DEFAULT;
 						buffered_input <= v_input;
 						output <= DEFAULT_MEMORY_OUTPUT;
-						read_write_port <= DEFAULT_READ_WRITE_CMD;
+						read_write_port_out <= DEFAULT_READ_WRITE_PORT;
 					end if;
 				elsif v_input.memory_operation = MEMORY_OPERATION_STORE then
-					if memory_ready_in = '1' and unsigned(read_write_status_in.write_count) < 16 and read_write_status_in.cmd_full = '0' then
+					if read_write_status_in.ready = '1' then
 						state <= STATE_DEFAULT;
 
 						buffered_input <= DEFAULT_EXECUTE_OUTPUT;
@@ -84,17 +74,16 @@ begin
 						output.writeback_register <= v_input.writeback_register;
 						output.tag <= v_input.tag;
 
-						read_write_port.enable <= '1';
-						read_write_port.command <= CMD_WRITE;
-						read_write_port.write_enable <= '1';
-						read_write_port.address <= v_input.memory_address(29 downto 2) & "00";
-						read_write_port.write_mask <= v_input.memory_write_mask;
-						read_write_port.write_data <= v_input.memory_data;
+						read_write_port_out.enable <= '1';
+						read_write_port_out.command <= CMD_WRITE;
+						read_write_port_out.address <= v_input.memory_address(26 downto 2);
+						read_write_port_out.write_data <= v_input.memory_data;
+						read_write_port_out.write_mask <= v_input.memory_write_mask;
 					else
 						state <= STATE_DEFAULT;
 						buffered_input <= v_input;
 						output <= DEFAULT_MEMORY_OUTPUT;
-						read_write_port <= DEFAULT_READ_WRITE_CMD;
+						read_write_port_out <= DEFAULT_READ_WRITE_PORT;
 					end if;
 				else
 					state <= STATE_DEFAULT;
@@ -106,10 +95,10 @@ begin
 					output.writeback_register <= v_input.writeback_register;
 					output.tag <= v_input.tag;
 
-					read_write_port <= DEFAULT_READ_WRITE_CMD;
+					read_write_port_out <= DEFAULT_READ_WRITE_PORT;
 				end if;
 			elsif state = STATE_READING then
-				if read_write_status_in.read_empty = '0' then
+				if read_write_status_in.data_valid = '1' then
 					state <= STATE_DEFAULT;
 
 					buffered_input <= DEFAULT_EXECUTE_OUTPUT;
@@ -145,12 +134,12 @@ begin
 					output.writeback_register <= v_input.writeback_register;
 					output.tag <= v_input.tag;
 
-					read_write_port <= DEFAULT_READ_WRITE_CMD;
+					read_write_port_out <= DEFAULT_READ_WRITE_PORT;
 				else
 					state <= STATE_READING;
 					buffered_input <= v_input;
 					output <= DEFAULT_MEMORY_OUTPUT;
-					read_write_port <= DEFAULT_READ_WRITE_CMD;
+					read_write_port_out <= DEFAULT_READ_WRITE_PORT;
 				end if;
 			end if;
 		end if;
