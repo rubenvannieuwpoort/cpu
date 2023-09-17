@@ -60,7 +60,7 @@ begin
 						if writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "00" then
 							v_register_1_value := reg(to_integer(unsigned(v_read_input.operand_1_register)));
 							v_register_1_ready := '1';
-						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_1_register then
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_1_register))) = "01" and write_input.writeback_register = v_read_input.operand_1_register then
 							if write_input.act = '1' then
 								v_register_1_value := write_input.writeback_value;
 							else
@@ -80,7 +80,7 @@ begin
 						if writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "00" then
 							v_register_2_3_value := reg(to_integer(unsigned(v_read_input.operand_2_3_register)));
 							v_register_2_3_ready := '1';
-						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "01" and write_input.writeback_register /= "00000" and write_input.writeback_register = v_read_input.operand_2_3_register then
+						elsif writes_in_flight(to_integer(unsigned(v_read_input.operand_2_3_register))) = "01" and write_input.writeback_register = v_read_input.operand_2_3_register then
 							if write_input.act = '1' then
 								v_register_2_3_value := write_input.writeback_value;
 							else
