@@ -203,7 +203,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BEQ;
 						v_output.stamp := v_input.stamp;
@@ -222,7 +222,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BNE;
 						v_output.stamp := v_input.stamp;
@@ -241,7 +241,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLT;
 						v_output.stamp := v_input.stamp;
@@ -260,7 +260,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGE;
 						v_output.stamp := v_input.stamp;
@@ -279,7 +279,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BLTU;
 						v_output.stamp := v_input.stamp;
@@ -298,7 +298,7 @@ begin
 						v_output.operand_2_3_register := v_input.opcode(24 downto 20);
 						v_output.operand_3_type := TYPE_IMMEDIATE;
 						v_output.operand_3_immediate := std_logic_vector(signed(v_input.pc) + signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"));
-						v_output.writeback_register := v_input.opcode(11 downto 7);
+						v_output.writeback_register := (others => '0');
 						v_output.csr_register := (others => '0');
 						v_output.alu_function := ALU_FUNCTION_BGEU;
 						v_output.stamp := v_input.stamp;
