@@ -15,7 +15,7 @@ package stages_interfaces is
 		pc: std_logic_vector(31 downto 0);
 		pc_next: std_logic_vector(31 downto 0);
 		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(4 downto 0);
+		tag: std_logic_vector(5 downto 0);
 	end record fetch_output_type;  
 
 	constant DEFAULT_FETCH_OUTPUT: fetch_output_type := (
@@ -51,7 +51,7 @@ package stages_interfaces is
 
 		pc: std_logic_vector(31 downto 0);
 		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(4 downto 0);
+		tag: std_logic_vector(5 downto 0);
 	end record decode_output_type;
 
 	constant TYPE_REGISTER  : std_logic := '0';
@@ -163,7 +163,7 @@ package stages_interfaces is
 
 		pc: std_logic_vector(31 downto 0);
 		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(4 downto 0);
+		tag: std_logic_vector(5 downto 0);
 	end record register_read_output_type;
 
 	constant DEFAULT_REGISTER_READ_OUTPUT: register_read_output_type := (
@@ -203,7 +203,7 @@ package stages_interfaces is
 
 		sign_extend: std_logic;
 
-		tag: std_logic_vector(4 downto 0);
+		tag: std_logic_vector(5 downto 0);
 	end record execute_output_type;
 
 	constant MEMORY_OPERATION_NOP   : std_logic_vector(1 downto 0) := "00";
@@ -240,7 +240,7 @@ package stages_interfaces is
 		writeback_value: std_logic_vector(31 downto 0);
 		writeback_register: std_logic_vector(4 downto 0);
 
-		tag: std_logic_vector(4 downto 0);
+		tag: std_logic_vector(5 downto 0);
 	end record memory_output_type;
 
 	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (

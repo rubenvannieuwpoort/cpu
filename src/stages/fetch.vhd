@@ -26,11 +26,11 @@ architecture Behavioral of fetch is
 
 	type opcodes_list is array(0 to 63) of std_logic_vector(31 downto 0);
 	signal opcodes: opcodes_list := (
-		X"fff00693", X"03ce1737", X"03c007b7", X"00d78023", X"00178793", X"fee79ce3", X"ffffffff", X"ff1ff06f",
-		X"00655693", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
-		X"40f007b3", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
-		X"fb5ff06f", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
+		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
+		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
+		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
+		X"00000013", X"00000013", X"ffffffff", X"0000006f", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013",
 		X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013", X"00000013"
@@ -65,7 +65,7 @@ begin
 				output.pc_next <= std_logic_vector(unsigned(branch_in.data.address) + 4);
 				output.opcode <= opcodes(to_integer(unsigned(branch_in.data.address(7 downto 2))));
 				output.stamp <= branch_in.stamp;
-				output.tag <= branch_in.data.address(6 downto 2);
+				output.tag <= branch_in.data.address(7 downto 2);
 			else
 				pc <= pc_next;
 				pc_next <= std_logic_vector(unsigned(pc_next) + 4);
@@ -73,9 +73,9 @@ begin
 				output.valid <= '1';
 				output.pc <= pc;
 				output.pc_next <= pc_next;
-				output.opcode <= opcodes(to_integer(unsigned(pc(6 downto 2))));
+				output.opcode <= opcodes(to_integer(unsigned(pc(7 downto 2))));
 				output.stamp <= stamp;
-				output.tag <= pc(6 downto 2);
+				output.tag <= pc(7 downto 2);
 			end if;
 		end if;
 	end process;
