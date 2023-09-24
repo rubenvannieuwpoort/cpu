@@ -52,6 +52,9 @@ architecture Behavioral of top_level is
 	signal read_port: read_cmd_signals;
 	signal read_status: read_status_signals;
 
+	signal textbuffer_port: bram_port;
+	signal textbuffer_read_data: std_logic_vector(31 downto 0);
+
 	-- vga
 	signal vga: vga_signals;
 
@@ -83,6 +86,8 @@ architecture Behavioral of top_level is
 			read_write_port_clk_in: in std_logic;
 			read_write_port_in: in read_write_port;
 			read_write_status_out: out read_write_status;
+			bram_port_out: out bram_port;
+			bram_data_in: in std_logic_vector(31 downto 0);
 			read_port_clk_in: in std_logic;
 			read_port_in: in read_cmd_signals;
 			read_status_out: out read_status_signals;
@@ -90,6 +95,16 @@ architecture Behavioral of top_level is
 			ram_bus: inout ram_bus_signals;
 			calib_done_out: out std_logic;
 			reset_in: in std_logic
+		);
+	end component;
+
+	component text_buffer_ram is
+		port(
+			write_clk: in std_logic;
+			write_address: in std_logic_vector(11 downto 2);
+			write_mask: in std_logic_vector(0 to 3);
+			write_data: in std_logic_vector(31 downto 0);
+			read_data: out std_logic_vector(31 downto 0)
 		);
 	end component;
 
@@ -137,7 +152,7 @@ begin
 		clk => clk_main,
 		read_write_status_in => read_write_status_s,
 		read_write_port_out => read_write_port_s,
-		leds_out => open
+		leds_out => leds_out
 		--leds_out => open
 	);
 
@@ -147,6 +162,8 @@ begin
 			read_write_port_clk_in => clk_main,
 			read_write_port_in => read_write_port_s,
 			read_write_status_out => read_write_status_s,
+			bram_port_out => textbuffer_port,
+			bram_data_in => textbuffer_read_data,
 			read_port_clk_in => clk_pixel,
 			read_port_in => read_port,
 			read_status_out => read_status,
@@ -179,13 +196,21 @@ begin
 		read_status_in => read_status
 	);
 
+	text_buffer_ram_inst: text_buffer_ram port map(
+		write_clk => clk_main,
+		write_address => textbuffer_port.address,
+		write_data => textbuffer_port.data,
+		write_mask => textbuffer_port.mask,
+		read_data => textbuffer_read_data
+	);
+
 	vga_hsync <= vga.hsync;
 	vga_vsync <= vga.vsync;
 	vga_red <= vga.red;
 	vga_green <= vga.green;
 	vga_blue <= vga.blue;
 
-	leds_out <= read_status.overflow & read_status.error & read_write_status_s.read_overflow & read_write_status_s.read_error & read_write_status_s.write_underrun & read_write_status_s.write_error & "00";
+	--leds_out <= read_status.overflow & read_status.error & read_write_status_s.read_overflow & read_write_status_s.read_error & read_write_status_s.write_underrun & read_write_status_s.write_error & "00";
 
 	ram_a <= ram.a;
 	ram_ba <= ram.ba;

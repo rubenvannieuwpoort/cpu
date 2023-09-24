@@ -15,6 +15,9 @@ entity memory_interface is
 		read_write_port_in: in read_write_port := DEFAULT_READ_WRITE_PORT;
 		read_write_status_out: out read_write_status := DEFAULT_READ_WRITE_STATUS;
 
+		bram_port_out: out bram_port := DEFAULT_BRAM_PORT;
+		bram_data_in: in std_logic_vector(31 downto 0);
+
 		-- for vga signal
 		read_port_clk_in: in std_logic;
 		read_port_in: in read_cmd_signals;
@@ -27,11 +30,13 @@ entity memory_interface is
 end memory_interface;
 
 architecture Behavioral of memory_interface is
-	constant STATE_INITIALIZE: std_logic_vector(1 downto 0) := "00";
-	constant STATE_READY: std_logic_vector(1 downto 0) := "01";
-	constant STATE_READING: std_logic_vector(1 downto 0) := "10";
-	constant STATE_WRITING: std_logic_vector(1 downto 0) := "11";
-	signal p0_state: std_logic_vector(1 downto 0) := STATE_INITIALIZE;
+	constant STATE_INITIALIZE: std_logic_vector(2 downto 0)      := "000";
+	constant STATE_READY: std_logic_vector(2 downto 0)           := "001";
+	constant STATE_READING_DRAM: std_logic_vector(2 downto 0)    := "010";
+	constant STATE_WRITING_DRAM: std_logic_vector(2 downto 0)    := "011";
+	constant STATE_READING_TEXTBUF: std_logic_vector(2 downto 0) := "100";
+
+	signal p0_state: std_logic_vector(2 downto 0) := STATE_INITIALIZE;
 
 	signal calib_done: std_logic := '0';
 
@@ -251,6 +256,8 @@ begin
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '1';
 
+					bram_port_out <= DEFAULT_BRAM_PORT;
+
 					calib_done_out <= '1';
 				else
 					p0_state <= STATE_INITIALIZE;
@@ -265,11 +272,13 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '0';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				end if;
 			elsif p0_state = STATE_READY then
-				if read_write_port_in.enable = '1' and read_write_port_in.command = CMD_READ then
-					-- read
-					p0_state <= STATE_READING;
+				if read_write_port_in.enable = '1' and read_write_port_in.command = CMD_READ and read_write_port_in.address(26) = '0' then
+					-- read to main memory
+					p0_state <= STATE_READING_DRAM;
 
 					c3_p0_cmd_en <= '1';
 					c3_p0_cmd_instr <= "001";
@@ -281,9 +290,11 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '0';
-				elsif read_write_port_in.enable = '1' and read_write_port_in.command = CMD_WRITE then
-					-- write
-					p0_state <= STATE_WRITING;
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
+				elsif read_write_port_in.enable = '1' and read_write_port_in.command = CMD_WRITE and read_write_port_in.address(26) = '0' then
+					-- write to main memory
+					p0_state <= STATE_WRITING_DRAM;
 
 					c3_p0_cmd_en <= '1';
 					c3_p0_cmd_instr <= "000";
@@ -295,6 +306,44 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '0';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
+				elsif read_write_port_in.enable = '1' and read_write_port_in.command = CMD_READ then --and read_write_port_in.address(26 downto 13) = "11000000000000" then
+					-- read from text buffer
+					p0_state <= STATE_READING_TEXTBUF;
+
+					c3_p0_cmd_en <= '0';
+					c3_p0_cmd_instr <= "000";
+					c3_p0_cmd_byte_addr <= (others => '0');
+					c3_p0_wr_en <= '0';
+					c3_p0_wr_mask <= "1111";
+					c3_p0_wr_data <= (others => '0');
+
+					read_write_status_out.read_data <= (others => '0');
+					read_write_status_out.data_valid <= '0';
+					read_write_status_out.ready <= '0';
+
+					bram_port_out.address <= read_write_port_in.address(11 downto 2);  -- TODO: change to 12 downto 2 when 4 BRAMs are used
+					bram_port_out.data <= (others => '0');
+					bram_port_out.mask <= (others => '0');
+				elsif read_write_port_in.enable = '1' and read_write_port_in.command = CMD_WRITE then --and read_write_port_in.address(26 downto 13) = "11000000000000" then
+					-- write to text buffer
+					p0_state <= STATE_READY;
+
+					c3_p0_cmd_en <= '0';
+					c3_p0_cmd_instr <= "000";
+					c3_p0_cmd_byte_addr <= (others => '0');
+					c3_p0_wr_en <= '0';
+					c3_p0_wr_mask <= "1111";
+					c3_p0_wr_data <= (others => '0');
+
+					read_write_status_out.read_data <= (others => '0');
+					read_write_status_out.data_valid <= '0';
+					read_write_status_out.ready <= '0';
+
+					bram_port_out.address <= read_write_port_in.address(11 downto 2);  -- TODO: change to 12 downto 2 when 4 BRAMs are used
+					bram_port_out.data <= read_write_port_in.write_data;
+					bram_port_out.mask <= read_write_port_in.write_mask;
 				else
 					-- no-op
 					p0_state <= STATE_READY;
@@ -309,9 +358,11 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '1';
+					
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				end if;
-			elsif p0_state = STATE_READING then
-				if c3_p0_rd_empty = '0' and c3_p0_cmd_empty = '1' then
+			elsif p0_state = STATE_READING_DRAM then
+				if c3_p0_rd_empty = '0' then
 					-- read data ready
 					p0_state <= STATE_READY;
 
@@ -325,9 +376,11 @@ begin
 					read_write_status_out.read_data <= c3_p0_rd_data;
 					read_write_status_out.data_valid <= '1';
 					read_write_status_out.ready <= '1';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				else
 					-- read data not ready
-					p0_state <= STATE_READING;
+					p0_state <= STATE_READING_DRAM;
 
 					c3_p0_cmd_en <= '0';
 					c3_p0_cmd_instr <= "000";
@@ -339,8 +392,10 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '0';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				end if;
-			elsif p0_state = STATE_WRITING then
+			elsif p0_state = STATE_WRITING_DRAM then
 				if c3_p0_wr_empty = '1' and c3_p0_cmd_empty = '1' then
 					-- write handled
 					p0_state <= STATE_READY;
@@ -355,9 +410,11 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '1';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				else
 					-- write still pending
-					p0_state <= STATE_WRITING;
+					p0_state <= STATE_WRITING_DRAM;
 
 					c3_p0_cmd_en <= '0';
 					c3_p0_cmd_instr <= "000";
@@ -369,7 +426,24 @@ begin
 					read_write_status_out.read_data <= (others => '0');
 					read_write_status_out.data_valid <= '0';
 					read_write_status_out.ready <= '0';
+
+					bram_port_out <= DEFAULT_BRAM_PORT;
 				end if;
+			elsif p0_state = STATE_READING_TEXTBUF then
+				p0_state <= STATE_READY;
+
+				c3_p0_cmd_en <= '0';
+				c3_p0_cmd_instr <= "000";
+				c3_p0_cmd_byte_addr <= (others => '0');
+				c3_p0_wr_en <= '0';
+				c3_p0_wr_mask <= "1111";
+				c3_p0_wr_data <= (others => '0');
+
+				read_write_status_out.read_data <= bram_data_in;
+				read_write_status_out.data_valid <= '1';
+				read_write_status_out.ready <= '1';
+
+				bram_port_out <= DEFAULT_BRAM_PORT;
 			end if;
 		end if;
 	end process;

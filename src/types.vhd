@@ -137,4 +137,16 @@ package types is
 		data_valid => '0',
 		ready => '0'
 	);
+
+	type bram_port is record
+		address: std_logic_vector(11 downto 2);
+		data: std_logic_vector(31 downto 0);
+		mask: std_logic_vector(0 to 3);
+	end record;
+
+	constant DEFAULT_BRAM_PORT: bram_port := (
+		address => (others => '0'),
+		data => (others => '0'),
+		mask => (others => '0')
+	);
 end package;
