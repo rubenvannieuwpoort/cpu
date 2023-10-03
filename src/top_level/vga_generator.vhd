@@ -2,8 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.types.all;
-use work.addresses.all;
+use work.top_level_types.all;
+use work.top_level_constants.all;
 
 
 entity vga_generator is
@@ -11,8 +11,8 @@ entity vga_generator is
 		clk: in std_logic;
 		memory_ready_in: in std_logic;
 		vga_out: out vga_signals;
-		read_port_out: out read_cmd_signals;
-		read_status_in: in read_status_signals
+		dram_port_out: out dram_port;
+		dram_port_status_in: in dram_port_status
 	);
 end vga_generator;
 
@@ -68,8 +68,10 @@ architecture Behavioral of vga_generator is
 	signal read_cmd_enable_local : std_logic := '0';
 
 begin
-	read_port_out.address <= std_logic_vector(address);
-	read_port_out.enable  <= read_cmd_enable_local;
+	dram_port_out.address <= std_logic_vector(address);
+	dram_port_out.command_enable  <= read_cmd_enable_local;
+	dram_port_out.command <= "001";
+	dram_port_out.burst_length <= "001111";
 
 	process(clk)
 	begin
@@ -89,22 +91,22 @@ begin
 				if vCounter < height - 1 then
 					if hCounter < width then 
 						-- issue a read every 64th cycle of a visible line (except last)
-						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not dram_port_status_in.command_full;
 					end if;
 				elsif vCounter = height - 1 then
 					-- don't issue the last three reads on the last line
 					if hCounter < (width - 4 * 64) then 
-						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not dram_port_status_in.command_full;
 					end if;
 				elsif vCounter = vMax-1 then 
 					-- prime the read queue just before the first line with 3 read * 16 words * 4 bytes = 192 bytes
 					if hCounter < 4 * 64 then
-						read_cmd_enable_local <= memory_ready_in and not read_status_in.cmd_full;
+						read_cmd_enable_local <= memory_ready_in and not dram_port_status_in.command_full;
 					end if;
 				end if;
 			end if;
 
-			read_port_out.data_enable <= '0';  -- indicates a read should be read from FIFO
+			dram_port_out.read_enable <= '0';  -- indicates a read should be read from FIFO
 
 			-- flush read port at end of frame
 			if vCounter = height then
@@ -116,23 +118,23 @@ begin
 			if hCounter < width and vCounter < height then 
 				case hcounter(1 downto 0) is
 					when "00" =>
-						vga_out.red   <= read_status_in.data(31 downto 29);
-						vga_out.green <= read_status_in.data(28 downto 26);
-						vga_out.blue  <= read_status_in.data(25 downto 24);
+						vga_out.red   <= dram_port_status_in.read_data(31 downto 29);
+						vga_out.green <= dram_port_status_in.read_data(28 downto 26);
+						vga_out.blue  <= dram_port_status_in.read_data(25 downto 24);
 					when "01" =>
-						vga_out.red   <= read_status_in.data(23 downto 21);
-						vga_out.green <= read_status_in.data(20 downto 18);
-						vga_out.blue  <= read_status_in.data(17 downto 16);
+						vga_out.red   <= dram_port_status_in.read_data(23 downto 21);
+						vga_out.green <= dram_port_status_in.read_data(20 downto 18);
+						vga_out.blue  <= dram_port_status_in.read_data(17 downto 16);
 					when "10" =>
-						vga_out.red   <= read_status_in.data(15 downto 13);
-						vga_out.green <= read_status_in.data(12 downto 10);
-						vga_out.blue  <= read_status_in.data( 9 downto  8);
+						vga_out.red   <= dram_port_status_in.read_data(15 downto 13);
+						vga_out.green <= dram_port_status_in.read_data(12 downto 10);
+						vga_out.blue  <= dram_port_status_in.read_data( 9 downto  8);
 						-- read_data_enable will be asserted next cycle so read_data will change the one following that
-						read_port_out.data_enable <= memory_ready_in and not read_status_in.data_empty;
+						dram_port_out.read_enable <= memory_ready_in and not dram_port_status_in.read_empty;
 					when others =>
-						vga_out.red   <= read_status_in.data( 7 downto 5);
-						vga_out.green <= read_status_in.data( 4 downto 2);
-						vga_out.blue  <= read_status_in.data( 1 downto 0);
+						vga_out.red   <= dram_port_status_in.read_data( 7 downto 5);
+						vga_out.green <= dram_port_status_in.read_data( 4 downto 2);
+						vga_out.blue  <= dram_port_status_in.read_data( 1 downto 0);
 				end case; 
 			else
 				vga_out.red   <= (others => '0');

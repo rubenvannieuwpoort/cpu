@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-use work.types.all;
+use work.top_level_types.all;
 
 
 entity text_buffer_ram is

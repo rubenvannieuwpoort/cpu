@@ -51,7 +51,7 @@
 -- /___/  \  /    Vendor             : Xilinx
 -- \   \   \/     Version            : 3.92
 --  \   \         Application        : MIG
---  /   /         Filename           : mem32.vhd
+--  /   /         Filename           : dram.vhd
 -- /___/   /\     Date Last Modified : $Date: 2011/06/02 07:17:24 $
 -- \   \  /  \    Date Created       : Jul 03 2009
 --  \___\/\___\
@@ -65,7 +65,7 @@
 --*****************************************************************************
 library ieee;
 use ieee.std_logic_1164.all;
-entity mem32 is
+entity dram is
 generic
   (
             C3_P0_MASK_SIZE           : integer := 4;
@@ -178,9 +178,9 @@ generic
    c3_p1_rd_error                          : out std_logic;
    mcb_drp_clk                             : out std_logic
   );
-end mem32;
+end dram;
 
-architecture arc of mem32 is
+architecture arc of dram is
 
 
 component memc3_wrapper is

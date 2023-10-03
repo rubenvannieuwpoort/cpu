@@ -1,24 +1,29 @@
 library ieee;
-use ieee.std_logic_1164.ALL;
-use ieee.numeric_std.ALL;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-use work.types.all;
+use work.top_level_types.all;
+use work.top_level_constants.all;
 
 
 entity top_level is
 	port(
 		clk_sys: in std_logic;
+
 		-- VGA
 		vga_hsync: out std_logic;
 		vga_vsync: out std_logic;
 		vga_red: out std_logic_vector(2 downto 0);
 		vga_green: out std_logic_vector(2 downto 0);
 		vga_blue: out std_logic_vector(2 downto 1);
+
 		-- LEDs
-		leds_out: out std_logic_vector(0 to 7);
+		leds_out: out std_logic_vector(7 downto 0);
+
 		-- seven segment display
 		seven_segment_enable: out std_logic_vector(2 downto 0);
 		seven_segment: out std_logic_vector(7 downto 0);
+
 		-- RAM
 		ram_dq: inout std_logic_vector(15 downto 0);
 		ram_a: out std_logic_vector(12 downto 0);
@@ -46,11 +51,8 @@ architecture Behavioral of top_level is
 	-- memory
 	signal memory_ready: std_logic;
 
-	signal read_write_port_s: read_write_port;
-	signal read_write_status_s: read_write_status;
-
-	signal read_port: read_cmd_signals;
-	signal read_status: read_status_signals;
+	signal read_write_port_s: memory_port;
+	signal read_write_status_s: memory_port_status;
 
 	signal textbuffer_port: bram_port;
 	signal textbuffer_read_data: std_logic_vector(31 downto 0);
@@ -61,15 +63,14 @@ architecture Behavioral of top_level is
 	-- ram
 	signal ram: ram_signals;
 	signal ram_bus: ram_bus_signals;
-
-	component CPU is
-		port(
-			clk: in std_logic;
-			read_write_status_in: in read_write_status;
-			read_write_port_out: out read_write_port;
-			leds_out: out std_logic_vector(0 to 7)
-		);
-	end component;
+	
+	signal dram_p0: dram_port;
+	signal dram_p0_status: dram_port_status;
+	
+	signal dram_p1: dram_port;
+	signal dram_p1_status: dram_port_status;
+	
+	signal calib_done: std_logic;
 
 	component clock_generator is
 		port(
@@ -80,17 +81,43 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
+	component core is
+		port(
+			clk: in std_logic;
+			data_port_out: out memory_port;
+			data_port_status_in: in memory_port_status;
+			leds_out: out std_logic_vector(0 to 7)
+		);
+	end component;
+
 	component memory_interface is
 		port(
-			clk: in memory_clock_signals;
-			read_write_port_clk_in: in std_logic;
-			read_write_port_in: in read_write_port;
-			read_write_status_out: out read_write_status;
-			bram_port_out: out bram_port;
+			clk: in std_logic;
+			mem_p0_clk_in: in std_logic;
+			mem_p0_in: in memory_port := DEFAULT_MEMORY_PORT;
+			mem_p0_status_out: out memory_port_status := DEFAULT_MEMORY_PORT_STATUS;
+			dram_p0_out: out dram_port := DEFAULT_DRAM_PORT;
+			dram_p0_status_in: in dram_port_status;
+			bram_port_out: out bram_port := DEFAULT_BRAM_PORT;
 			bram_data_in: in std_logic_vector(31 downto 0);
-			read_port_clk_in: in std_logic;
-			read_port_in: in read_cmd_signals;
-			read_status_out: out read_status_signals;
+			calib_done_in: in std_logic;
+			memory_ready_out: out std_logic
+		);
+	end component;
+
+	component dram_interface is
+		port(
+			clks_in: in memory_clock_signals;
+			p0_cmd_clk_in: in std_logic;
+			p0_read_clk_in: in std_logic;
+			p0_write_clk_in: in std_logic;
+			p0_in: in dram_port;
+			p0_status_out: out dram_port_status;
+			p1_cmd_clk_in: in std_logic;
+			p1_read_clk_in: in std_logic;
+			p1_write_clk_in: in std_logic;
+			p1_in: in dram_port;
+			p1_status_out: out dram_port_status;
 			ram_out: out ram_signals;
 			ram_bus: inout ram_bus_signals;
 			calib_done_out: out std_logic;
@@ -107,94 +134,65 @@ architecture Behavioral of top_level is
 			read_data: out std_logic_vector(31 downto 0)
 		);
 	end component;
-
-	--component test_pattern_writer
-	--	port(
-	--		clk: in std_logic;
-	--		completed: out std_logic;
-	--		memory_ready: in std_logic;
-	--		write_port_clk: out std_logic;
-	--		write_port: out write_cmd_signals;
-	--		write_status: in write_status_signals
-	--	);
-	--end component;
-
-	--component textmode_vga_generator
-	--	port(
-	--		clk: in std_logic;
-	--		vga_out: out vga_signals
-	--	);
-	--end component;
 	
 	component vga_generator is
 		port(
 			clk: in std_logic;
 			memory_ready_in: in std_logic;
 			vga_out: out vga_signals;
-			read_port_out: out read_cmd_signals;
-			read_status_in: in read_status_signals
+			dram_port_out: out dram_port;
+			dram_port_status_in: in dram_port_status
 		);
 	end component;
-
 begin
+	-- disable seven segment display to prevent ghosting
 	seven_segment_enable <= "000";
 	seven_segment <= "11111111";
 
-	clock_gen: clock_generator
-		port map(
-			clk_in => clk_sys,
-			clk_main => clk_main,
-			clk_mem => clk_mem,
-			clk_pixel => clk_pixel
-		);
+	clock_generator_inst: clock_generator port map(
+		clk_in => clk_sys,
+		clk_main => clk_main,
+		clk_mem => clk_mem,
+		clk_pixel => clk_pixel
+	);
 
-	cpu_inst: CPU port map(
+	core_inst: core port map(
 		clk => clk_main,
-		read_write_status_in => read_write_status_s,
-		read_write_port_out => read_write_port_s,
+		data_port_out => read_write_port_s,
+		data_port_status_in => read_write_status_s,
 		leds_out => leds_out
-		--leds_out => open
 	);
 
-	mem_if: memory_interface
-		port map(
-			clk => clk_mem,
-			read_write_port_clk_in => clk_main,
-			read_write_port_in => read_write_port_s,
-			read_write_status_out => read_write_status_s,
-			bram_port_out => textbuffer_port,
-			bram_data_in => textbuffer_read_data,
-			read_port_clk_in => clk_pixel,
-			read_port_in => read_port,
-			read_status_out => read_status,
-			ram_out => ram,
-			ram_bus => ram_bus,
-			calib_done_out => memory_ready,
-			reset_in => '0'
-		);
-
-	--test_pattern_writer_inst: test_pattern_writer
-	--port map(
-	--	clk => clk_main,
-	--	memory_ready => memory_ready,
-	--	completed => open,
-	--	write_port => write_port,
-	--	write_status => write_status
-	--);
-
-	--vga_gen: textmode_vga_generator
-	--	port map(
-	--		clk => clk_pixel,
-	--		vga_out => vga
-	--	);
-
-	vga_gen: vga_generator port map(
-		clk => clk_pixel,
-		memory_ready_in => memory_ready,
-		vga_out => vga,
-		read_port_out => read_port,
-		read_status_in => read_status
+	mem_if: memory_interface port map(
+		clk => clk_main,
+		mem_p0_clk_in => clk_main,
+		mem_p0_in => read_write_port_s,
+		mem_p0_status_out => read_write_status_s,
+		dram_p0_out => dram_p0,
+		dram_p0_status_in => dram_p0_status,
+		bram_port_out => textbuffer_port,  -- textbuffer_port_status_in: bram_port_status
+		bram_data_in => textbuffer_read_data,  -- textbuffer_port_out: bram_port
+		calib_done_in => calib_done,
+		memory_ready_out => memory_ready
 	);
+	
+	dram_interface_inst: dram_interface port map(
+		clks_in => clk_mem,
+		p0_cmd_clk_in => clk_main,
+		p0_read_clk_in => clk_main,
+		p0_write_clk_in => clk_main,
+		p0_in => dram_p0,
+		p0_status_out => dram_p0_status,
+		p1_cmd_clk_in => clk_main,
+		p1_read_clk_in => clk_main,
+		p1_write_clk_in => clk_main,
+		p1_in => dram_p1,
+		p1_status_out => dram_p1_status,
+		ram_out => ram,
+		ram_bus => ram_bus,
+		calib_done_out => calib_done,
+		reset_in => '0'
+	);	
 
 	text_buffer_ram_inst: text_buffer_ram port map(
 		write_clk => clk_main,
@@ -203,6 +201,15 @@ begin
 		write_mask => textbuffer_port.mask,
 		read_data => textbuffer_read_data
 	);
+
+	vga_generator_inst: vga_generator port map(
+		clk => clk_pixel,
+		memory_ready_in => memory_ready,
+		vga_out => vga,
+		dram_port_out => dram_p1,
+		dram_port_status_in => dram_p1_status
+	);
+
 
 	vga_hsync <= vga.hsync;
 	vga_vsync <= vga.vsync;

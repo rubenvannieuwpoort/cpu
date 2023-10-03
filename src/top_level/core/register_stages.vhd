@@ -2,10 +2,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.stages_interfaces.all;
+use work.core_types.all;
+use work.core_constants.all;
 
 
-entity registers is
+entity register_stages is
 	port(
 		clk: in std_logic;
 		read_stall_in: in std_logic;
@@ -16,10 +17,10 @@ entity registers is
 		
 		write_input: in memory_output_type := DEFAULT_MEMORY_OUTPUT
 	);
-end registers;
+end register_stages;
 
 
-architecture Behavioral of registers is
+architecture Behavioral of register_stages is
 	signal buffered_read_input: decode_output_type := DEFAULT_DECODE_OUTPUT;
 
 	type register_file is array(0 to 31) of std_logic_vector(31 downto 0);
