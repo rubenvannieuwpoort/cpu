@@ -72,6 +72,9 @@ begin
 	dram_port_out.command_enable  <= read_cmd_enable_local;
 	dram_port_out.command <= "001";
 	dram_port_out.burst_length <= "001111";
+	dram_port_out.write_enable <= '0';
+	dram_port_out.write_mask <= "1111";
+	dram_port_out.write_data <= (others => '0');
 
 	process(clk)
 	begin
