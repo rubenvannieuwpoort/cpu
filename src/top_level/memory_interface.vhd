@@ -34,11 +34,12 @@ entity memory_interface is
 end memory_interface;
 
 architecture Behavioral of memory_interface is
-	constant STATE_INITIALIZE: std_logic_vector(2 downto 0)      := "000";
-	constant STATE_READY: std_logic_vector(2 downto 0)           := "001";
-	constant STATE_READING_DRAM: std_logic_vector(2 downto 0)    := "010";
-	constant STATE_WRITING_DRAM: std_logic_vector(2 downto 0)    := "011";
-	constant STATE_READING_TEXTBUF: std_logic_vector(2 downto 0) := "100";
+	constant STATE_INITIALIZE: std_logic_vector(2 downto 0)        := "000";
+	constant STATE_READY: std_logic_vector(2 downto 0)             := "001";
+	constant STATE_READING_DRAM: std_logic_vector(2 downto 0)      := "010";
+	constant STATE_WRITING_DRAM: std_logic_vector(2 downto 0)      := "011";
+	constant STATE_READING_TEXTBUF_1: std_logic_vector(2 downto 0) := "100";
+	constant STATE_READING_TEXTBUF_2: std_logic_vector(2 downto 0) := "101";
 
 	signal p0_state: std_logic_vector(2 downto 0) := STATE_INITIALIZE;
 	signal p0: dram_port := DEFAULT_DRAM_PORT;
@@ -60,8 +61,7 @@ architecture Behavioral of memory_interface is
 	--signal c3_p0_rd_count: std_logic_vector(6 downto 0) := (others => '0');
 
 begin
-
-	process(clk)
+	process(mem_p0_clk_in)
 	begin
 		if rising_edge(mem_p0_clk_in) then
 			if p0_state = STATE_INITIALIZE then
@@ -131,9 +131,9 @@ begin
 					mem_p0_status_out.ready <= '0';
 
 					bram_port_out <= DEFAULT_BRAM_PORT;
-				elsif mem_p0_in.enable = '1' and mem_p0_in.command = COMMAND_READ then --and read_write_port_in.address(26 downto 13) = "11000000000000" then
+				elsif mem_p0_in.enable = '1' and mem_p0_in.command = COMMAND_READ and mem_p0_in.address(26 downto 12) = "110000000000000" then
 					-- read from text buffer
-					p0_state <= STATE_READING_TEXTBUF;
+					p0_state <= STATE_READING_TEXTBUF_1;
 
 					dram_p0_out.command_enable <= '0';
 					dram_p0_out.command <= "000";
@@ -146,10 +146,10 @@ begin
 					mem_p0_status_out.data_valid <= '0';
 					mem_p0_status_out.ready <= '0';
 
-					bram_port_out.address <= mem_p0_in.address(11 downto 2);  -- TODO: change to 12 downto 2 when 4 BRAMs are used
+					bram_port_out.address <= mem_p0_in.address(11 downto 2);
 					bram_port_out.data <= (others => '0');
 					bram_port_out.mask <= (others => '0');
-				elsif mem_p0_in.enable = '1' and mem_p0_in.command = COMMAND_WRITE then --and read_write_port_in.address(26 downto 13) = "11000000000000" then
+				elsif mem_p0_in.enable = '1' and mem_p0_in.command = COMMAND_WRITE and mem_p0_in.address(26 downto 12) = "110000000000000" then
 					-- write to text buffer
 					p0_state <= STATE_READY;
 
@@ -164,7 +164,7 @@ begin
 					mem_p0_status_out.data_valid <= '0';
 					mem_p0_status_out.ready <= '0';
 
-					bram_port_out.address <= mem_p0_in.address(11 downto 2);  -- TODO: change to 12 downto 2 when 4 BRAMs are used
+					bram_port_out.address <= mem_p0_in.address(11 downto 2);
 					bram_port_out.data <= mem_p0_in.write_data;
 					bram_port_out.mask <= mem_p0_in.write_mask;
 				else
@@ -252,7 +252,22 @@ begin
 
 					bram_port_out <= DEFAULT_BRAM_PORT;
 				end if;
-			elsif p0_state = STATE_READING_TEXTBUF then
+			elsif p0_state = STATE_READING_TEXTBUF_1 then
+				p0_state <= STATE_READING_TEXTBUF_2;
+				
+				dram_p0_out.command_enable <= '0';
+				dram_p0_out.command <= "000";
+				dram_p0_out.address <= (others => '0');
+				dram_p0_out.write_enable <= '0';
+				dram_p0_out.write_mask <= "1111";
+				dram_p0_out.write_data <= (others => '0');
+				
+				mem_p0_status_out.read_data <= (others => '0');
+				mem_p0_status_out.data_valid <= '0';
+				mem_p0_status_out.ready <= '0';
+				
+				bram_port_out <= DEFAULT_BRAM_PORT;
+			elsif p0_state = STATE_READING_TEXTBUF_2 then
 				p0_state <= STATE_READY;
 
 				dram_p0_out.command_enable <= '0';
