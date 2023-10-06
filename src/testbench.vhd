@@ -6,44 +6,17 @@ use work.top_level_types.all;
 use work.top_level_constants.all;
 
 
-entity top_level is
-	port(
-		clk_sys: in std_logic;
-
-		-- VGA
-		vga_hsync: out std_logic;
-		vga_vsync: out std_logic;
-		vga_red: out std_logic_vector(2 downto 0);
-		vga_green: out std_logic_vector(2 downto 0);
-		vga_blue: out std_logic_vector(2 downto 1);
-
-		-- LEDs
-		leds_out: out std_logic_vector(7 downto 0);
-
-		-- seven segment display
-		seven_segment_enable: out std_logic_vector(2 downto 0);
-		seven_segment: out std_logic_vector(7 downto 0);
-
-		-- RAM
-		ram_dq: inout std_logic_vector(15 downto 0);
-		ram_a: out std_logic_vector(12 downto 0);
-		ram_ba: out std_logic_vector( 1 downto 0);
-		ram_cke: out std_logic;
-		ram_ras_n: out std_logic;
-		ram_cas_n: out std_logic;
-		ram_we_n: out std_logic;
-		ram_dm: out std_logic;
-		ram_udqs: inout std_logic;
-		ram_rzq: inout std_logic;
-		ram_udm: out std_logic;
-		ram_dqs: inout std_logic;
-		ram_ck: out std_logic;
-		ram_ck_n: out std_logic
-	);
-end top_level;
+entity testbench is
+end testbench;
 
 
-architecture Behavioral of top_level is
+architecture Behavioral of testbench is
+	signal clk_sys: std_logic := '0';
+	constant clk_period: time := 10 ns;
+
+	-- LEDs
+	signal leds_out: std_logic_vector(7 downto 0);
+
 	-- clocks
 	signal clk_main, clk_pixel: std_logic;
 	signal clk_mem: memory_clock_signals;
@@ -60,17 +33,14 @@ architecture Behavioral of top_level is
 	-- vga
 	signal vga: vga_signals;
 
-	-- ram
-	signal ram: ram_signals;
-	signal ram_bus: ram_bus_signals;
-	
+	-- ram	
 	signal dram_p0: dram_port;
-	signal dram_p0_status: dram_port_status;
+	signal dram_p0_status: dram_port_status := DEFAULT_DRAM_PORT_STATUS;
 	
 	signal dram_p1: dram_port;
-	signal dram_p1_status: dram_port_status;
+	signal dram_p1_status: dram_port_status := DEFAULT_DRAM_PORT_STATUS;
 	
-	signal calib_done: std_logic;
+	signal calib_done: std_logic := '1';
 
 	component clock_generator is
 		port(
@@ -105,26 +75,6 @@ architecture Behavioral of top_level is
 		);
 	end component;
 
-	component dram_interface is
-		port(
-			clks_in: in memory_clock_signals;
-			p0_cmd_clk_in: in std_logic;
-			p0_read_clk_in: in std_logic;
-			p0_write_clk_in: in std_logic;
-			p0_in: in dram_port;
-			p0_status_out: out dram_port_status;
-			p1_cmd_clk_in: in std_logic;
-			p1_read_clk_in: in std_logic;
-			p1_write_clk_in: in std_logic;
-			p1_in: in dram_port;
-			p1_status_out: out dram_port_status;
-			ram_out: out ram_signals;
-			ram_bus: inout ram_bus_signals;
-			calib_done_out: out std_logic;
-			reset_in: in std_logic
-		);
-	end component;
-
 	component text_buffer_ram is
 		port(
 			write_clk: in std_logic;
@@ -145,9 +95,13 @@ architecture Behavioral of top_level is
 		);
 	end component;
 begin
-	-- disable seven segment display to prevent ghosting
-	seven_segment_enable <= "000";
-	seven_segment <= "11111111";
+	clk_process :process
+	begin
+		wait for clk_period / 2;
+		clk_sys <= '1';
+		wait for clk_period / 2;
+		clk_sys <= '0';
+	end process;
 
 	clock_generator_inst: clock_generator port map(
 		clk_in => clk_sys,
@@ -170,29 +124,11 @@ begin
 		mem_p0_status_out => read_write_status_s,
 		dram_p0_out => dram_p0,
 		dram_p0_status_in => dram_p0_status,
-		bram_port_out => textbuffer_port,  -- textbuffer_port_status_in: bram_port_status
-		bram_data_in => textbuffer_read_data,  -- textbuffer_port_out: bram_port
+		bram_port_out => textbuffer_port,
+		bram_data_in => textbuffer_read_data,
 		calib_done_in => calib_done,
 		memory_ready_out => memory_ready
 	);
-	
-	dram_interface_inst: dram_interface port map(
-		clks_in => clk_mem,
-		p0_cmd_clk_in => clk_main,
-		p0_read_clk_in => clk_main,
-		p0_write_clk_in => clk_main,
-		p0_in => dram_p0,
-		p0_status_out => dram_p0_status,
-		p1_cmd_clk_in => clk_pixel,
-		p1_read_clk_in => clk_pixel,
-		p1_write_clk_in => clk_pixel,
-		p1_in => dram_p1,
-		p1_status_out => dram_p1_status,
-		ram_out => ram,
-		ram_bus => ram_bus,
-		calib_done_out => calib_done,
-		reset_in => '0'
-	);	
 
 	text_buffer_ram_inst: text_buffer_ram port map(
 		write_clk => clk_main,
@@ -210,27 +146,5 @@ begin
 		dram_port_status_in => dram_p1_status
 	);
 
-
-	vga_hsync <= vga.hsync;
-	vga_vsync <= vga.vsync;
-	vga_red <= vga.red;
-	vga_green <= vga.green;
-	vga_blue <= vga.blue;
-
 	--leds_out <= read_status.overflow & read_status.error & read_write_status_s.read_overflow & read_write_status_s.read_error & read_write_status_s.write_underrun & read_write_status_s.write_error & "00";
-
-	ram_a <= ram.a;
-	ram_ba <= ram.ba;
-	ram_cke <= ram.cke;
-	ram_ras_n <= ram.ras_n;
-	ram_cas_n <= ram.cas_n;
-	ram_we_n <= ram.we_n;
-	ram_dm <= ram.dm;
-	ram_udm <= ram.udm;
-	ram_ck <= ram.ck;
-	ram_ck_n <= ram.ck_n;
-	ram_dq <= ram_bus.dq;
-	ram_udqs <= ram_bus.udqs;
-	ram_dqs <= ram_bus.dqs;
-	ram_rzq <= ram_bus.rzq;
 end Behavioral;

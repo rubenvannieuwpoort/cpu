@@ -1,22 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
+use work.core_types.all;
 
-package stages_interfaces is
 
-	-- CSRs
+package core_constants is
 	constant CSR_MISA: std_logic_vector(11 downto 0) := X"301";
-
-	-- FETCH STAGE INTERFACE
-
-	type fetch_output_type is record
-		valid: std_logic;
-		opcode: std_logic_vector(31 downto 0);
-		pc: std_logic_vector(31 downto 0);
-		pc_next: std_logic_vector(31 downto 0);
-		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(5 downto 0);
-	end record fetch_output_type;  
 
 	constant DEFAULT_FETCH_OUTPUT: fetch_output_type := (
 		valid => '0',
@@ -26,33 +15,6 @@ package stages_interfaces is
 		stamp => (others => '0'),
 		tag => (others => '0')
 	);
-
-
-	-- DECODE STAGE
-
-	type decode_output_type is record
-		valid: std_logic;
-		illegal: std_logic;
-
-		operand_1_type: std_logic;
-		operand_1_immediate: std_logic_vector(31 downto 0);
-		operand_1_register: std_logic_vector(4 downto 0);
-
-		operand_2_type: std_logic;
-		operand_2_immediate: std_logic_vector(31 downto 0);
-		operand_2_3_register: std_logic_vector(4 downto 0);
-		operand_3_type: std_logic;
-		operand_3_immediate: std_logic_vector(31 downto 0);
-
-		writeback_register: std_logic_vector(4 downto 0);
-		csr_register: std_logic_vector(11 downto 0);
-
-		alu_function: std_logic_vector(4 downto 0);
-
-		pc: std_logic_vector(31 downto 0);
-		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(5 downto 0);
-	end record decode_output_type;
 
 	constant TYPE_REGISTER  : std_logic := '0';
 	constant TYPE_IMMEDIATE : std_logic := '1';
@@ -80,7 +42,6 @@ package stages_interfaces is
 	-- ALU_FUNCTION_LOAD_WORD: writeback_value = <word at op1 + op3> (with sign extension)
 	-- ALU_FUNCTION_LOAD_BYTE_UNSIGNED: writeback_value = <byte at op1 + op3> (no sign extension)
 	-- ALU_FUNCTION_LOAD_HALFWORD_UNSIGNED: writeback_value = <byte at op1 + op3> (no sign extension)
-
 	
 	-- arithmetic
 	constant ALU_FUNCTION_ADD                    : std_logic_vector(4 downto 0) := "00000";
@@ -144,28 +105,6 @@ package stages_interfaces is
 		tag => (others => '0')
 	);
 
-
-	-- REGISTER READ STAGE
-
-	type register_read_output_type is record
-		valid: std_logic;
-
-		operand_1: std_logic_vector(31 downto 0);
-		operand_2: std_logic_vector(31 downto 0);
-		operand_3: std_logic_vector(31 downto 0);
-		
-		operand_1_is_zero_register: std_logic;
-
-		writeback_register: std_logic_vector(4 downto 0);
-		csr_register: std_logic_vector(11 downto 0);
-
-		alu_function: std_logic_vector(4 downto 0);
-
-		pc: std_logic_vector(31 downto 0);
-		stamp: std_logic_vector(2 downto 0);
-		tag: std_logic_vector(5 downto 0);
-	end record register_read_output_type;
-
 	constant DEFAULT_REGISTER_READ_OUTPUT: register_read_output_type := (
 		valid => '0',
 
@@ -184,27 +123,6 @@ package stages_interfaces is
 		stamp => (others => '0'),
 		tag => (others => '0')
 	);
-
-
-	-- EXECUTE STAGE
-
-	type execute_output_type is record
-		valid: std_logic;
-		act: std_logic;
-
-		writeback_value: std_logic_vector(31 downto 0);
-		writeback_register: std_logic_vector(4 downto 0);
-
-		memory_operation: std_logic_vector(1 downto 0);
-		memory_data: std_logic_vector(31 downto 0);
-		memory_write_mask: std_logic_vector(3 downto 0);
-		memory_address: std_logic_vector(31 downto 0);
-		memory_size: std_logic_vector(1 downto 0);
-
-		sign_extend: std_logic;
-
-		tag: std_logic_vector(5 downto 0);
-	end record execute_output_type;
 
 	constant MEMORY_OPERATION_NOP   : std_logic_vector(1 downto 0) := "00";
 	constant MEMORY_OPERATION_LOAD  : std_logic_vector(1 downto 0) := "01";
@@ -232,17 +150,6 @@ package stages_interfaces is
 		tag => (others => '0')
 	);
 
-
-	-- MEMORY STAGE
-
-	type memory_output_type is record
-		act: std_logic;
-		writeback_value: std_logic_vector(31 downto 0);
-		writeback_register: std_logic_vector(4 downto 0);
-
-		tag: std_logic_vector(5 downto 0);
-	end record memory_output_type;
-
 	constant DEFAULT_MEMORY_OUTPUT: memory_output_type := (
 		act => '0',
 		writeback_value => (others => '0'),
@@ -251,4 +158,14 @@ package stages_interfaces is
 		tag => (others => '0')
 	);
 
-end package stages_interfaces;
+	constant DEFAULT_BRANCH_DATA: branch_data := (
+		indicator => '0',
+		address => (others => '0')
+	);
+
+	constant DEFAULT_BRANCH_SIGNALS: branch_signals := (
+		data => DEFAULT_BRANCH_DATA,
+		stamp => (others => '0')
+	);
+
+end package core_constants;

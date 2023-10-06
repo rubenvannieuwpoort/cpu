@@ -2,11 +2,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.types.all;
-use work.stages_interfaces.all;
+--use work.types.all;
+use work.core_types.all;
+use work.core_constants.all;
 
 
-entity execute is
+entity execute_stage is
 	port(
 		clk: in std_logic;
 		stall_in: in std_logic;
@@ -19,10 +20,10 @@ entity execute is
 
 		leds_out: out std_logic_vector(7 downto 0) := (others => '0')
 	);
-end execute;
+end execute_stage;
 
 
-architecture Behavioral of execute is
+architecture Behavioral of execute_stage is
 	signal buffered_input: register_read_output_type := DEFAULT_REGISTER_READ_OUTPUT;
 	signal stamp: std_logic_vector(2 downto 0) := (others => '0');
 	signal commit_slot: execute_output_type := DEFAULT_EXECUTE_OUTPUT;

@@ -4,11 +4,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.types.all;
-use work.stages_interfaces.all;
+use work.core_types.all;
+use work.core_constants.all;
 
 
-entity fetch is
+entity fetch_stage is
 	port(
 		clk: in std_logic;
 		stall_in: in std_logic;
@@ -16,9 +16,9 @@ entity fetch is
 		branch_in: branch_signals;
 		output: out fetch_output_type := DEFAULT_FETCH_OUTPUT
 	);
-end fetch;
+end fetch_stage;
 
-architecture Behavioral of fetch is
+architecture Behavioral of fetch_stage is
 	signal pc: std_logic_vector(31 downto 0) := (others => '0');
 	signal pc_next: std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4, 32));
 	-- signal wait_indicator: std_logic := '0';

@@ -2,10 +2,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.stages_interfaces.all;
+use work.core_types.all;
+use work.core_constants.all;
 
 
-entity decode is
+entity decode_stage is
 	port(
 		clk: in std_logic;
 		stall_in: in std_logic;
@@ -14,10 +15,10 @@ entity decode is
 		stall_out: out std_logic := '0';
 		output: out decode_output_type := DEFAULT_DECODE_OUTPUT
 	);
-end decode;
+end decode_stage;
 
 
-architecture Behavioral of decode is
+architecture Behavioral of decode_stage is
 	signal buffered_input: fetch_output_type := DEFAULT_FETCH_OUTPUT;
 begin
 	stall_out <= buffered_input.valid;
@@ -37,49 +38,6 @@ begin
 			if stall_in = '0' then
 				-- output generation
 				if v_input.valid = '1' then
-					--variable v_imm: std_logic_vector(31 downto 0);
-					--variable v_rs1: std_logic_vector(4 downto 0);
-					--variable v_rs2: std_logic_vector(4 downto 0);
-					--variable v_rsd: std_logic_vector(4 downto 0);
-					--variable v_funct7: std_logic_vector(6 downto 0);
-					--variable v_funct3: std_logic_vector(2 downto 0);
-					--variable v_opcode: std_logic_vector(6 downto 0);
-
-					--v_opcode := v_input.opcode(6 downto 0);
-
-					---- R-type
-					--v_funct7 := v_input.opcode(31 downto 25);
-					--v_rs2 := v_input.opcode(24 downto 20);
-					--v_rs1 := v_input.opcode(19 downto 15);
-					--v_funct3 := v_input.opcode(14 downto 12);
-					--v_rd := v_input.opcode(11 downto 7);
-
-					---- I-type
-					--v_imm = std_logic_vector(resize(signed(v_input.opcode(31 downto 20)), 32));  -- TODO: how to extend?
-					--v_rs1 := v_input.opcode(19 downto 15);
-					--v_funct3 := v_input.opcode(14 downto 12);
-					--v_rd := v_input.opcode(11 downto 7);
-
-					---- S-type
-					--v_imm := std_logic_vector(resize(signed(v_input.opcode(31 downto 25) & v_input.opcode(11 downto 7)), 32)); -- TODO: extend
-					--v_rs2 := v_input.opcode(24 downto 20);
-					--v_rs1 := v_input.opcode(19 downto 15);
-					--v_funct3 := v_input.opcode(14 downto 12);
-
-					---- B-type
-					--v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(7) & v_input.opcode(30 downto 25) & v_input.opcode(11 downto 8) & "0"), 32)); -- TODO: extend
-					--v_rs2 := v_input.opcode(24 downto 20);
-					--v_rs1 := v_input.opcode(19 downto 15);
-					--v_funct3 := v_input.opcode(14 downto 12);
-
-					---- U-type
-					--v_imm := v_input.opcode(31 downto 12) & "000000000000";
-					--v_rd := v_input.opcode(11 downto 7);
-
-					---- J-type
-					--v_imm := std_logic_vector(resize(signed(v_input.opcode(31) & v_input.opcode(19 downto 12) & v_input.opcode(20) & v_input.opcode(20) & v_input.opcode(30 downto 25) & v_input.opcode(24 downto 12) & "0"), 32))
-					--v_rd := v_input.opcode(11 downto 7);
-
 					if v_input.opcode(31 downto 8) = "111111111111111111111111" then
 						-- custom instruction (LEDs on)
 						v_output.valid := '1';

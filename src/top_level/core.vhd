@@ -2,21 +2,23 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.types.all;
-use work.stages_interfaces.all;
+use work.top_level_types.all;
+
+use work.core_types.all;
+use work.core_constants.all;
 
 
-entity CPU is
+entity core is
 	port(
 		clk: in std_logic;
-		read_write_status_in: in read_write_status;
-		read_write_port_out: out read_write_port;
+		data_port_out: out memory_port;
+		data_port_status_in: in memory_port_status;
 		leds_out: out std_logic_vector(7 downto 0)
 	);
-end CPU;
+end core;
 
 
-architecture Behavioral of CPU is
+architecture Behavioral of core is
 	signal fetch_output: fetch_output_type := DEFAULT_FETCH_OUTPUT;
 
 	signal decode_stall_out: std_logic := '0';
@@ -33,7 +35,7 @@ architecture Behavioral of CPU is
 	signal memory_output: memory_output_type := DEFAULT_MEMORY_OUTPUT;
 
 
-	component fetch is
+	component fetch_stage is
 		port(
 			clk: in std_logic;
 			stall_in: in std_logic;
@@ -42,7 +44,7 @@ architecture Behavioral of CPU is
 		);
 	end component;
 
-	component decode is
+	component decode_stage is
 		port(
 			clk: in std_logic;
 			stall_in: in std_logic;
@@ -52,7 +54,7 @@ architecture Behavioral of CPU is
 		);
 	end component;
 
-	component registers is
+	component register_stages is
 		port(
 			clk: in std_logic;
 			write_input: in memory_output_type;
@@ -63,7 +65,7 @@ architecture Behavioral of CPU is
 		);
 	end component;
 
-	component execute is
+	component execute_stage is
 		port(
 			clk: in std_logic;
 			stall_in: in std_logic;
@@ -75,26 +77,26 @@ architecture Behavioral of CPU is
 		);
 	end component;
 
-	component memory is
+	component memory_stage is
 		port(
 			clk: in std_logic;
 			input: in execute_output_type;
-			read_write_port_out: out read_write_port;
-			read_write_status_in: in read_write_status;
+			data_port_out: out memory_port;
+			data_port_status_in: in memory_port_status;
 			stall_out: out std_logic;
 			output: out memory_output_type
 		);
 	end component;
 
 begin
-	stage_fetch: fetch port map(
+	fetch_stage_inst: fetch_stage port map(
 		clk => clk,
 		stall_in => decode_stall_out,
 		branch_in => branch,
 		output => fetch_output
 	);
 
-	stage_decode: decode port map(
+	decode_stage_inst: decode_stage port map(
 		clk => clk,
 		stall_in => register_read_stall_out,
 		input => fetch_output,
@@ -102,7 +104,7 @@ begin
 		output => decode_output
 	);
 
-	stage_registers: registers port map(
+	register_stages_inst: register_stages port map(
 		clk => clk,
 		write_input => memory_output,
 		read_stall_in => execute_stall_out,
@@ -111,7 +113,7 @@ begin
 		read_output => register_read_output
 	);
 
-	stage_execute: execute port map(
+	execute_stage_inst: execute_stage port map(
 		clk => clk,
 		stall_in => memory_stall_out,
 		input => register_read_output,
@@ -121,11 +123,11 @@ begin
 		leds_out => leds_out
 	);
 
-	stage_memory: memory port map(
+	memory_stage_inst: memory_stage port map(
 		clk => clk,
 		input => execute_output,
-		read_write_status_in => read_write_status_in,
-		read_write_port_out => read_write_port_out,
+		data_port_out => data_port_out,
+		data_port_status_in => data_port_status_in,
 		stall_out => memory_stall_out,
 		output => memory_output
 	);
