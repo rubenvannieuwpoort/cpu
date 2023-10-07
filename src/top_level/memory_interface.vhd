@@ -21,15 +21,6 @@ entity memory_interface is
 
 		calib_done_in: in std_logic;
 		memory_ready_out: out std_logic
-
-		-- for vga signal
-		--read_port_clk_in: in std_logic;
-		--read_port_in: in read_cmd_signals;
-		--read_status_out: out read_status_signals;
-		--ram_out: out ram_signals;
-		--ram_bus: inout ram_bus_signals;
-		--calib_done_out: out std_logic := '0';
-		--reset_in: in std_logic
 	);
 end memory_interface;
 
@@ -43,22 +34,6 @@ architecture Behavioral of memory_interface is
 
 	signal p0_state: std_logic_vector(2 downto 0) := STATE_INITIALIZE;
 	signal p0: dram_port := DEFAULT_DRAM_PORT;
-
-	--signal c3_p0_cmd_en: std_logic := '0';
-	--signal c3_p0_cmd_instr: std_logic_vector(2 downto 0) := "000";
-	--signal c3_p0_cmd_byte_addr: std_logic_vector(29 downto 0) := (others => '0');
-	--signal c3_p0_cmd_empty: std_logic := '0';
-	--signal c3_p0_cmd_full: std_logic := '0';
-	--signal c3_p0_wr_en: std_logic := '0';
-	--signal c3_p0_wr_mask: std_logic_vector(3 downto 0) := "1111";
-	--signal c3_p0_wr_data: std_logic_vector(31 downto 0) := (others => '0');
-	--signal c3_p0_wr_full: std_logic := '0';
-	--signal c3_p0_wr_empty: std_logic := '0';
-	--signal c3_p0_wr_count: std_logic_vector(6 downto 0) := (others => '0');
-	--signal c3_p0_rd_data: std_logic_vector(31 downto 0) := (others => '0');
-	--signal c3_p0_rd_full: std_logic := '0';
-	--signal c3_p0_rd_empty: std_logic := '0';
-	--signal c3_p0_rd_count: std_logic_vector(6 downto 0) := (others => '0');
 
 begin
 	process(mem_p0_clk_in)
