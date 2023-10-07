@@ -2,6 +2,8 @@
 
 This is a VHDL implementation of a pipelined [RISC-V](https://en.wikipedia.org/wiki/RISC-V) processor. The design currently targets the [Mimas v2](https://numato.com/product/mimas-v2-spartan-6-fpga-development-board-with-ddr-sdram/).
 
+For more documentation, see the docs/vulture folder.
+
 
 ## Synthesis
 
