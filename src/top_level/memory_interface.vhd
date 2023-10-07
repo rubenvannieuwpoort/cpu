@@ -9,7 +9,6 @@ entity memory_interface is
 	port(
 		clk: in std_logic;
 
-		mem_p0_clk_in: in std_logic;
 		mem_p0_in: in memory_port := DEFAULT_MEMORY_PORT;
 		mem_p0_status_out: out memory_port_status := DEFAULT_MEMORY_PORT_STATUS;
 
@@ -36,9 +35,9 @@ architecture Behavioral of memory_interface is
 	signal p0: dram_port := DEFAULT_DRAM_PORT;
 
 begin
-	process(mem_p0_clk_in)
+	process(clk)
 	begin
-		if rising_edge(mem_p0_clk_in) then
+		if rising_edge(clk) then
 			if p0_state = STATE_INITIALIZE then
 				if calib_done_in = '1' then
 					p0_state <= STATE_READY;

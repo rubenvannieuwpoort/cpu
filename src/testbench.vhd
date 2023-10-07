@@ -63,7 +63,6 @@ architecture Behavioral of testbench is
 	component memory_interface is
 		port(
 			clk: in std_logic;
-			mem_p0_clk_in: in std_logic;
 			mem_p0_in: in memory_port := DEFAULT_MEMORY_PORT;
 			mem_p0_status_out: out memory_port_status := DEFAULT_MEMORY_PORT_STATUS;
 			dram_p0_out: out dram_port := DEFAULT_DRAM_PORT;
@@ -117,9 +116,8 @@ begin
 		leds_out => leds_out
 	);
 
-	mem_if: memory_interface port map(
+	memory_interface_inst: memory_interface port map(
 		clk => clk_main,
-		mem_p0_clk_in => clk_main,
 		mem_p0_in => read_write_port_s,
 		mem_p0_status_out => read_write_status_s,
 		dram_p0_out => dram_p0,
