@@ -18,14 +18,18 @@ If you add or remove ports, `src/memory_controller/memory_interface.vhd` should 
 
 ```
 0x00000000
-           main memory
+           main memory (64 MiB, read/write/execute)
 0x04000000
-           (unused)
+           (unmapped, read/write will result in an exception)
 0x06000000
-           text buffer
+           boot ram (4 KiB, read/write/execute)
+0x06001000
+           font ram (4 KiB, non-executable; trying to execute will result in exception)
 0x06002000
-           font ram
+           text buffer ram (8 KiB, non-executable; trying to execute will result in exception)
 0x06004000
+           (unmapped, read/write/execute will result in an exception)
+0xffffffff
 ```
 
 The screenbuffer currently resides at a hardcoded location of `0x03000000`. When (if) I introduce caching, writes to the screenbuffer should never be cached, so the cache should either be write-through, or there should be an uncached region reserved for the screenbuffer (I think using the last 16 MB of the 64 MB main memory would be sufficient).
