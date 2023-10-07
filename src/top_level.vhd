@@ -170,8 +170,8 @@ begin
 		mem_p0_status_out => read_write_status_s,
 		dram_p0_out => dram_p0,
 		dram_p0_status_in => dram_p0_status,
-		bram_port_out => textbuffer_port,  -- textbuffer_port_status_in: bram_port_status
-		bram_data_in => textbuffer_read_data,  -- textbuffer_port_out: bram_port
+		bram_port_out => textbuffer_port,
+		bram_data_in => textbuffer_read_data,
 		calib_done_in => calib_done,
 		memory_ready_out => memory_ready
 	);
