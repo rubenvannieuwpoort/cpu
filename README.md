@@ -11,9 +11,7 @@ The design currently uses Xilinx IP for the memory controller, which some custom
 
 
 ## Todo
-- Add a block RAM for the boot memory.
-- Add a write-only block RAM for the text buffer.
-- Add a write-only block RAM for the font RAM (optional).
+- Let the textmode VGA generator use the text buffer and font ram.
 - Set up a testbench with a DRAM module.
 - Set up some tools to conveniently program and test in C or assembly.
 - Implement CSRs.
