@@ -8,30 +8,45 @@ use unisim.vcomponents.all;
 use work.top_level_types.all;
 
 
-entity text_buffer_ram is
+entity boot_ram is
 	port(
-		write_clk: in std_logic;
-		write_address: in std_logic_vector(11 downto 2);
-		write_mask: in std_logic_vector(0 to 3);
-		write_data: in std_logic_vector(31 downto 0);
-		read_data: out std_logic_vector(31 downto 0)
+		clk_0: in std_logic;
+		port_0: in bram_port;
+		p0_read_data: out std_logic_vector(31 downto 0);
+		
+		clk_1: in std_logic;
+		port_1: in bram_port;
+		p1_read_data: out std_logic_vector(31 downto 0)
 	);
-end text_buffer_ram;
+end boot_ram;
 
-architecture Behavioral of text_buffer_ram is
-	signal full_write_address: std_logic_vector(13 downto 0) := (others => '0');
-	signal write_mask_0: std_logic_vector(0 to 3) := "0000";
-	signal write_mask_1: std_logic_vector(0 to 3) := "0000";
-	signal bram_select: std_logic_vector(0 downto 0) := "0";
+architecture Behavioral of boot_ram is
+	signal p0_bram_address: std_logic_vector(13 downto 0) := (others => '0');
+	signal p0_write_mask_0: std_logic_vector(0 to 3) := "0000";
+	signal p0_write_mask_1: std_logic_vector(0 to 3) := "0000";
+	signal p0_bram_select: std_logic_vector(0 downto 0) := "0";
 
-	signal data_out0: std_logic_vector(31 downto 0) := (others => '0');
-	signal data_out1: std_logic_vector(31 downto 0) := (others => '0');
+	signal p0_data_out_0: std_logic_vector(31 downto 0) := (others => '0');
+	signal p0_data_out_1: std_logic_vector(31 downto 0) := (others => '0');
+
+	signal p1_bram_address: std_logic_vector(13 downto 0) := (others => '0');
+	signal p1_write_mask_0: std_logic_vector(0 to 3) := "0000";
+	signal p1_write_mask_1: std_logic_vector(0 to 3) := "0000";
+	signal p1_bram_select: std_logic_vector(0 downto 0) := "0";
+
+	signal p1_data_out_0: std_logic_vector(31 downto 0) := (others => '0');
+	signal p1_data_out_1: std_logic_vector(31 downto 0) := (others => '0');
 
 begin
-	full_write_address <= write_address(10 downto 2) & "00000";
-	write_mask_0 <= write_mask when write_address(11) = '0' else "0000";
-	write_mask_1 <= write_mask when write_address(11) = '1' else "0000";
-	read_data <= data_out0 when bram_select = "0" else data_out1;
+	p0_bram_address <= port_0.address(10 downto 2) & "00000";
+	p0_write_mask_0 <= port_0.write_mask when port_0.address(11) = '0' else "0000";
+	p0_write_mask_1 <= port_0.write_mask when port_0.address(11) = '1' else "0000";
+	p0_read_data <= p0_data_out_0 when p0_bram_select = "0" else p0_data_out_1;
+
+	p1_bram_address <= port_1.address(10 downto 2) & "00000";
+	p1_write_mask_0 <= port_1.write_mask when port_1.address(11) = '0' else "0000";
+	p1_write_mask_1 <= port_1.write_mask when port_1.address(11) = '1' else "0000";
+	p1_read_data <= p1_data_out_0 when p1_bram_select = "0" else p1_data_out_1;
 
 	bram0 : RAMB16BWER
 	generic map (
@@ -141,32 +156,32 @@ begin
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
-		DOA => data_out0, -- 32-bit output: A port data output
+		DOA => p0_data_out_0, -- 32-bit output: A port data output
 		DOPA => open, -- 4-bit output: A port parity output
 		-- Port B Data: 32-bit (each) output: Port B data
-		DOB => open, -- 32-bit output: B port data output
+		DOB => p1_data_out_0, -- 32-bit output: B port data output
 		DOPB => open, -- 4-bit output: B port parity output
 
 		-- Port A Address/Control Signals: 14-bit (each) input: Port A address and control signals
-		ADDRA => full_write_address, -- 14-bit input: A port address input
-		CLKA => write_clk, -- 1-bit input: A port clock input
+		ADDRA => p0_bram_address, -- 14-bit input: A port address input
+		CLKA => clk_0, -- 1-bit input: A port clock input
 		ENA => '1', -- 1-bit input: A port enable input
 		REGCEA => '1', -- 1-bit input: A port register clock enable input
 		RSTA => '0', -- 1-bit input: A port register set/reset input
-		WEA => write_mask_0, -- 4-bit input: Port A byte-wide write enable input
+		WEA => p0_write_mask_0, -- 4-bit input: Port A byte-wide write enable input
 		-- Port A Data: 32-bit (each) input: Port A data
-		DIA => write_data, -- 32-bit input: A port data input
+		DIA => port_0.write_data, -- 32-bit input: A port data input
 		DIPA => (others => '0'), -- 4-bit input: A port parity input
 
 		-- Port B Address/Control Signals: 14-bit (each) input: Port B address and control signals
-		ADDRB => (others => '0'), -- 14-bit input: B port address input
-		CLKB => write_clk, -- 1-bit input: B port clock input
-		ENB => '0', -- 1-bit input: B port enable input
-		REGCEB => '0', -- 1-bit input: B port register clock enable input
+		ADDRB => p1_bram_address, -- 14-bit input: B port address input
+		CLKB => clk_1, -- 1-bit input: B port clock input
+		ENB => '1', -- 1-bit input: B port enable input
+		REGCEB => '1', -- 1-bit input: B port register clock enable input
 		RSTB => '0', -- 1-bit input: B port register set/reset input
-		WEB => (others => '0'), -- 4-bit input: Port B byte-wide write enable input
+		WEB => p1_write_mask_0, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
-		DIB => (others => '0'), -- 32-bit input: B port data input
+		DIB => port_1.write_data, -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
 	);
 
@@ -278,41 +293,49 @@ begin
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
-		DOA => data_out1, -- 32-bit output: A port data output
+		DOA => p0_data_out_1, -- 32-bit output: A port data output
 		DOPA => open, -- 4-bit output: A port parity output
 		-- Port B Data: 32-bit (each) output: Port B data
-		DOB => open, -- 32-bit output: B port data output
+		DOB => p1_data_out_1, -- 32-bit output: B port data output
 		DOPB => open, -- 4-bit output: B port parity output
 
 		-- Port A Address/Control Signals: 14-bit (each) input: Port A address and control signals
-		ADDRA => full_write_address, -- 14-bit input: A port address input
-		CLKA => write_clk, -- 1-bit input: A port clock input
+		ADDRA => p0_bram_address, -- 14-bit input: A port address input
+		CLKA => clk_0, -- 1-bit input: A port clock input
 		ENA => '1', -- 1-bit input: A port enable input
 		REGCEA => '1', -- 1-bit input: A port register clock enable input
 		RSTA => '0', -- 1-bit input: A port register set/reset input
-		WEA => write_mask_1, -- 4-bit input: Port A byte-wide write enable input
+		WEA => p0_write_mask_1, -- 4-bit input: Port A byte-wide write enable input
 		-- Port A Data: 32-bit (each) input: Port A data
-		DIA => write_data, -- 32-bit input: A port data input
+		DIA => port_0.write_data, -- 32-bit input: A port data input
 		DIPA => (others => '0'), -- 4-bit input: A port parity input
 
 		-- Port B Address/Control Signals: 14-bit (each) input: Port B address and control signals
-		ADDRB => (others => '0'), -- 14-bit input: B port address input
-		CLKB => write_clk, -- 1-bit input: B port clock input
-		ENB => '0', -- 1-bit input: B port enable input
-		REGCEB => '0', -- 1-bit input: B port register clock enable input
+		ADDRB => p1_bram_address, -- 14-bit input: B port address input
+		CLKB => clk_1, -- 1-bit input: B port clock input
+		ENB => '1', -- 1-bit input: B port enable input
+		REGCEB => '1', -- 1-bit input: B port register clock enable input
 		RSTB => '0', -- 1-bit input: B port register set/reset input
-		WEB => (others => '0'), -- 4-bit input: Port B byte-wide write enable input
+		WEB => p1_write_mask_1, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
-		DIB => (others => '0'), -- 32-bit input: B port data input
+		DIB => (port_1.write_data), -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
 	);
 	
 
-	process(write_clk)
+	process(clk_0)
 		variable v_opcode: std_logic_vector(31 downto 0);
 	begin
-		if rising_edge(write_clk) then
-			bram_select <= write_address(11 downto 11);
+		if rising_edge(clk_0) then
+			p0_bram_select <= port_0.address(11 downto 11);
+		end if;
+	end process;
+
+	process(clk_1)
+		variable v_opcode: std_logic_vector(31 downto 0);
+	begin
+		if rising_edge(clk_1) then
+			p1_bram_select <= port_1.address(11 downto 11);
 		end if;
 	end process;
 end Behavioral;

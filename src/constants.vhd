@@ -10,6 +10,21 @@ package top_level_constants is
 
 	constant RAM_SIZE: std_logic_vector(31 downto 0) := X"04000000";
 
+	constant MAIN_MEMORY_REGION_START: std_logic_vector(31 downto 0) := X"00000000";
+	constant MAIN_MEMORY_REGION_END: std_logic_vector(31 downto 0) := X"04000000";
+
+	constant SCREENBUFFER_REGION_START: std_logic_vector(31 downto 0) := X"03000000";
+	constant SCREENBUFFER_REGION_END: std_logic_vector(31 downto 0) := X"04000000";
+
+	constant BOOT_RAM_REGION_START: std_logic_vector(31 downto 0) := X"06000000";
+	constant BOOT_RAM_REGION_END: std_logic_vector(31 downto 0) := X"06001000";
+
+	constant FONT_RAM_REGION_START: std_logic_vector(31 downto 0) := X"06001000";
+	constant FONT_RAM_REGION_END: std_logic_vector(31 downto 0) := X"06002000";
+
+	constant TEXTBUFFER_RAM_REGION_START: std_logic_vector(31 downto 0) := X"06002000";
+	constant TEXTBUFFER_RAM_REGION_END: std_logic_vector(31 downto 0) := X"06004000";
+
 	constant COMMAND_READ: std_logic := '0';
 	constant COMMAND_WRITE: std_logic := '1';
 
@@ -44,7 +59,7 @@ package top_level_constants is
 	
 	constant DEFAULT_BRAM_PORT: bram_port := (
 		address => (others => '0'),
-		data => (others => '0'),
-		mask => (others => '0')
+		write_data => (others => '0'),
+		write_mask => (others => '0')
 	);
 end package;

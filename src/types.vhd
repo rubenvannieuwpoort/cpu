@@ -89,9 +89,9 @@ package top_level_types is
 	end record;
 
 	type bram_port is record
-		address: std_logic_vector(11 downto 2);
-		data: std_logic_vector(31 downto 0);
-		mask: std_logic_vector(0 to 3);
+		address: std_logic_vector(12 downto 2);
+		write_data: std_logic_vector(31 downto 0);
+		write_mask: std_logic_vector(0 to 3);
 	end record;
 
 end package;
