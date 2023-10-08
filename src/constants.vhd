@@ -56,7 +56,23 @@ package top_level_constants is
 		write_data => (others => '0'),
 		read_enable => '0'
 	);
-	
+
+	constant DEFAULT_DRAM_PORT_STATUS: dram_port_status := (
+		command_empty => '0',
+		command_full => '0',
+		write_full => '0',
+		write_empty => '0',
+		write_count => (others => '0'),
+		write_underrun => '0',
+		write_error => '0',
+		read_data => (others => '0'),
+		read_full => '0',
+		read_empty => '0',
+		read_count => (others => '0'),
+		read_overflow => '0',
+		read_error => '0'
+	);
+
 	constant DEFAULT_BRAM_PORT: bram_port := (
 		address => (others => '0'),
 		write_data => (others => '0'),
