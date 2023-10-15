@@ -11,11 +11,11 @@ use work.top_level_types.all;
 entity boot_ram is
 	port(
 		clk_0: in std_logic;
-		port_0: in bram_port;
+		port_0: in bram_port_32b;
 		p0_read_data: out std_logic_vector(31 downto 0);
 		
 		clk_1: in std_logic;
-		port_1: in bram_port;
+		port_1: in bram_port_32b;
 		p1_read_data: out std_logic_vector(31 downto 0)
 	);
 end boot_ram;

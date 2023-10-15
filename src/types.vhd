@@ -46,7 +46,7 @@ package top_level_types is
 	type memory_port is record
 		enable: std_logic;
 		command: std_logic;
-		address: std_logic_vector(26 downto 2);
+		address: std_logic_vector(26 downto 0);
 		write_data: std_logic_vector(31 downto 0);
 		write_mask: std_logic_vector(3 downto 0);
 	end record;
@@ -88,10 +88,15 @@ package top_level_types is
 		read_error: std_logic;
 	end record;
 
-	type bram_port is record
+	type bram_port_32b is record
 		address: std_logic_vector(12 downto 2);
 		write_data: std_logic_vector(31 downto 0);
 		write_mask: std_logic_vector(0 to 3);
 	end record;
 
+	type bram_port_8b is record
+		address: std_logic_vector(12 downto 0);
+		write_data: std_logic_vector(31 downto 0);
+		write_mask: std_logic_vector(0 to 0);
+	end record;
 end package;

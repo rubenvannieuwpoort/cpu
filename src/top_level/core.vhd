@@ -11,6 +11,7 @@ use work.core_constants.all;
 entity core is
 	port(
 		clk: in std_logic;
+		memory_ready_in: in std_logic;
 		data_port_out: out memory_port;
 		data_port_status_in: in memory_port_status;
 		leds_out: out std_logic_vector(7 downto 0)
@@ -80,6 +81,7 @@ architecture Behavioral of core is
 	component memory_stage is
 		port(
 			clk: in std_logic;
+			memory_ready_in: in std_logic;
 			input: in execute_output_type;
 			data_port_out: out memory_port;
 			data_port_status_in: in memory_port_status;
@@ -125,6 +127,7 @@ begin
 
 	memory_stage_inst: memory_stage port map(
 		clk => clk,
+		memory_ready_in => memory_ready_in,
 		input => execute_output,
 		data_port_out => data_port_out,
 		data_port_status_in => data_port_status_in,

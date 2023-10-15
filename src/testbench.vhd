@@ -22,19 +22,28 @@ architecture Behavioral of testbench is
 	signal clk_mem: memory_clock_signals;
 
 	-- memory
-	signal memory_ready: std_logic;
+	signal memory_ready: std_logic := '0';
 
 	signal read_write_port_s: memory_port;
 	signal read_write_status_s: memory_port_status;
 
-	signal boot_ram_port: bram_port;
-	signal boot_ram_read_data: std_logic_vector(31 downto 0);
+	--signal boot_ram_port: bram_port_32b;
+	--signal boot_ram_read_data: std_logic_vector(31 downto 0);
 
-	signal font_ram_port: bram_port;
-	signal font_ram_read_data: std_logic_vector(31 downto 0);
+	--signal font_ram_port: bram_port_32b;
+	--signal font_ram_read_data: std_logic_vector(31 downto 0);
 
-	signal textbuffer_ram_port: bram_port;
+	--signal font_read_port: bram_port_8b;
+	--signal font_read_data: std_logic_vector(7 downto 0);
+
+	signal textbuffer_ram_port: bram_port_32b;
 	signal textbuffer_ram_read_data: std_logic_vector(31 downto 0);
+
+	signal textbuffer_read_port: bram_port_8b;
+	signal textbuffer_read_data: std_logic_vector(7 downto 0);
+
+	-- vga
+	signal vga: vga_signals;
 
 	component clock_generator is
 		port(
@@ -48,6 +57,7 @@ architecture Behavioral of testbench is
 	component core is
 		port(
 			clk: in std_logic;
+			memory_ready_in: in std_logic;
 			data_port_out: out memory_port;
 			data_port_status_in: in memory_port_status;
 			leds_out: out std_logic_vector(0 to 7)
@@ -61,49 +71,61 @@ architecture Behavioral of testbench is
 			mem_p0_status_out: out memory_port_status := DEFAULT_MEMORY_PORT_STATUS;
 			dram_p0_out: out dram_port := DEFAULT_DRAM_PORT;
 			dram_p0_status_in: in dram_port_status;
-			bootram_port_out: out bram_port := DEFAULT_BRAM_PORT;
-			bootram_data_in: in std_logic_vector(31 downto 0);
-			fontram_port_out: out bram_port := DEFAULT_BRAM_PORT;
-			fontram_data_in: in std_logic_vector(31 downto 0);
-			textbuffer_port_out: out bram_port := DEFAULT_BRAM_PORT;
+			--bootram_port_out: out bram_port_32b := DEFAULT_BRAM_PORT_32B;
+			--bootram_data_in: in std_logic_vector(31 downto 0);
+			--fontram_port_out: out bram_port_32b := DEFAULT_BRAM_PORT_32B;
+			--fontram_data_in: in std_logic_vector(31 downto 0);
+			textbuffer_port_out: out bram_port_32b := DEFAULT_BRAM_PORT_32B;
 			textbuffer_data_in: in std_logic_vector(31 downto 0);
 			calib_done_in: in std_logic;
 			memory_ready_out: out std_logic
 		);
 	end component;
 
-	component boot_ram is
-		port(
-			clk_0: in std_logic;
-			port_0: in bram_port;
-			p0_read_data: out std_logic_vector(31 downto 0);
-			clk_1: in std_logic;
-			port_1: in bram_port;
-			p1_read_data: out std_logic_vector(31 downto 0)
-		);
-	end component;
+	--component boot_ram is
+	--	port(
+	--		clk_0: in std_logic;
+	--		port_0: in bram_port_32b;
+	--		p0_read_data: out std_logic_vector(31 downto 0);
+	--		clk_1: in std_logic;
+	--		port_1: in bram_port_32b;
+	--		p1_read_data: out std_logic_vector(31 downto 0)
+	--	);
+	--end component;
 
-	component font_ram is
-		port(
-			clk_0: in std_logic;
-			port_0: in bram_port;
-			p0_read_data: out std_logic_vector(31 downto 0);
-			clk_1: in std_logic;
-			port_1: in bram_port;
-			p1_read_data: out std_logic_vector(31 downto 0)
-		);
-	end component;
+	--component font_ram is
+	--	port(
+	--		clk_0: in std_logic;
+	--		port_0: in bram_port_32b;
+	--		p0_read_data: out std_logic_vector(31 downto 0);
+	--		clk_1: in std_logic;
+	--		port_1: in bram_port_8b;
+	--		p1_read_data: out std_logic_vector(7 downto 0)
+	--	);
+	--end component;
 
 	component textbuffer_ram is
 		port(
 			clk_0: in std_logic;
-			port_0: in bram_port;
+			port_0: in bram_port_32b;
 			p0_read_data: out std_logic_vector(31 downto 0);
 			clk_1: in std_logic;
-			port_1: in bram_port;
-			p1_read_data: out std_logic_vector(31 downto 0)
+			port_1: in bram_port_8b;
+			p1_read_data: out std_logic_vector(7 downto 0)
 		);
 	end component;
+
+	component textmode_vga_generator is
+		port(
+			clk: in std_logic;
+			textbuffer_read_port_out: out bram_port_8b;
+			textbuffer_read_data_in: in std_logic_vector(7 downto 0);
+			--font_read_port_out: out bram_port_8b;
+			--font_read_data_in: in std_logic_vector(7 downto 0);
+			vga_out: out vga_signals
+		);
+	end component;
+
 begin
 	clk_process :process
 	begin
@@ -122,6 +144,7 @@ begin
 
 	core_inst: core port map(
 		clk => clk_main,
+		memory_ready_in => memory_ready,
 		data_port_out => read_write_port_s,
 		data_port_status_in => read_write_status_s,
 		leds_out => leds_out
@@ -133,40 +156,49 @@ begin
 		mem_p0_status_out => read_write_status_s,
 		dram_p0_out => open,
 		dram_p0_status_in => DEFAULT_DRAM_PORT_STATUS,
-		bootram_port_out => boot_ram_port,
-		bootram_data_in => boot_ram_read_data,
-		fontram_port_out => font_ram_port,
-		fontram_data_in => font_ram_read_data,
+		--bootram_port_out => boot_ram_port,
+		--bootram_data_in => boot_ram_read_data,
+		--fontram_port_out => font_ram_port,
+		--fontram_data_in => font_ram_read_data,
 		textbuffer_port_out => textbuffer_ram_port,
 		textbuffer_data_in => textbuffer_ram_read_data,
 		calib_done_in => '1',
 		memory_ready_out => memory_ready
 	);
 
-	boot_ram_inst: boot_ram port map(
-		clk_0 => clk_main,
-		port_0 => boot_ram_port,
-		p0_read_data => boot_ram_read_data,
-		clk_1 => '0',
-		port_1 => DEFAULT_BRAM_PORT,
-		p1_read_data => open
-	);
+	--boot_ram_inst: boot_ram port map(
+	--	clk_0 => clk_main,
+	--	port_0 => boot_ram_port,
+	--	p0_read_data => boot_ram_read_data,
+	--	clk_1 => '0',
+	--	port_1 => DEFAULT_BRAM_PORT_32B,
+	--	p1_read_data => open
+	--);
 
-	font_ram_inst: font_ram port map(
-		clk_0 => clk_main,
-		port_0 => font_ram_port,
-		p0_read_data => font_ram_read_data,
-		clk_1 => '0',
-		port_1 => DEFAULT_BRAM_PORT,
-		p1_read_data => open
-	);
+	--font_ram_inst: font_ram port map(
+	--	clk_0 => clk_main,
+	--	port_0 => font_ram_port,
+	--	p0_read_data => font_ram_read_data,
+	--	clk_1 => '0',
+	--	port_1 => DEFAULT_BRAM_PORT_8B,
+	--	p1_read_data => open
+	--);
 
 	textbuffer_ram_inst: textbuffer_ram port map(
 		clk_0 => clk_main,
 		port_0 => textbuffer_ram_port,
 		p0_read_data => textbuffer_ram_read_data,
-		clk_1 => '0',
-		port_1 => DEFAULT_BRAM_PORT,
-		p1_read_data => open
+		clk_1 => clk_pixel,
+		port_1 => textbuffer_read_port,
+		p1_read_data => textbuffer_read_data
+	);
+
+	textmode_vga_generator_inst: textmode_vga_generator port map(
+		clk => clk_pixel,
+		textbuffer_read_port_out => textbuffer_read_port,
+		textbuffer_read_data_in => textbuffer_read_data,
+		--font_read_port_out => font_read_port,
+		--font_read_data_in => font_read_data,
+		vga_out => vga
 	);
 end Behavioral;

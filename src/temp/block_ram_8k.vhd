@@ -8,19 +8,19 @@ use unisim.vcomponents.all;
 use work.top_level_types.all;
 
 
-entity textbuffer_ram is
+entity block_ram_8k is
 	port(
 		clk_0: in std_logic;
 		port_0: in bram_port_32b;
 		p0_read_data: out std_logic_vector(31 downto 0);
 		
 		clk_1: in std_logic;
-		port_1: in bram_port_8b;
-		p1_read_data: out std_logic_vector(7 downto 0)
+		port_1: in bram_port_32b;
+		p1_read_data: out std_logic_vector(31 downto 0)
 	);
-end textbuffer_ram;
+end block_ram_8k;
 
-architecture Behavioral of textbuffer_ram is
+architecture Behavioral of block_ram_8k is
 	signal p0_bram_address: std_logic_vector(13 downto 0) := (others => '0');
 	signal p0_write_mask_0: std_logic_vector(0 to 3) := "0000";
 	signal p0_write_mask_1: std_logic_vector(0 to 3) := "0000";
@@ -38,7 +38,7 @@ architecture Behavioral of textbuffer_ram is
 	signal p1_write_mask_1: std_logic_vector(0 to 3) := "0000";
 	signal p1_write_mask_2: std_logic_vector(0 to 3) := "0000";
 	signal p1_write_mask_3: std_logic_vector(0 to 3) := "0000";
-	signal p1_bram_select: std_logic_vector(1 downto 0) := "00";
+	signal p1_bram_select: std_logic_vector(0 downto 0) := "0";
 
 	signal p1_data_out_0: std_logic_vector(31 downto 0) := (others => '0');
 	signal p1_data_out_1: std_logic_vector(31 downto 0) := (others => '0');
@@ -56,21 +56,21 @@ begin
 	                p0_data_out_2 when p0_bram_select = "10" else
 	                p0_data_out_3 when p0_bram_select = "11";
 
-	p1_bram_address <= port_1.address(10 downto 0) & "000";
-	p1_write_mask_0 <= "000" & port_1.write_mask when port_1.address(12 downto 11) = "00" else "0000";
-	p1_write_mask_1 <= "000" & port_1.write_mask when port_1.address(12 downto 11) = "01" else "0000";
-	p1_write_mask_2 <= "000" & port_1.write_mask when port_1.address(12 downto 11) = "10" else "0000";
-	p1_write_mask_3 <= "000" & port_1.write_mask when port_1.address(12 downto 11) = "11" else "0000";
-	p1_read_data <= p1_data_out_0(7 downto 0) when p1_bram_select = "00" else
-	                p1_data_out_1(7 downto 0) when p1_bram_select = "01" else
-	                p1_data_out_2(7 downto 0) when p1_bram_select = "10" else
-	                p1_data_out_3(7 downto 0) when p1_bram_select = "11";
+	p1_bram_address <= port_1.address(10 downto 2) & "00000";
+	p1_write_mask_0 <= port_1.write_mask when port_1.address(12 downto 11) = "00" else "0000";
+	p1_write_mask_1 <= port_1.write_mask when port_1.address(12 downto 11) = "01" else "0000";
+	p1_write_mask_2 <= port_1.write_mask when port_1.address(12 downto 11) = "10" else "0000";
+	p1_write_mask_3 <= port_1.write_mask when port_1.address(12 downto 11) = "11" else "0000";
+	p1_read_data <= p1_data_out_0 when p1_bram_select = "00" else
+	                p1_data_out_1 when p1_bram_select = "01" else
+	                p1_data_out_2 when p1_bram_select = "10" else
+	                p1_data_out_3 when p1_bram_select = "11";
 
 	bram0 : RAMB16BWER
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -169,8 +169,8 @@ begin
 		SRVAL_A => X"000000000",
 		SRVAL_B => X"000000000",
 		-- WRITE_MODE_A/WRITE_MODE_B: "WRITE_FIRST", "READ_FIRST", or "NO_CHANGE"
-		WRITE_MODE_A => "WRITE_FIRST",
-		WRITE_MODE_B => "WRITE_FIRST"
+		WRITE_MODE_A => "READ_FIRST",
+		WRITE_MODE_B => "READ_FIRST"
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
@@ -207,7 +207,7 @@ begin
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -306,8 +306,8 @@ begin
 		SRVAL_A => X"000000000",
 		SRVAL_B => X"000000000",
 		-- WRITE_MODE_A/WRITE_MODE_B: "WRITE_FIRST", "READ_FIRST", or "NO_CHANGE"
-		WRITE_MODE_A => "WRITE_FIRST",
-		WRITE_MODE_B => "WRITE_FIRST"
+		WRITE_MODE_A => "READ_FIRST",
+		WRITE_MODE_B => "READ_FIRST"
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
@@ -344,7 +344,7 @@ begin
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -443,8 +443,8 @@ begin
 		SRVAL_A => X"000000000",
 		SRVAL_B => X"000000000",
 		-- WRITE_MODE_A/WRITE_MODE_B: "WRITE_FIRST", "READ_FIRST", or "NO_CHANGE"
-		WRITE_MODE_A => "WRITE_FIRST",
-		WRITE_MODE_B => "WRITE_FIRST"
+		WRITE_MODE_A => "READ_FIRST",
+		WRITE_MODE_B => "READ_FIRST"
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
@@ -473,7 +473,7 @@ begin
 		RSTB => '0', -- 1-bit input: B port register set/reset input
 		WEB => p1_write_mask_2, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
-		DIB => port_1.write_data, -- 32-bit input: B port data input
+		DIB => (port_1.write_data), -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
 	);
 
@@ -481,7 +481,7 @@ begin
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -580,8 +580,8 @@ begin
 		SRVAL_A => X"000000000",
 		SRVAL_B => X"000000000",
 		-- WRITE_MODE_A/WRITE_MODE_B: "WRITE_FIRST", "READ_FIRST", or "NO_CHANGE"
-		WRITE_MODE_A => "WRITE_FIRST",
-		WRITE_MODE_B => "WRITE_FIRST"
+		WRITE_MODE_A => "READ_FIRST",
+		WRITE_MODE_B => "READ_FIRST"
 	)
 	port map (
 		-- Port A Data: 32-bit (each) output: Port A data
@@ -610,7 +610,7 @@ begin
 		RSTB => '0', -- 1-bit input: B port register set/reset input
 		WEB => p1_write_mask_3, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
-		DIB => port_1.write_data, -- 32-bit input: B port data input
+		DIB => (port_1.write_data), -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
 	);
 

@@ -73,7 +73,13 @@ package top_level_constants is
 		read_error => '0'
 	);
 
-	constant DEFAULT_BRAM_PORT: bram_port := (
+	constant DEFAULT_BRAM_PORT_32B: bram_port_32b := (
+		address => (others => '0'),
+		write_data => (others => '0'),
+		write_mask => (others => '0')
+	);
+
+	constant DEFAULT_BRAM_PORT_8B: bram_port_8b := (
 		address => (others => '0'),
 		write_data => (others => '0'),
 		write_mask => (others => '0')

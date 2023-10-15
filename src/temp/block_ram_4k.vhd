@@ -8,30 +8,30 @@ use unisim.vcomponents.all;
 use work.top_level_types.all;
 
 
-entity font_ram is
+entity block_ram_4k is
 	port(
 		clk_0: in std_logic;
 		port_0: in bram_port_32b;
 		p0_read_data: out std_logic_vector(31 downto 0);
 		
 		clk_1: in std_logic;
-		port_1: in bram_port_8b;
-		p1_read_data: out std_logic_vector(7 downto 0)
+		port_1: in bram_port_32b;
+		p1_read_data: out std_logic_vector(31 downto 0)
 	);
-end font_ram;
+end block_ram_4k;
 
-architecture Behavioral of font_ram is
+architecture Behavioral of block_ram_4k is
 	signal p0_bram_address: std_logic_vector(13 downto 0) := (others => '0');
-	signal p0_write_mask_0: std_logic_vector(0 to 0) := "0";
-	signal p0_write_mask_1: std_logic_vector(0 to 0) := "0";
+	signal p0_write_mask_0: std_logic_vector(0 to 3) := "0000";
+	signal p0_write_mask_1: std_logic_vector(0 to 3) := "0000";
 	signal p0_bram_select: std_logic_vector(0 downto 0) := "0";
 
 	signal p0_data_out_0: std_logic_vector(31 downto 0) := (others => '0');
 	signal p0_data_out_1: std_logic_vector(31 downto 0) := (others => '0');
 
 	signal p1_bram_address: std_logic_vector(13 downto 0) := (others => '0');
-	signal p1_write_mask_0: std_logic_vector(0 to 0) := "0";
-	signal p1_write_mask_1: std_logic_vector(0 to 0) := "0";
+	signal p1_write_mask_0: std_logic_vector(0 to 3) := "0000";
+	signal p1_write_mask_1: std_logic_vector(0 to 3) := "0000";
 	signal p1_bram_select: std_logic_vector(0 downto 0) := "0";
 
 	signal p1_data_out_0: std_logic_vector(31 downto 0) := (others => '0');
@@ -39,20 +39,20 @@ architecture Behavioral of font_ram is
 
 begin
 	p0_bram_address <= port_0.address(10 downto 2) & "00000";
-	p0_write_mask_0 <= port_0.write_mask when port_0.address(11) = '0' else "0";
-	p0_write_mask_1 <= port_0.write_mask when port_0.address(11) = '1' else "0";
+	p0_write_mask_0 <= port_0.write_mask when port_0.address(11) = '0' else "0000";
+	p0_write_mask_1 <= port_0.write_mask when port_0.address(11) = '1' else "0000";
 	p0_read_data <= p0_data_out_0 when p0_bram_select = "0" else p0_data_out_1;
 
-	p1_bram_address <= port_1.address(10 downto 0) & "000";
-	p1_write_mask_0 <= port_1.write_mask when port_1.address(11) = '0' else "0";
-	p1_write_mask_1 <= port_1.write_mask when port_1.address(11) = '1' else "0";
-	p1_read_data <= p1_data_out_0(7 downto 0) when p1_bram_select = "0" else p1_data_out_1(7 downto 0);
+	p1_bram_address <= port_1.address(10 downto 2) & "00000";
+	p1_write_mask_0 <= port_1.write_mask when port_1.address(11) = '0' else "0000";
+	p1_write_mask_1 <= port_1.write_mask when port_1.address(11) = '1' else "0000";
+	p1_read_data <= p1_data_out_0 when p1_bram_select = "0" else p1_data_out_1;
 
 	bram0 : RAMB16BWER
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -179,7 +179,7 @@ begin
 		ENB => '1', -- 1-bit input: B port enable input
 		REGCEB => '1', -- 1-bit input: B port register clock enable input
 		RSTB => '0', -- 1-bit input: B port register set/reset input
-		WEB => "000" & p1_write_mask_0, -- 4-bit input: Port B byte-wide write enable input
+		WEB => p1_write_mask_0, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
 		DIB => port_1.write_data, -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
@@ -189,7 +189,7 @@ begin
 	generic map (
 		-- DATA_WIDTH_A/DATA_WIDTH_B: 0, 1, 2, 4, 9, 18, or 36
 		DATA_WIDTH_A => 36,
-		DATA_WIDTH_B => 9,
+		DATA_WIDTH_B => 36,
 		-- DOA_REG/DOB_REG: Optional output register (0 or 1)
 		DOA_REG => 0,
 		DOB_REG => 0,
@@ -316,7 +316,7 @@ begin
 		ENB => '1', -- 1-bit input: B port enable input
 		REGCEB => '1', -- 1-bit input: B port register clock enable input
 		RSTB => '0', -- 1-bit input: B port register set/reset input
-		WEB => "000" & p1_write_mask_1, -- 4-bit input: Port B byte-wide write enable input
+		WEB => p1_write_mask_1, -- 4-bit input: Port B byte-wide write enable input
 		-- Port B Data: 32-bit (each) input: Port B data
 		DIB => (port_1.write_data), -- 32-bit input: B port data input
 		DIPB => (others => '0') -- 4-bit input: B port parity input
