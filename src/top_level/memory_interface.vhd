@@ -267,9 +267,9 @@ begin
 
 					--fontram_port_out <= DEFAULT_BRAM_PORT_32B;
 
-					textbuffer_port_out.address <= (others => '0');
-					textbuffer_port_out.write_data <= mem_p0_in.write_data;
-					textbuffer_port_out.write_mask <= mem_p0_in.write_mask;
+					textbuffer_port_out.address <= mem_p0_in.address(12 downto 2);
+					textbuffer_port_out.write_data <= mem_p0_in.write_data(7 downto 0) & mem_p0_in.write_data(15 downto 8) & mem_p0_in.write_data(23 downto 16) & mem_p0_in.write_data(31 downto 24);
+					textbuffer_port_out.write_mask <= mem_p0_in.write_mask(0) & mem_p0_in.write_mask(1) & mem_p0_in.write_mask(2) & mem_p0_in.write_mask(3);
 				else
 					-- no-op
 					p0_state <= STATE_READY;
